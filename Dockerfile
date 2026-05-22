@@ -5,8 +5,8 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Instala dependências do sistema necessárias para WeasyPrint e Pillow
-RUN apt-get update && apt-get install -y \
+# Instala dependências do sistema — WeasyPrint 53+ não precisa de GTK3
+RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
     libffi-dev \
@@ -14,7 +14,6 @@ RUN apt-get update && apt-get install -y \
     libpango-1.0-0 \
     libpangocairo-1.0-0 \
     libgdk-pixbuf2.0-0 \
-    libgtk-3-0 \
     libjpeg-dev \
     libpng-dev \
     libfreetype6-dev \
