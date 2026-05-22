@@ -97,7 +97,7 @@ else:
             'HOST': config('DB_HOST', default='db'),
             'PORT': config('DB_PORT', default='5432'),
             'OPTIONS': {
-                'options': '-c default_transaction_isolation=read_committed',
+                'options': "-c default_transaction_isolation='read committed'",
             },
         }
     }
