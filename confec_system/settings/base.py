@@ -96,9 +96,6 @@ else:
             'PASSWORD': config('DB_PASSWORD', default='confec_senha123'),
             'HOST': config('DB_HOST', default='db'),
             'PORT': config('DB_PORT', default='5432'),
-            'OPTIONS': {
-                'options': "-c default_transaction_isolation='read committed'",
-            },
         }
     }
 
