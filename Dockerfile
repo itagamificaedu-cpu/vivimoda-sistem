@@ -1,24 +1,23 @@
-# Imagem base Python 3.11 slim
-FROM python:3.11-slim
+# Imagem base Python 3.11 Alpine — mais leve e confiável em VPS
+FROM python:3.11-alpine
 
 # Evita geração de .pyc e habilita log em tempo real
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Instala dependências do sistema — WeasyPrint 53+ não precisa de GTK3
-RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends \
+# Instala dependências do sistema via apk (Alpine)
+RUN apk add --no-cache \
     gcc \
-    libpq-dev \
+    musl-dev \
+    postgresql-dev \
     libffi-dev \
-    libcairo2 \
-    libpango-1.0-0 \
-    libpangocairo-1.0-0 \
-    libgdk-pixbuf2.0-0 \
-    libjpeg-dev \
+    cairo \
+    pango \
+    gdk-pixbuf \
+    jpeg-dev \
     libpng-dev \
-    libfreetype6-dev \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+    freetype-dev \
+    curl
 
 WORKDIR /app
 
