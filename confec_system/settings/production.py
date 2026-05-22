@@ -7,6 +7,16 @@ DEBUG = False
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
 
+# Necessário para CSRF funcionar atrás de proxy Nginx com HTTPS
+CSRF_TRUSTED_ORIGINS = [
+    'https://vivimoda.itatecnologiaeducacional.tech',
+    'http://vivimoda.itatecnologiaeducacional.tech',
+]
+
+# Informa ao Django que está atrás de um proxy reverso (Nginx)
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # Segurança HTTP
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
