@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="{% url 'fornecedores:lista' %}">Fornecedores</a></li>
+                <li class="breadcrumb-item active">{{ titulo }}</li>
+            </ol>
+        </nav>
+        <h4 class="fw-bold mb-0"><i class="bi bi-building text-primary me-2"></i>{{ titulo }}</h4>
+    </div>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header"><h6 class="mb-0">Dados Principais</h6></div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label">Razão Social / Nome *</label>
+                            {{ form.razao_social }}
+                            {% if form.razao_social.errors %}<div class="text-danger small">{{ form.razao_social.errors }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">CNPJ/CPF *</label>
+                            <div class="input-group">
+                                {{ form.cnpj_cpf }}
+                                <button type="button" class="btn btn-outline-secondary" onclick="buscarCNPJ()" title="Buscar dados na Receita">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nome Fantasia</label>
+                            {{ form.nome_fantasia }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Inscrição Estadual</label>
+                            {{ form.inscricao_estadual }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Telefone</label>
+                            {{ form.telefone }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Celular / WhatsApp</label>
+                            {{ form.celular }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">E-mail</label>
+                            {{ form.email }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Site</label>
+                            {{ form.site }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header"><h6 class="mb-0">Endereço</h6></div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">CEP</label>
+                            <div class="input-group">
+                                {{ form.cep }}
+                                <button type="button" class="btn btn-outline-secondary" onclick="buscarCEP('form_fornecedor')" title="Buscar CEP">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <label class="form-label">Logradouro</label>
+                            {{ form.logradouro }}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Número</label>
+                            {{ form.numero }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Complemento</label>
+                            {{ form.complemento }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Bairro</label>
+                            {{ form.bairro }}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Cidade</label>
+                            {{ form.cidade }}
+                        </div>
+                        <div class="col-md-1">
+                            <label class="form-label">UF</label>
+                            {{ form.estado }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><h6 class="mb-0">Observações</h6></div>
+                <div class="card-body">
+                    {{ form.observacoes }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header"><h6 class="mb-0">Configurações</h6></div>
+                <div class="card-body">
+                    <div class="mb-3">{{ form.ativo }} <label>Fornecedor ativo</label></div>
+                </div>
+            </div>
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-save me-2"></i>Salvar Fornecedor
+                </button>
+                {% if fornecedor %}
+                <a href="{% url 'fornecedores:detalhe' fornecedor.pk %}" class="btn btn-outline-secondary">Cancelar</a>
+                {% else %}
+                <a href="{% url 'fornecedores:lista' %}" class="btn btn-outline-secondary">Cancelar</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block js_extra %}
+<script>
+function buscarCNPJ() {
+    const cnpj = document.querySelector('[name=cnpj_cpf]').value.replace(/\D/g,'');
+    if (cnpj.length !== 14) { alert('Informe um CNPJ válido (14 dígitos)'); return; }
+    fetch(`/core/ajax/cnpj/?cnpj=${cnpj}`)
+        .then(r => r.json())
+        .then(d => {
+            if (d.erro) { alert('CNPJ não encontrado'); return; }
+            document.querySelector('[name=razao_social]').value = d.razao_social || '';
+            document.querySelector('[name=nome_fantasia]').value = d.nome_fantasia || '';
+            document.querySelector('[name=cep]').value = d.cep || '';
+            document.querySelector('[name=logradouro]').value = d.logradouro || '';
+            document.querySelector('[name=numero]').value = d.numero || '';
+            document.querySelector('[name=bairro]').value = d.bairro || '';
+            document.querySelector('[name=cidade]').value = d.municipio || '';
+            document.querySelector('[name=estado]').value = d.uf || '';
+            document.querySelector('[name=telefone]').value = d.telefone || '';
+            document.querySelector('[name=email]').value = d.email || '';
+        }).catch(() => alert('Erro ao buscar CNPJ'));
+}
+</script>
+{% endblock %}

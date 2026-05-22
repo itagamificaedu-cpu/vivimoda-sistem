@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}{{ funcionario.nome_completo }}{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="{% url 'funcionarios:lista' %}">Funcionários</a></li>
+                <li class="breadcrumb-item active">{{ funcionario.nome_completo|truncatechars:30 }}</li>
+            </ol>
+        </nav>
+        <h4 class="fw-bold mb-0">
+            <i class="bi bi-person-badge text-primary me-2"></i>{{ funcionario.nome_completo }}
+            {% if funcionario.ativo %}<span class="badge bg-success">Ativo</span>
+            {% else %}<span class="badge bg-secondary">Inativo</span>{% endif %}
+        </h4>
+    </div>
+    <a href="{% url 'funcionarios:editar' funcionario.pk %}" class="btn btn-outline-primary">
+        <i class="bi bi-pencil me-1"></i>Editar
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header"><h6 class="mb-0">Informações Pessoais</h6></div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-5 text-muted">Cargo</dt>
+                    <dd class="col-sm-7"><span class="badge bg-primary">{{ funcionario.cargo }}</span></dd>
+                    <dt class="col-sm-5 text-muted">CPF</dt>
+                    <dd class="col-sm-7">{{ funcionario.cpf|default:"—" }}</dd>
+                    <dt class="col-sm-5 text-muted">RG</dt>
+                    <dd class="col-sm-7">{{ funcionario.rg|default:"—" }}</dd>
+                    <dt class="col-sm-5 text-muted">Nascimento</dt>
+                    <dd class="col-sm-7">{{ funcionario.data_nascimento|date:"d/m/Y"|default:"—" }}</dd>
+                    <dt class="col-sm-5 text-muted">Admissão</dt>
+                    <dd class="col-sm-7">{{ funcionario.data_admissao|date:"d/m/Y"|default:"—" }}</dd>
+                    <dt class="col-sm-5 text-muted">Telefone</dt>
+                    <dd class="col-sm-7">{{ funcionario.telefone|default:"—" }}</dd>
+                    <dt class="col-sm-5 text-muted">E-mail</dt>
+                    <dd class="col-sm-7">{{ funcionario.email|default:"—" }}</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header"><h6 class="mb-0">Remuneração</h6></div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                    <span class="text-muted">Salário Atual</span>
+                    <span class="fw-bold fs-5">R$ {{ funcionario.salario_atual|floatformat:2 }}</span>
+                </div>
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                    <span class="text-muted">Comissão</span>
+                    <span>{{ funcionario.percentual_comissao|floatformat:1 }}%</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted">Tipo de Contrato</span>
+                    <span>{{ funcionario.get_tipo_contrato_display }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        {# Histórico de salário #}
+        <div class="card mb-4">
+            <div class="card-header"><h6 class="mb-0"><i class="bi bi-clock-history me-2"></i>Histórico de Salário</h6></div>
+            <div class="card-body p-0">
+                <table class="table table-sm table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Data</th>
+                            <th class="text-end">Salário Anterior</th>
+                            <th class="text-end">Novo Salário</th>
+                            <th>Motivo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hist in historico_salario %}
+                        <tr>
+                            <td class="ps-3 small text-muted">{{ hist.data_alteracao|date:"d/m/Y" }}</td>
+                            <td class="text-end">R$ {{ hist.salario_anterior|floatformat:2 }}</td>
+                            <td class="text-end fw-semibold text-success">R$ {{ hist.salario_novo|floatformat:2 }}</td>
+                            <td class="small">{{ hist.motivo|default:"—" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center text-muted py-3">Nenhuma alteração de salário.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {# Dados bancários #}
+        {% if funcionario.banco %}
+        <div class="card">
+            <div class="card-header"><h6 class="mb-0"><i class="bi bi-bank me-2"></i>Dados Bancários</h6></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <small class="text-muted">Banco</small><div>{{ funcionario.banco }}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted">Agência</small><div>{{ funcionario.agencia|default:"—" }}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted">Conta</small><div>{{ funcionario.conta|default:"—" }}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted">Tipo de Conta</small><div>{{ funcionario.tipo_conta|default:"—" }}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted">Chave PIX</small><div>{{ funcionario.chave_pix|default:"—" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

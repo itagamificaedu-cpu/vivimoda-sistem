@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Ordens de Compra{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-0"><i class="bi bi-truck text-primary me-2"></i>Ordens de Compra</h4>
+        <small class="text-muted">{{ total }} registro(s)</small>
+    </div>
+    <a href="{% url 'compras:criar' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i>Nova Ordem
+    </a>
+</div>
+
+{# Filtros #}
+<div class="card mb-4">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm"
+                       placeholder="Nº ordem, fornecedor...">
+            </div>
+            <div class="col-md-2">
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">Todos</option>
+                    <option value="RASCUNHO" {% if status == 'RASCUNHO' %}selected{% endif %}>Rascunho</option>
+                    <option value="ENVIADA" {% if status == 'ENVIADA' %}selected{% endif %}>Enviada</option>
+                    <option value="PARCIAL" {% if status == 'PARCIAL' %}selected{% endif %}>Receb. Parcial</option>
+                    <option value="RECEBIDA" {% if status == 'RECEBIDA' %}selected{% endif %}>Recebida</option>
+                    <option value="CANCELADA" {% if status == 'CANCELADA' %}selected{% endif %}>Cancelada</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="data_de" value="{{ data_de }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="data_ate" value="{{ data_ate }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-auto d-flex gap-1">
+                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
+                <a href="{% url 'compras:lista' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Número</th>
+                        <th>Fornecedor</th>
+                        <th>Data</th>
+                        <th>Previsão Entrega</th>
+                        <th class="text-end">Total</th>
+                        <th class="text-center">Itens</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center pe-3">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for oc in page_obj %}
+                    <tr>
+                        <td class="ps-3">
+                            <a href="{% url 'compras:detalhe' oc.pk %}" class="fw-semibold text-decoration-none">
+                                {{ oc.numero }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'fornecedores:detalhe' oc.fornecedor.pk %}" class="text-decoration-none">
+                                {{ oc.fornecedor.razao_social }}
+                            </a>
+                        </td>
+                        <td class="text-muted small">{{ oc.data_pedido|date:"d/m/Y" }}</td>
+                        <td class="text-muted small">
+                            {% if oc.data_previsao %}{{ oc.data_previsao|date:"d/m/Y" }}{% else %}—{% endif %}
+                        </td>
+                        <td class="text-end fw-semibold">R$ {{ oc.valor_total|floatformat:2 }}</td>
+                        <td class="text-center">{{ oc.itens.count }}</td>
+                        <td class="text-center">
+                            {% if oc.status == 'RASCUNHO' %}
+                                <span class="badge bg-secondary">Rascunho</span>
+                            {% elif oc.status == 'ENVIADA' %}
+                                <span class="badge bg-primary">Enviada</span>
+                            {% elif oc.status == 'PARCIAL' %}
+                                <span class="badge bg-warning text-dark">Parcial</span>
+                            {% elif oc.status == 'RECEBIDA' %}
+                                <span class="badge bg-success">Recebida</span>
+                            {% elif oc.status == 'CANCELADA' %}
+                                <span class="badge bg-danger">Cancelada</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center pe-3">
+                            <a href="{% url 'compras:detalhe' oc.pk %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            {% if oc.status in 'RASCUNHO ENVIADA PARCIAL' %}
+                            <a href="{% url 'compras:receber' oc.pk %}" class="btn btn-sm btn-outline-success" title="Receber mercadoria">
+                                <i class="bi bi-box-arrow-in-down"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-truck display-6 d-block mb-2"></i>
+                            Nenhuma ordem de compra encontrada.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

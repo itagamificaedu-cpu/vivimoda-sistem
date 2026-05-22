@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Categorias{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-tags text-primary me-2"></i>Categorias de Produto</h4>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header"><h6 class="mb-0">Nova Categoria</h6></div>
+            <div class="card-body">
+                <form method="post" action="{% url 'produtos:salvar_categoria' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Nome *</label>
+                        <input type="text" name="nome" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descrição</label>
+                        <textarea name="descricao" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" name="ativo" class="form-check-input" id="catAtivo" checked>
+                            <label class="form-check-label" for="catAtivo">Ativa</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-plus-circle me-1"></i>Salvar Categoria
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Nome</th>
+                            <th>Descrição</th>
+                            <th class="text-center">Produtos</th>
+                            <th class="text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cat in page_obj %}
+                        <tr>
+                            <td class="ps-3 fw-semibold">{{ cat.nome }}</td>
+                            <td class="text-muted small">{{ cat.descricao|default:"—" }}</td>
+                            <td class="text-center">{{ cat.produto_set.count }}</td>
+                            <td class="text-center">
+                                {% if cat.ativo %}<span class="badge bg-success">Ativa</span>
+                                {% else %}<span class="badge bg-secondary">Inativa</span>{% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted">Nenhuma categoria cadastrada.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+[
+  {
+    "model": "caixa.caixa", "pk": 1,
+    "fields": {
+      "numero": "01",
+      "descricao": "Caixa Principal",
+      "ativo": true
+    }
+  },
+  {
+    "model": "caixa.caixa", "pk": 2,
+    "fields": {
+      "numero": "02",
+      "descricao": "Caixa Secundário",
+      "ativo": true
+    }
+  }
+]

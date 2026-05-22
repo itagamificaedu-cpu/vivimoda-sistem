@@ -1,0 +1,41 @@
+[
+  {
+    "model": "configuracoes.configuracaoloja",
+    "pk": 1,
+    "fields": {
+      "nome_fantasia": "VIVIMODA",
+      "razao_social": "VIVIMODA Comércio de Confecções Ltda",
+      "cpf_cnpj": "00.000.000/0001-00",
+      "inscricao_estadual": "",
+      "logo": "",
+      "endereco": "Rua das Confecções, 123 — Centro",
+      "cidade": "São Paulo",
+      "estado": "SP",
+      "cep": "01310-100",
+      "telefone": "(11) 3000-0000",
+      "whatsapp": "(11) 99000-0000",
+      "email": "contato@vivimoda.com.br",
+      "site": "",
+      "instagram": "@vivimoda",
+      "pix_chave": "11.99000-0000",
+      "pix_tipo": "CELULAR",
+      "banco_nome": "Bradesco",
+      "banco_agencia": "0001",
+      "banco_conta": "123456-7",
+      "taxa_juros_mes": "2.00",
+      "percentual_multa": "2.00",
+      "carencia_juros_dias": 3,
+      "dias_alerta_vencimento": 3,
+      "vender_sem_estoque": false,
+      "desconto_maximo": "10.00",
+      "forma_pagamento_padrao": "DINHEIRO",
+      "imprimir_cupom_auto": false,
+      "cupom_cabecalho": "VIVIMODA\nRua das Confecções, 123\nTel: (11) 3000-0000",
+      "cupom_rodape": "Obrigado pela preferência!\nVOLTE SEMPRE!",
+      "tema_cor": "blue",
+      "modo_escuro": false,
+      "criado_em": "2025-01-01T00:00:00Z",
+      "atualizado_em": "2025-01-01T00:00:00Z"
+    }
+  }
+]

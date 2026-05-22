@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Receber Mercadoria{% endblock %}
+
+{% block conteudo %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'compras:lista' %}">Compras</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'compras:detalhe' oc.pk %}">{{ oc.numero }}</a></li>
+                <li class="breadcrumb-item active">Receber</li>
+            </ol>
+        </nav>
+
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-box-arrow-in-down me-2"></i>Recebimento de Mercadoria — {{ oc.numero }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Informe a quantidade efetivamente recebida de cada item.
+                    O estoque será atualizado automaticamente e uma conta a pagar será gerada.
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Número da NF *</label>
+                        <input type="text" name="numero_nf" class="form-control"
+                               value="{{ oc.numero_nf|default:'' }}" placeholder="Número da nota fiscal">
+                    </div>
+
+                    <h6 class="fw-semibold border-bottom pb-2 mb-3">Itens a Receber</h6>
+                    {% for item in oc.itens.all %}
+                    <div class="row align-items-center mb-3 p-2 border rounded">
+                        <div class="col-md-6">
+                            <div class="fw-semibold">{{ item.produto.nome }}</div>
+                            {% if item.grade %}
+                            <small class="text-muted">{{ item.grade.cor }} / {{ item.grade.tamanho }}</small>
+                            {% endif %}
+                            <small class="text-muted d-block">
+                                Pedido: {{ item.quantidade|floatformat:0 }} un. |
+                                Já recebido: {{ item.quantidade_recebida|floatformat:0 }} un. |
+                                Pendente: {{ item.quantidade_pendente|floatformat:0 }} un.
+                            </small>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label form-label-sm">Qtd Recebida *</label>
+                            <input type="number" name="recebido_{{ item.pk }}"
+                                   class="form-control" step="1" min="0"
+                                   max="{{ item.quantidade_pendente|floatformat:0 }}"
+                                   value="{{ item.quantidade_pendente|floatformat:0 }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label form-label-sm">Custo Unit.</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text">R$</span>
+                                <input type="number" name="custo_{{ item.pk }}"
+                                       class="form-control" step="0.01" min="0"
+                                       value="{{ item.preco_unitario|floatformat:2 }}">
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-success flex-fill btn-lg">
+                            <i class="bi bi-box-arrow-in-down me-2"></i>Confirmar Recebimento
+                        </button>
+                        <a href="{% url 'compras:detalhe' oc.pk %}" class="btn btn-outline-secondary btn-lg">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

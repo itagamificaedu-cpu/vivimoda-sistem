@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Contas a Pagar{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-0"><i class="bi bi-arrow-up-circle text-danger me-2"></i>Contas a Pagar</h4>
+        <small class="text-muted">{{ total }} registro(s)</small>
+    </div>
+    <a href="{% url 'financeiro:nova_pagar' %}" class="btn btn-danger">
+        <i class="bi bi-plus-circle me-1"></i>Nova Conta
+    </a>
+</div>
+
+{# Cards resumo #}
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 bg-danger text-white">
+            <div class="card-body py-3">
+                <div class="small opacity-75">A Pagar (total)</div>
+                <div class="fw-bold fs-5">R$ {{ total_pendente|floatformat:2|default:"0,00" }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 bg-warning text-dark">
+            <div class="card-body py-3">
+                <div class="small opacity-75">Vencido</div>
+                <div class="fw-bold fs-5">R$ {{ total_vencido|floatformat:2|default:"0,00" }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 bg-info text-white">
+            <div class="card-body py-3">
+                <div class="small opacity-75">Vence Hoje</div>
+                <div class="fw-bold fs-5">R$ {{ total_hoje|floatformat:2|default:"0,00" }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 bg-secondary text-white">
+            <div class="card-body py-3">
+                <div class="small opacity-75">Pago (mês)</div>
+                <div class="fw-bold fs-5">R$ {{ total_pago_mes|floatformat:2|default:"0,00" }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Filtros #}
+<div class="card mb-4">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm"
+                       placeholder="Fornecedor, descrição, nº...">
+            </div>
+            <div class="col-md-2">
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">Todos</option>
+                    <option value="PENDENTE" {% if status == 'PENDENTE' %}selected{% endif %}>Pendente</option>
+                    <option value="PAGO" {% if status == 'PAGO' %}selected{% endif %}>Pago</option>
+                    <option value="VENCIDO" {% if status == 'VENCIDO' %}selected{% endif %}>Vencido</option>
+                    <option value="CANCELADO" {% if status == 'CANCELADO' %}selected{% endif %}>Cancelado</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="venc_de" value="{{ venc_de }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="venc_ate" value="{{ venc_ate }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-auto d-flex gap-1">
+                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
+                <a href="{% url 'financeiro:pagar' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# Tabela #}
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Descrição</th>
+                        <th>Fornecedor</th>
+                        <th>Emissão</th>
+                        <th>Vencimento</th>
+                        <th class="text-end">Valor</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center pe-3">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for conta in page_obj %}
+                    <tr class="{% if conta.dias_atraso > 0 and conta.status == 'VENCIDO' %}table-danger{% elif conta.status == 'PAGO' %}table-success bg-opacity-10{% endif %}">
+                        <td class="ps-3">
+                            <div class="fw-semibold">{{ conta.descricao }}</div>
+                            {% if conta.numero_documento %}
+                            <small class="text-muted">Doc: {{ conta.numero_documento }}</small>
+                            {% endif %}
+                            {% if conta.compra %}
+                            <small class="text-muted d-block">
+                                <a href="{% url 'compras:detalhe' conta.compra.pk %}">OC: {{ conta.compra.numero }}</a>
+                            </small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if conta.fornecedor %}
+                            <a href="{% url 'fornecedores:detalhe' conta.fornecedor.pk %}" class="text-decoration-none">
+                                {{ conta.fornecedor.razao_social }}
+                            </a>
+                            {% else %}—{% endif %}
+                        </td>
+                        <td class="text-muted small">{{ conta.data_emissao|date:"d/m/Y" }}</td>
+                        <td>
+                            {{ conta.data_vencimento|date:"d/m/Y" }}
+                            {% if conta.dias_atraso > 0 %}
+                            <span class="badge bg-danger ms-1">{{ conta.dias_atraso }}d</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end fw-semibold">R$ {{ conta.valor|floatformat:2 }}</td>
+                        <td class="text-center">
+                            {% if conta.status == 'PAGO' %}
+                                <span class="badge bg-success">Pago</span>
+                            {% elif conta.status == 'PENDENTE' %}
+                                <span class="badge bg-warning text-dark">Pendente</span>
+                            {% elif conta.status == 'VENCIDO' %}
+                                <span class="badge bg-danger">Vencido</span>
+                            {% elif conta.status == 'CANCELADO' %}
+                                <span class="badge bg-secondary">Cancelado</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center pe-3">
+                            {% if conta.status in 'PENDENTE VENCIDO' %}
+                            <a href="{% url 'financeiro:baixar_pagamento' conta.pk %}"
+                               class="btn btn-sm btn-success" title="Baixar">
+                                <i class="bi bi-check-circle"></i>
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'financeiro:editar_pagar' conta.pk %}"
+                               class="btn btn-sm btn-outline-primary" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox display-6 d-block mb-2"></i>
+                            Nenhuma conta a pagar encontrada.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

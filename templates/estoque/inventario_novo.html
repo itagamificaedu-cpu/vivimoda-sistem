@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Novo Inventário{% endblock %}
+
+{% block conteudo %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clipboard-plus me-2"></i>Iniciar Inventário</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    O sistema carregará todos os produtos ativos com o estoque atual.
+                    Você poderá informar a quantidade contada fisicamente.
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Categoria (opcional)</label>
+                        <select name="categoria" class="form-select">
+                            <option value="">Todas as categorias</option>
+                            {% for cat in categorias %}
+                            <option value="{{ cat.pk }}">{{ cat.nome }}</option>
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">Deixe em branco para inventariar todos os produtos.</small>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Observações</label>
+                        <textarea name="observacoes" class="form-control" rows="3"
+                                  placeholder="Motivo do inventário, local, etc..."></textarea>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill">
+                            <i class="bi bi-clipboard-check me-1"></i>Iniciar Inventário
+                        </button>
+                        <a href="{% url 'estoque:inventario_lista' %}" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

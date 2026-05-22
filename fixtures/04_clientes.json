@@ -1,0 +1,165 @@
+[
+  {
+    "model": "clientes.cliente", "pk": 1,
+    "fields": {
+      "tipo": "PF", "nome": "Ana Paula Ferreira", "cpf": "123.456.789-09",
+      "rg": "12.345.678-9", "data_nascimento": "1990-03-15", "sexo": "F",
+      "razao_social": "", "cnpj": null, "inscricao_estadual": "", "nome_fantasia": "",
+      "telefone": "(11) 3456-7890", "celular": "(11) 99123-4567",
+      "whatsapp": "(11) 99123-4567", "email": "ana.paula@email.com",
+      "cep": "01310-100", "logradouro": "Av. Paulista", "numero": "100",
+      "complemento": "Apto 42", "bairro": "Bela Vista", "cidade": "São Paulo", "estado": "SP",
+      "limite_credito": "500.00", "saldo_devedor": "0.00", "dia_vencimento": 10,
+      "categoria": "REGULAR", "pontos_fidelidade": 120,
+      "foto": "", "ativo": true, "observacoes": "",
+      "criado_em": "2025-01-15T09:00:00Z", "atualizado_em": "2025-01-15T09:00:00Z"
+    }
+  },
+  {
+    "model": "clientes.cliente", "pk": 2,
+    "fields": {
+      "tipo": "PF", "nome": "Carlos Eduardo Silva", "cpf": "987.654.321-00",
+      "rg": "98.765.432-1", "data_nascimento": "1985-07-22", "sexo": "M",
+      "razao_social": "", "cnpj": null, "inscricao_estadual": "", "nome_fantasia": "",
+      "telefone": "", "celular": "(11) 98765-4321",
+      "whatsapp": "(11) 98765-4321", "email": "carlos.silva@email.com",
+      "cep": "04038-001", "logradouro": "Rua das Flores", "numero": "250",
+      "complemento": "", "bairro": "Paraíso", "cidade": "São Paulo", "estado": "SP",
+      "limite_credito": "1000.00", "saldo_devedor": "350.00", "dia_vencimento": 15,
+      "categoria": "VIP", "pontos_fidelidade": 850,
+      "foto": "", "ativo": true, "observacoes": "Cliente antigo, boa frequência",
+      "criado_em": "2025-01-16T10:00:00Z", "atualizado_em": "2025-01-16T10:00:00Z"
+    }
+  },
+  {
+    "model": "clientes.cliente", "pk": 3,
+    "fields": {
+      "tipo": "PF", "nome": "Maria José Santos", "cpf": "456.789.123-45",
+      "rg": "", "data_nascimento": "1972-11-08", "sexo": "F",
+      "razao_social": "", "cnpj": null, "inscricao_estadual": "", "nome_fantasia": "",
+      "telefone": "(11) 3000-1234", "celular": "(11) 97654-3210",
+      "whatsapp": "(11) 97654-3210", "email": "",
+      "cep": "09520-000", "logradouro": "Rua das Acácias", "numero": "789",
+      "complemento": "", "bairro": "Centro", "cidade": "São Caetano do Sul", "estado": "SP",
+      "limite_credito": "300.00", "saldo_devedor": "0.00", "dia_vencimento": 5,
+      "categoria": "REGULAR", "pontos_fidelidade": 60,
+      "foto": "", "ativo": true, "observacoes": "",
+      "criado_em": "2025-01-17T11:00:00Z", "atualizado_em": "2025-01-17T11:00:00Z"
+    }
+  },
+  {
+    "model": "clientes.cliente", "pk": 4,
+    "fields": {
+      "tipo": "PF", "nome": "Roberto Alves Nascimento", "cpf": "321.654.987-12",
+      "rg": "32.165.498-7", "data_nascimento": "1995-04-30", "sexo": "M",
+      "razao_social": "", "cnpj": null, "inscricao_estadual": "", "nome_fantasia": "",
+      "telefone": "", "celular": "(21) 99000-8888",
+      "whatsapp": "(21) 99000-8888", "email": "roberto.alves@gmail.com",
+      "cep": "20040-020", "logradouro": "Av. Rio Branco", "numero": "56",
+      "complemento": "Sala 301", "bairro": "Centro", "cidade": "Rio de Janeiro", "estado": "RJ",
+      "limite_credito": "800.00", "saldo_devedor": "0.00", "dia_vencimento": 20,
+      "categoria": "REGULAR", "pontos_fidelidade": 200,
+      "foto": "", "ativo": true, "observacoes": "",
+      "criado_em": "2025-01-18T14:00:00Z", "atualizado_em": "2025-01-18T14:00:00Z"
+    }
+  },
+  {
+    "model": "clientes.cliente", "pk": 5,
+    "fields": {
+      "tipo": "PF", "nome": "Juliana Carvalho Mendes", "cpf": "159.753.486-20",
+      "rg": "", "data_nascimento": "1988-09-12", "sexo": "F",
+      "razao_social": "", "cnpj": null, "inscricao_estadual": "", "nome_fantasia": "",
+      "telefone": "", "celular": "(11) 91234-5678",
+      "whatsapp": "(11) 91234-5678", "email": "juliana.carvalho@email.com",
+      "cep": "04101-300", "logradouro": "Rua Domingos de Morais", "numero": "2200",
+      "complemento": "Apto 83", "bairro": "Vila Mariana", "cidade": "São Paulo", "estado": "SP",
+      "limite_credito": "600.00", "saldo_devedor": "150.00", "dia_vencimento": 25,
+      "categoria": "REGULAR", "pontos_fidelidade": 380,
+      "foto": "", "ativo": true, "observacoes": "",
+      "criado_em": "2025-01-20T08:30:00Z", "atualizado_em": "2025-01-20T08:30:00Z"
+    }
+  },
+  {
+    "model": "clientes.cliente", "pk": 6,
+    "fields": {
+      "tipo": "PJ", "nome": "Boutique Elegant Ltda", "cpf": null,
+      "rg": "", "data_nascimento": null, "sexo": "",
+      "razao_social": "Boutique Elegant Comércio de Roupas Ltda",
+      "cnpj": "12.345.678/0001-90",
+      "inscricao_estadual": "123.456.789.110",
+      "nome_fantasia": "Boutique Elegant",
+      "telefone": "(11) 3200-5000", "celular": "(11) 99200-5001",
+      "whatsapp": "(11) 99200-5001", "email": "compras@boutiqueelegant.com.br",
+      "cep": "01308-100", "logradouro": "Rua Augusta", "numero": "1500",
+      "complemento": "Loja 12", "bairro": "Consolação", "cidade": "São Paulo", "estado": "SP",
+      "limite_credito": "5000.00", "saldo_devedor": "0.00", "dia_vencimento": 10,
+      "categoria": "ATACADO", "pontos_fidelidade": 1200,
+      "foto": "", "ativo": true, "observacoes": "Atacadista — compras mensais",
+      "criado_em": "2025-01-21T09:00:00Z", "atualizado_em": "2025-01-21T09:00:00Z"
+    }
+  },
+  {
+    "model": "clientes.cliente", "pk": 7,
+    "fields": {
+      "tipo": "PF", "nome": "Fernanda Lima Costa", "cpf": "741.852.963-04",
+      "rg": "74.185.296-3", "data_nascimento": "2000-01-25", "sexo": "F",
+      "razao_social": "", "cnpj": null, "inscricao_estadual": "", "nome_fantasia": "",
+      "telefone": "", "celular": "(11) 94567-8901",
+      "whatsapp": "(11) 94567-8901", "email": "fernanda.lima@email.com",
+      "cep": "05410-000", "logradouro": "Av. Brigadeiro Faria Lima", "numero": "300",
+      "complemento": "", "bairro": "Jardim Paulistano", "cidade": "São Paulo", "estado": "SP",
+      "limite_credito": "400.00", "saldo_devedor": "0.00", "dia_vencimento": 15,
+      "categoria": "REGULAR", "pontos_fidelidade": 50,
+      "foto": "", "ativo": true, "observacoes": "",
+      "criado_em": "2025-02-05T10:00:00Z", "atualizado_em": "2025-02-05T10:00:00Z"
+    }
+  },
+  {
+    "model": "clientes.cliente", "pk": 8,
+    "fields": {
+      "tipo": "PF", "nome": "Marcos Vinicius Oliveira", "cpf": "258.369.147-80",
+      "rg": "", "data_nascimento": "1979-06-18", "sexo": "M",
+      "razao_social": "", "cnpj": null, "inscricao_estadual": "", "nome_fantasia": "",
+      "telefone": "(11) 2500-3456", "celular": "(11) 96789-0123",
+      "whatsapp": "(11) 96789-0123", "email": "marcos.vinicius@email.com",
+      "cep": "09111-000", "logradouro": "Av. Industrial", "numero": "1000",
+      "complemento": "", "bairro": "Bairro Industrial", "cidade": "Santo André", "estado": "SP",
+      "limite_credito": "700.00", "saldo_devedor": "700.00", "dia_vencimento": 5,
+      "categoria": "INADIMPLENTE", "pontos_fidelidade": 400,
+      "foto": "", "ativo": true, "observacoes": "Possui carnê vencido — cobrar",
+      "criado_em": "2025-02-10T11:00:00Z", "atualizado_em": "2025-02-10T11:00:00Z"
+    }
+  },
+  {
+    "model": "clientes.cliente", "pk": 9,
+    "fields": {
+      "tipo": "PF", "nome": "Patricia Rocha Andrade", "cpf": "369.258.147-60",
+      "rg": "36.925.814-7", "data_nascimento": "1993-12-03", "sexo": "F",
+      "razao_social": "", "cnpj": null, "inscricao_estadual": "", "nome_fantasia": "",
+      "telefone": "", "celular": "(31) 98765-1234",
+      "whatsapp": "(31) 98765-1234", "email": "patricia.rocha@email.com",
+      "cep": "30140-110", "logradouro": "Av. do Contorno", "numero": "555",
+      "complemento": "", "bairro": "Santa Efigênia", "cidade": "Belo Horizonte", "estado": "MG",
+      "limite_credito": "500.00", "saldo_devedor": "0.00", "dia_vencimento": 20,
+      "categoria": "REGULAR", "pontos_fidelidade": 90,
+      "foto": "", "ativo": true, "observacoes": "",
+      "criado_em": "2025-02-15T14:00:00Z", "atualizado_em": "2025-02-15T14:00:00Z"
+    }
+  },
+  {
+    "model": "clientes.cliente", "pk": 10,
+    "fields": {
+      "tipo": "PF", "nome": "Diego Henrique Borges", "cpf": "147.258.369-77",
+      "rg": "", "data_nascimento": "1998-08-07", "sexo": "M",
+      "razao_social": "", "cnpj": null, "inscricao_estadual": "", "nome_fantasia": "",
+      "telefone": "", "celular": "(11) 95432-1098",
+      "whatsapp": "(11) 95432-1098", "email": "diego.borges@email.com",
+      "cep": "07180-000", "logradouro": "Rua João Pessoa", "numero": "320",
+      "complemento": "", "bairro": "Centro", "cidade": "Guarulhos", "estado": "SP",
+      "limite_credito": "350.00", "saldo_devedor": "0.00", "dia_vencimento": 10,
+      "categoria": "REGULAR", "pontos_fidelidade": 25,
+      "foto": "", "ativo": true, "observacoes": "",
+      "criado_em": "2025-03-01T09:00:00Z", "atualizado_em": "2025-03-01T09:00:00Z"
+    }
+  }
+]

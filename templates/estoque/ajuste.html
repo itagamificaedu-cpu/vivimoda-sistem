@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Ajuste Manual de Estoque{% endblock %}
+
+{% block conteudo %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'estoque:index' %}">Estoque</a></li>
+                <li class="breadcrumb-item active">Ajuste Manual</li>
+            </ol>
+        </nav>
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="bi bi-sliders me-2"></i>Ajuste Manual de Estoque</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Ajustes manuais são registrados com motivo obrigatório para fins de auditoria.
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Produto *</label>
+                        <select name="produto" id="id_produto" class="form-select select2" required>
+                            <option value="">— Selecione o produto —</option>
+                            {% for p in produtos %}
+                            <option value="{{ p.pk }}" {% if produto_selecionado and p.pk == produto_selecionado.pk %}selected{% endif %}>
+                                {{ p.codigo }} — {{ p.nome }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    {# Se produto tem grade #}
+                    {% if produto_selecionado and produto_selecionado.tipo == 'GRADE' %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Variação (Grade) *</label>
+                        <select name="grade" class="form-select" required>
+                            <option value="">— Selecione —</option>
+                            {% for g in grades_produto %}
+                            <option value="{{ g.pk }}">{{ g.cor }} / {{ g.tamanho }} — Estoque: {{ g.estoque_atual }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% elif produto_selecionado %}
+                    <div class="mb-3 p-3 bg-light rounded">
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Estoque Atual</span>
+                            <span class="fw-bold fs-5">{{ produto_selecionado.estoque_atual|floatformat:0 }} un.</span>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tipo de Ajuste *</label>
+                        <select name="tipo" class="form-select" required>
+                            <option value="AJUSTE_POSITIVO">➕ Adicionar ao estoque</option>
+                            <option value="AJUSTE_NEGATIVO">➖ Remover do estoque</option>
+                            <option value="INVENTARIO">📋 Definir quantidade exata (inventário)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Quantidade *</label>
+                        <input type="number" name="quantidade" class="form-control"
+                               step="1" min="0" required placeholder="0">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Motivo / Justificativa *</label>
+                        <textarea name="motivo" class="form-control" rows="3" required
+                                  placeholder="Informe o motivo do ajuste de estoque (ex: contagem física, produto danificado, etc.)..."></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-warning flex-fill">
+                            <i class="bi bi-check-circle me-1"></i>Registrar Ajuste
+                        </button>
+                        <a href="{% url 'estoque:index' %}" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

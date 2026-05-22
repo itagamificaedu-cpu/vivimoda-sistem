@@ -1,0 +1,85 @@
+[
+  {
+    "model": "fornecedores.fornecedor", "pk": 1,
+    "fields": {
+      "tipo": "PJ",
+      "razao_social": "Têxtil Nordeste Comércio de Malhas Ltda",
+      "nome_fantasia": "Têxtil Nordeste",
+      "cnpj": "11.222.333/0001-44", "cpf": null,
+      "inscricao_estadual": "111.222.333.444",
+      "telefone": "(81) 3333-4444", "celular": "(81) 99111-2222",
+      "email": "comercial@textilnordeste.com.br",
+      "site": "https://www.textilnordeste.com.br",
+      "cep": "50010-900", "logradouro": "Av. Dantas Barreto", "numero": "500",
+      "complemento": "", "bairro": "Santo Antônio", "cidade": "Recife", "estado": "PE",
+      "prazo_pagamento": 30, "condicao_pagamento": "30/60 dias",
+      "desconto_padrao": "5.00", "avaliacao": 5,
+      "observacoes": "Fornecedor principal de malhas. Entrega em 7 dias úteis.",
+      "ativo": true,
+      "criado_em": "2025-01-05T09:00:00Z", "atualizado_em": "2025-01-05T09:00:00Z"
+    }
+  },
+  {
+    "model": "fornecedores.fornecedor", "pk": 2,
+    "fields": {
+      "tipo": "PJ",
+      "razao_social": "Jeans Fashion Indústria e Comércio Ltda",
+      "nome_fantasia": "Jeans Fashion",
+      "cnpj": "22.333.444/0001-55", "cpf": null,
+      "inscricao_estadual": "222.333.444.555",
+      "telefone": "(11) 4444-5555", "celular": "(11) 99222-3333",
+      "email": "vendas@jeansfashion.com.br",
+      "site": "",
+      "cep": "08773-000", "logradouro": "Rua das Fábricas", "numero": "1200",
+      "complemento": "Galpão 3", "bairro": "Distrito Industrial",
+      "cidade": "Mogi das Cruzes", "estado": "SP",
+      "prazo_pagamento": 28, "condicao_pagamento": "7/14/21/28 dias",
+      "desconto_padrao": "3.00", "avaliacao": 4,
+      "observacoes": "Fornecedor de jeans. Pedido mínimo de 12 peças por referência.",
+      "ativo": true,
+      "criado_em": "2025-01-06T09:00:00Z", "atualizado_em": "2025-01-06T09:00:00Z"
+    }
+  },
+  {
+    "model": "fornecedores.fornecedor", "pk": 3,
+    "fields": {
+      "tipo": "PJ",
+      "razao_social": "Acessórios & Moda Distribuidora Ltda",
+      "nome_fantasia": "A&M Distribuidora",
+      "cnpj": "33.444.555/0001-66", "cpf": null,
+      "inscricao_estadual": "333.444.555.666",
+      "telefone": "(11) 2222-6666", "celular": "(11) 97777-8888",
+      "email": "contato@acessoriosmoda.com.br",
+      "site": "",
+      "cep": "01310-100", "logradouro": "Rua Barão de Itapetininga", "numero": "40",
+      "complemento": "Sala 12", "bairro": "República",
+      "cidade": "São Paulo", "estado": "SP",
+      "prazo_pagamento": 15, "condicao_pagamento": "À vista com 5% desconto ou 15 dias",
+      "desconto_padrao": "0.00", "avaliacao": 3,
+      "observacoes": "Fornecedor de cintos, bolsas e acessórios.",
+      "ativo": true,
+      "criado_em": "2025-01-07T09:00:00Z", "atualizado_em": "2025-01-07T09:00:00Z"
+    }
+  },
+  {
+    "model": "fornecedores.fornecedor", "pk": 4,
+    "fields": {
+      "tipo": "PF",
+      "razao_social": "Sebastião Araujo Confecções",
+      "nome_fantasia": "Tião Confecções",
+      "cnpj": null, "cpf": "555.666.777-88",
+      "inscricao_estadual": "",
+      "telefone": "", "celular": "(43) 98888-9999",
+      "email": "tiao.confeccoes@gmail.com",
+      "site": "",
+      "cep": "86010-000", "logradouro": "Rua Sergipe", "numero": "123",
+      "complemento": "", "bairro": "Centro",
+      "cidade": "Londrina", "estado": "PR",
+      "prazo_pagamento": 30, "condicao_pagamento": "30 dias",
+      "desconto_padrao": "2.00", "avaliacao": 4,
+      "observacoes": "Confeccionista local, atende pedidos especiais.",
+      "ativo": true,
+      "criado_em": "2025-01-08T09:00:00Z", "atualizado_em": "2025-01-08T09:00:00Z"
+    }
+  }
+]

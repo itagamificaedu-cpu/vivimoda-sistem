@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block titulo %}{{ fornecedor.razao_social }}{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="{% url 'fornecedores:lista' %}">Fornecedores</a></li>
+                <li class="breadcrumb-item active">{{ fornecedor.razao_social|truncatechars:30 }}</li>
+            </ol>
+        </nav>
+        <h4 class="fw-bold mb-0">
+            <i class="bi bi-building text-primary me-2"></i>{{ fornecedor.razao_social }}
+            {% if fornecedor.ativo %}<span class="badge bg-success fs-6">Ativo</span>
+            {% else %}<span class="badge bg-secondary fs-6">Inativo</span>{% endif %}
+        </h4>
+    </div>
+    <a href="{% url 'fornecedores:editar' fornecedor.pk %}" class="btn btn-outline-primary">
+        <i class="bi bi-pencil me-1"></i>Editar
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header"><h6 class="mb-0">Informações</h6></div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-5 text-muted">Razão Social</dt>
+                    <dd class="col-sm-7">{{ fornecedor.razao_social }}</dd>
+                    <dt class="col-sm-5 text-muted">Nome Fantasia</dt>
+                    <dd class="col-sm-7">{{ fornecedor.nome_fantasia|default:"—" }}</dd>
+                    <dt class="col-sm-5 text-muted">CNPJ/CPF</dt>
+                    <dd class="col-sm-7">{{ fornecedor.cnpj_cpf|default:"—" }}</dd>
+                    <dt class="col-sm-5 text-muted">IE</dt>
+                    <dd class="col-sm-7">{{ fornecedor.inscricao_estadual|default:"—" }}</dd>
+                    <dt class="col-sm-5 text-muted">Telefone</dt>
+                    <dd class="col-sm-7">{{ fornecedor.telefone|default:"—" }}</dd>
+                    <dt class="col-sm-5 text-muted">E-mail</dt>
+                    <dd class="col-sm-7">{{ fornecedor.email|default:"—" }}</dd>
+                    <dt class="col-sm-5 text-muted">Site</dt>
+                    <dd class="col-sm-7">
+                        {% if fornecedor.site %}<a href="{{ fornecedor.site }}" target="_blank">{{ fornecedor.site }}</a>
+                        {% else %}—{% endif %}
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><h6 class="mb-0">Endereço</h6></div>
+            <div class="card-body">
+                <address class="mb-0">
+                    {% if fornecedor.logradouro %}
+                    {{ fornecedor.logradouro }}, {{ fornecedor.numero }}
+                    {% if fornecedor.complemento %} — {{ fornecedor.complemento }}{% endif %}<br>
+                    {{ fornecedor.bairro }}<br>
+                    {{ fornecedor.cidade }}/{{ fornecedor.estado }} — CEP: {{ fornecedor.cep }}
+                    {% else %}
+                    <span class="text-muted">Endereço não informado</span>
+                    {% endif %}
+                </address>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        {# Contatos #}
+        <div class="card mb-4">
+            <div class="card-header"><h6 class="mb-0"><i class="bi bi-person-lines-fill me-2"></i>Contatos</h6></div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Nome</th>
+                            <th>Cargo</th>
+                            <th>Telefone</th>
+                            <th>E-mail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for contato in fornecedor.contatos.all %}
+                        <tr>
+                            <td class="ps-3">{{ contato.nome }}</td>
+                            <td class="text-muted small">{{ contato.cargo|default:"—" }}</td>
+                            <td>{{ contato.telefone|default:"—" }}</td>
+                            <td>{{ contato.email|default:"—" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center text-muted py-3">Nenhum contato cadastrado.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {# Últimas compras #}
+        <div class="card">
+            <div class="card-header"><h6 class="mb-0"><i class="bi bi-truck me-2"></i>Últimas Ordens de Compra</h6></div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Número</th>
+                            <th>Data</th>
+                            <th class="text-end">Total</th>
+                            <th class="text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for oc in ultimas_compras %}
+                        <tr>
+                            <td class="ps-3">
+                                <a href="{% url 'compras:detalhe' oc.pk %}">{{ oc.numero }}</a>
+                            </td>
+                            <td class="small text-muted">{{ oc.data_pedido|date:"d/m/Y" }}</td>
+                            <td class="text-end">R$ {{ oc.valor_total|floatformat:2 }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-{% if oc.status == 'RECEBIDA' %}success{% elif oc.status == 'CANCELADA' %}danger{% else %}primary{% endif %}">
+                                    {{ oc.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center text-muted py-3">Nenhuma compra registrada.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

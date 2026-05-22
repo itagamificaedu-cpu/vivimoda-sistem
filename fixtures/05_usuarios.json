@@ -1,0 +1,107 @@
+[
+  {
+    "model": "autenticacao.usuario",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$720000$confec2024salt$YBBtkOiSMBYT5QV1n7DlI7k5QY1q1DvBXe0GDi/e1kA=",
+      "last_login": null,
+      "is_superuser": true,
+      "username": "admin",
+      "first_name": "Administrador",
+      "last_name": "Sistema",
+      "email": "admin@vivimoda.com.br",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2025-01-01T00:00:00Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "autenticacao.usuario",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$720000$gerente2024$kSr7VxFgHQLdgI3Jc2w4xNb5Qk8Y7R2ZkTmL6Ne+xFM=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "gerente",
+      "first_name": "Maria",
+      "last_name": "Gerente",
+      "email": "gerente@vivimoda.com.br",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-01-02T00:00:00Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "autenticacao.usuario",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$720000$caixa2024$mPq3LxKjNwRT9sYbZuCgVeIhAo7F4D6ExWn2Mk1eL5I=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "caixa1",
+      "first_name": "João",
+      "last_name": "Operador",
+      "email": "caixa@vivimoda.com.br",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-01-03T00:00:00Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "autenticacao.perfilusuario",
+    "pk": 1,
+    "fields": {
+      "usuario": 1,
+      "cargo": "master",
+      "foto": "", "ativo": true,
+      "criado_em": "2025-01-01T00:00:00Z",
+      "atualizado_em": "2025-01-01T00:00:00Z",
+      "acesso_funcionarios": true, "acesso_clientes": true,
+      "acesso_fornecedores": true, "acesso_produtos": true,
+      "acesso_estoque": true, "acesso_compras": true,
+      "acesso_vendas": true, "acesso_caixa": true,
+      "acesso_financeiro": true, "acesso_carne": true,
+      "acesso_relatorios": true, "acesso_configuracoes": true
+    }
+  },
+  {
+    "model": "autenticacao.perfilusuario",
+    "pk": 2,
+    "fields": {
+      "usuario": 2,
+      "cargo": "gerente",
+      "foto": "", "ativo": true,
+      "criado_em": "2025-01-02T00:00:00Z",
+      "atualizado_em": "2025-01-02T00:00:00Z",
+      "acesso_funcionarios": true, "acesso_clientes": true,
+      "acesso_fornecedores": true, "acesso_produtos": true,
+      "acesso_estoque": true, "acesso_compras": true,
+      "acesso_vendas": true, "acesso_caixa": true,
+      "acesso_financeiro": true, "acesso_carne": true,
+      "acesso_relatorios": true, "acesso_configuracoes": false
+    }
+  },
+  {
+    "model": "autenticacao.perfilusuario",
+    "pk": 3,
+    "fields": {
+      "usuario": 3,
+      "cargo": "caixa",
+      "foto": "", "ativo": true,
+      "criado_em": "2025-01-03T00:00:00Z",
+      "atualizado_em": "2025-01-03T00:00:00Z",
+      "acesso_funcionarios": false, "acesso_clientes": true,
+      "acesso_fornecedores": false, "acesso_produtos": false,
+      "acesso_estoque": false, "acesso_compras": false,
+      "acesso_vendas": true, "acesso_caixa": true,
+      "acesso_financeiro": false, "acesso_carne": true,
+      "acesso_relatorios": false, "acesso_configuracoes": false
+    }
+  }
+]

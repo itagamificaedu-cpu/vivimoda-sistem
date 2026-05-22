@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Fechamento — {{ sessao.caixa }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; font-size: 12px; padding: 20px; color: #333; }
+        h1 { font-size: 18px; text-align: center; margin-bottom: 5px; }
+        .empresa { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+        .secao { margin-bottom: 20px; }
+        .secao h3 { font-size: 13px; border-bottom: 1px solid #999; padding-bottom: 4px; margin-bottom: 8px; }
+        .linha { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .linha.total { font-weight: bold; font-size: 14px; border-top: 1px solid #333; padding-top: 4px; margin-top: 4px; }
+        .linha.diferenca { font-size: 14px; }
+        .diferenca-zero { color: green; }
+        .diferenca-negativa { color: red; }
+        .diferenca-positiva { color: orange; }
+        table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+        th, td { border: 1px solid #ddd; padding: 4px 8px; text-align: left; font-size: 11px; }
+        th { background: #f5f5f5; }
+        td.num { text-align: right; }
+        @media print { @page { size: A4; margin: 15mm; } }
+    </style>
+</head>
+<body>
+    <div class="empresa">
+        <h1>{{ config_loja.nome_empresa|default:"CONFEC SYSTEM" }}</h1>
+        {% if config_loja.cnpj %}<div>CNPJ: {{ config_loja.cnpj }}</div>{% endif %}
+        <div style="font-size:14px;font-weight:bold;margin-top:5px;">RELATÓRIO DE FECHAMENTO DE CAIXA</div>
+    </div>
+
+    <div class="secao">
+        <h3>Identificação da Sessão</h3>
+        <div class="linha"><span>Caixa:</span><span>{{ sessao.caixa }}</span></div>
+        <div class="linha"><span>Operador:</span><span>{{ sessao.operador.nome_exibicao }}</span></div>
+        <div class="linha"><span>Abertura:</span><span>{{ sessao.data_abertura|date:"d/m/Y H:i" }}</span></div>
+        <div class="linha"><span>Fechamento:</span><span>{{ sessao.data_fechamento|date:"d/m/Y H:i" }}</span></div>
+    </div>
+
+    <div class="secao">
+        <h3>Movimentação de Dinheiro</h3>
+        <div class="linha"><span>Valor de Abertura</span><span>R$ {{ sessao.valor_abertura|floatformat:2 }}</span></div>
+        <div class="linha"><span>Suprimentos</span><span>R$ {{ sessao.valor_suprimento|floatformat:2 }}</span></div>
+        <div class="linha"><span>Vendas em Dinheiro</span><span>R$ {{ sessao.total_dinheiro|floatformat:2 }}</span></div>
+        <div class="linha"><span>Sangrias</span><span>- R$ {{ sessao.valor_sangria|floatformat:2 }}</span></div>
+        <div class="linha total"><span>Esperado em Caixa</span><span>R$ {{ sessao.saldo_esperado|floatformat:2 }}</span></div>
+        {% if sessao.valor_contado_dinheiro is not None %}
+        <div class="linha"><span>Contado fisicamente</span><span>R$ {{ sessao.valor_contado_dinheiro|floatformat:2 }}</span></div>
+        <div class="linha diferenca {% if sessao.diferenca_caixa == 0 %}diferenca-zero{% elif sessao.diferenca_caixa < 0 %}diferenca-negativa{% else %}diferenca-positiva{% endif %}">
+            <span>Diferença</span>
+            <span>R$ {{ sessao.diferenca_caixa|floatformat:2 }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="secao">
+        <h3>Vendas por Forma de Pagamento</h3>
+        <div class="linha"><span>Dinheiro</span><span>R$ {{ sessao.total_dinheiro|floatformat:2 }}</span></div>
+        <div class="linha"><span>PIX</span><span>R$ {{ sessao.total_pix|floatformat:2 }}</span></div>
+        <div class="linha"><span>Cartão de Crédito</span><span>R$ {{ sessao.total_credito|floatformat:2 }}</span></div>
+        <div class="linha"><span>Cartão de Débito</span><span>R$ {{ sessao.total_debito|floatformat:2 }}</span></div>
+        <div class="linha"><span>Crediário / Carnê</span><span>R$ {{ sessao.total_crediario|floatformat:2 }}</span></div>
+        <div class="linha"><span>Outros</span><span>R$ {{ sessao.total_outros|floatformat:2 }}</span></div>
+        <div class="linha total"><span>TOTAL VENDAS</span><span>R$ {{ sessao.total_vendas|floatformat:2 }}</span></div>
+    </div>
+
+    {% if sessao.observacoes_fechamento %}
+    <div class="secao">
+        <h3>Observações</h3>
+        <p>{{ sessao.observacoes_fechamento }}</p>
+    </div>
+    {% endif %}
+
+    <div style="margin-top:40px;display:flex;justify-content:space-around;">
+        <div style="text-align:center;">
+            <div style="border-top:1px solid #000;width:200px;padding-top:5px;">Operador: {{ sessao.operador.nome_exibicao }}</div>
+        </div>
+        <div style="text-align:center;">
+            <div style="border-top:1px solid #000;width:200px;padding-top:5px;">Gerente / Supervisor</div>
+        </div>
+    </div>
+
+    <div style="text-align:center;margin-top:20px;font-size:10px;color:#999;">
+        Emitido em: {% now "d/m/Y H:i:s" %} — Sistema ConfecSystem
+    </div>
+
+    <script>window.print();</script>
+</body>
+</html>

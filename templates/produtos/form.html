@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="{% url 'produtos:lista' %}">Produtos</a></li>
+                <li class="breadcrumb-item active">{{ titulo }}</li>
+            </ol>
+        </nav>
+        <h4 class="fw-bold mb-0"><i class="bi bi-box-seam text-primary me-2"></i>{{ titulo }}</h4>
+    </div>
+</div>
+
+<form method="post" enctype="multipart/form-data" x-data="formProduto()">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header"><h6 class="mb-0">Identificação</h6></div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label">Nome *</label>
+                            {{ form.nome }}
+                            {% if form.nome.errors %}<div class="text-danger small">{{ form.nome.errors }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Código</label>
+                            {{ form.codigo }}
+                            <small class="text-muted">Deixe em branco para gerar automaticamente</small>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Código de Barras</label>
+                            {{ form.codigo_barras }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Referência</label>
+                            {{ form.referencia }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Tipo *</label>
+                            {{ form.tipo }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Categoria</label>
+                            {{ form.categoria }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Marca</label>
+                            {{ form.marca }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Descrição</label>
+                            {{ form.descricao }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header"><h6 class="mb-0">Preços</h6></div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Preço de Custo</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                {{ form.preco_custo }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Margem (%)</label>
+                            {{ form.margem_lucro }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Preço de Venda *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                {{ form.preco_venda }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Preço Promocional</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                {{ form.preco_promocional }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Promoção De</label>
+                            {{ form.promo_inicio }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Promoção Até</label>
+                            {{ form.promo_fim }}
+                        </div>
+                        {% if produto %}
+                        <div class="col-12">
+                            <label class="form-label">Motivo da Alteração de Preço</label>
+                            <input type="text" name="motivo_preco" class="form-control"
+                                   placeholder="Informe o motivo se estiver alterando o preço...">
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><h6 class="mb-0">Estoque</h6></div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Estoque Atual</label>
+                            {{ form.estoque_atual }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Estoque Mínimo</label>
+                            {{ form.estoque_minimo }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Localização</label>
+                            {{ form.localizacao }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header"><h6 class="mb-0">Foto Principal</h6></div>
+                <div class="card-body text-center">
+                    {% if produto and produto.foto_principal %}
+                    <img src="{{ produto.foto_principal.url }}" alt="" class="img-fluid rounded mb-2"
+                         style="max-height:150px;object-fit:cover;">
+                    {% endif %}
+                    {{ form.foto_principal }}
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-header"><h6 class="mb-0">Configurações</h6></div>
+                <div class="card-body">
+                    <div class="mb-2">{{ form.ativo }} <label>Produto ativo</label></div>
+                    <div class="mb-2">{{ form.controla_estoque }} <label>Controlar estoque</label></div>
+                    {% if form.permite_fracao %}
+                    <div class="mb-2">{{ form.permite_fracao }} <label>Permite fração (venda em m²/kg)</label></div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-save me-2"></i>Salvar Produto
+                </button>
+                <a href="{% url 'produtos:lista' %}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block js_extra %}
+<script>
+function formProduto() {
+    return {
+        calcularPreco() {
+            const custo = parseFloat(document.querySelector('[name=preco_custo]').value) || 0;
+            const margem = parseFloat(document.querySelector('[name=margem_lucro]').value) || 0;
+            if (custo > 0 && margem > 0) {
+                document.querySelector('[name=preco_venda]').value = (custo * (1 + margem/100)).toFixed(2);
+            }
+        }
+    }
+}
+// Auto-calcular preço ao mudar custo/margem
+document.querySelectorAll('[name=preco_custo],[name=margem_lucro]').forEach(el => {
+    el.addEventListener('input', () => {
+        const custo = parseFloat(document.querySelector('[name=preco_custo]').value)||0;
+        const margem = parseFloat(document.querySelector('[name=margem_lucro]').value)||0;
+        if (custo > 0 && margem > 0) {
+            document.querySelector('[name=preco_venda]').value = (custo*(1+margem/100)).toFixed(2);
+        }
+    });
+});
+</script>
+{% endblock %}

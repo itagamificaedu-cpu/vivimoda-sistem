@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Baixar Parcela{% endblock %}
+
+{% block conteudo %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'carne:lista' %}">Carnês</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'carne:detalhe' parcela.carne.pk %}">{{ parcela.carne.numero }}</a></li>
+                <li class="breadcrumb-item active">Baixar Parcela {{ parcela.numero }}</li>
+            </ol>
+        </nav>
+
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-check-circle me-2"></i>Registrar Pagamento</h5>
+            </div>
+            <div class="card-body">
+                {# Resumo da parcela #}
+                <div class="alert alert-info mb-4">
+                    <div class="row text-center g-3">
+                        <div class="col-4">
+                            <div class="text-muted small">Parcela</div>
+                            <div class="fw-bold">{{ parcela.numero }}/{{ parcela.carne.quantidade_parcelas }}</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted small">Vencimento</div>
+                            <div class="fw-bold">{{ parcela.data_vencimento|date:"d/m/Y" }}</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted small">Cliente</div>
+                            <div class="fw-bold">{{ parcela.carne.cliente.nome|truncatechars:20 }}</div>
+                        </div>
+                    </div>
+                    {% if parcela.dias_atraso > 0 %}
+                    <hr class="my-2">
+                    <div class="text-center text-danger fw-semibold">
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        {{ parcela.dias_atraso }} dia(s) de atraso
+                    </div>
+                    {% endif %}
+                </div>
+
+                <form method="post" x-data="formBaixa()">
+                    {% csrf_token %}
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Valor Original</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="text" class="form-control bg-light" readonly
+                                       value="{{ parcela.valor_original|floatformat:2 }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Juros calculados</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="number" name="valor_juros" x-model="juros" step="0.01" min="0"
+                                       class="form-control" value="{{ juros_sugerido|floatformat:2 }}"
+                                       @input="calcularTotal">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Multa</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="number" name="valor_multa" x-model="multa" step="0.01" min="0"
+                                       class="form-control" value="{{ multa_sugerida|floatformat:2 }}"
+                                       @input="calcularTotal">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Desconto</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="number" name="valor_desconto" x-model="desconto" step="0.01" min="0"
+                                       class="form-control" value="0" @input="calcularTotal">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center p-3 bg-primary-subtle rounded">
+                                <span class="fw-bold fs-5">Total a Pagar</span>
+                                <span class="fw-bold fs-4 text-primary" x-text="'R$ ' + total"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Valor Recebido *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-success text-white">R$</span>
+                                <input type="number" name="valor_pago" x-model="valorPago" step="0.01" min="0.01"
+                                       class="form-control" required @input="calcularTroco">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Forma de Pagamento *</label>
+                            <select name="forma_pagamento" class="form-select" required>
+                                <option value="DINHEIRO">Dinheiro</option>
+                                <option value="PIX">PIX</option>
+                                <option value="CARTAO_CREDITO">Cartão de Crédito</option>
+                                <option value="CARTAO_DEBITO">Cartão de Débito</option>
+                                <option value="CHEQUE">Cheque</option>
+                                <option value="TRANSFERENCIA">Transferência</option>
+                            </select>
+                        </div>
+                        <div class="col-12" x-show="troco > 0">
+                            <div class="alert alert-success py-2 mb-0">
+                                <i class="bi bi-cash me-1"></i>
+                                <strong>Troco: R$ <span x-text="troco"></span></strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success btn-lg flex-fill">
+                            <i class="bi bi-check-circle me-2"></i>Confirmar Pagamento
+                        </button>
+                        <a href="{% url 'carne:detalhe' parcela.carne.pk %}" class="btn btn-outline-secondary btn-lg">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_extra %}
+<script>
+function formBaixa() {
+    const original = {{ parcela.valor_original }};
+    const jurSug = {{ juros_sugerido|default:0 }};
+    const mulSug = {{ multa_sugerida|default:0 }};
+
+    return {
+        juros: jurSug.toFixed(2),
+        multa: mulSug.toFixed(2),
+        desconto: '0.00',
+        valorPago: '',
+        total: '0.00',
+        troco: '0.00',
+
+        init() { this.calcularTotal(); },
+
+        calcularTotal() {
+            const t = original + parseFloat(this.juros||0) + parseFloat(this.multa||0) - parseFloat(this.desconto||0);
+            this.total = Math.max(0, t).toFixed(2).replace('.', ',');
+            this.calcularTroco();
+        },
+
+        calcularTroco() {
+            const tot = parseFloat(this.total.replace(',','.')) || 0;
+            const pago = parseFloat(this.valorPago) || 0;
+            const tr = pago - tot;
+            this.troco = tr > 0 ? tr.toFixed(2).replace('.',',') : '0,00';
+        }
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Fluxo de Caixa{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-graph-up text-primary me-2"></i>Fluxo de Caixa</h4>
+    <form method="get" class="d-flex gap-2 align-items-center">
+        <label class="form-label mb-0 me-1 text-muted">Período:</label>
+        <input type="date" name="data_de" value="{{ data_de }}" class="form-control form-control-sm" style="width:140px">
+        <span class="text-muted">até</span>
+        <input type="date" name="data_ate" value="{{ data_ate }}" class="form-control form-control-sm" style="width:140px">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="bi bi-search me-1"></i>Filtrar
+        </button>
+    </form>
+</div>
+
+{# Cards saldo #}
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 bg-success text-white">
+            <div class="card-body">
+                <div class="small opacity-75">Total de Entradas</div>
+                <div class="fw-bold fs-4">R$ {{ total_entradas|floatformat:2|default:"0,00" }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 bg-danger text-white">
+            <div class="card-body">
+                <div class="small opacity-75">Total de Saídas</div>
+                <div class="fw-bold fs-4">R$ {{ total_saidas|floatformat:2|default:"0,00" }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 {% if saldo_periodo >= 0 %}bg-primary{% else %}bg-warning text-dark{% endif %} text-white">
+            <div class="card-body">
+                <div class="small opacity-75">Saldo do Período</div>
+                <div class="fw-bold fs-4">R$ {{ saldo_periodo|floatformat:2|default:"0,00" }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Gráfico #}
+<div class="card mb-4">
+    <div class="card-header">
+        <h6 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Entradas x Saídas por Dia</h6>
+    </div>
+    <div class="card-body">
+        <canvas id="graficoFluxo" height="80"></canvas>
+    </div>
+</div>
+
+{# Tabela dia a dia #}
+<div class="card">
+    <div class="card-header">
+        <h6 class="mb-0"><i class="bi bi-table me-2"></i>Extrato Diário</h6>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Data</th>
+                        <th class="text-end text-success">Entradas</th>
+                        <th class="text-end text-danger">Saídas</th>
+                        <th class="text-end fw-bold">Saldo do Dia</th>
+                        <th class="text-end pe-3 fw-bold">Saldo Acumulado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for linha in fluxo_diario %}
+                    <tr>
+                        <td class="ps-3">{{ linha.data|date:"d/m/Y" }} <small class="text-muted">({{ linha.data|date:"D"|lower }})</small></td>
+                        <td class="text-end text-success">R$ {{ linha.entradas|floatformat:2 }}</td>
+                        <td class="text-end text-danger">R$ {{ linha.saidas|floatformat:2 }}</td>
+                        <td class="text-end {% if linha.saldo_dia >= 0 %}text-success{% else %}text-danger{% endif %} fw-semibold">
+                            R$ {{ linha.saldo_dia|floatformat:2 }}
+                        </td>
+                        <td class="text-end pe-3 {% if linha.saldo_acumulado >= 0 %}text-primary{% else %}text-danger{% endif %} fw-bold">
+                            R$ {{ linha.saldo_acumulado|floatformat:2 }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-muted">Nenhum dado encontrado para o período.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_extra %}
+<script>
+const labels = [{% for l in fluxo_diario %}"{{ l.data|date:'d/m' }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+const entradas = [{% for l in fluxo_diario %}{{ l.entradas }}{% if not forloop.last %},{% endif %}{% endfor %}];
+const saidas = [{% for l in fluxo_diario %}{{ l.saidas }}{% if not forloop.last %},{% endif %}{% endfor %}];
+
+new Chart(document.getElementById('graficoFluxo'), {
+    type: 'bar',
+    data: {
+        labels,
+        datasets: [
+            { label: 'Entradas', data: entradas, backgroundColor: 'rgba(25,135,84,0.7)' },
+            { label: 'Saídas',   data: saidas,   backgroundColor: 'rgba(220,53,69,0.7)' },
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { position: 'top' } },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+</script>
+{% endblock %}

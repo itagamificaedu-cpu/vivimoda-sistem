@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block conteudo %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'autenticacao:usuarios' %}">Usuários</a></li>
+                <li class="breadcrumb-item active">{{ titulo }}</li>
+            </ol>
+        </nav>
+        <h4 class="fw-bold mb-4"><i class="bi bi-person-plus text-primary me-2"></i>{{ titulo }}</h4>
+
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nome *</label>
+                            <input type="text" name="first_name" class="form-control" required
+                                   value="{{ usuario.first_name|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Sobrenome</label>
+                            <input type="text" name="last_name" class="form-control"
+                                   value="{{ usuario.last_name|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nome de Usuário *</label>
+                            <input type="text" name="username" class="form-control" required
+                                   value="{{ usuario.username|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">E-mail</label>
+                            <input type="email" name="email" class="form-control"
+                                   value="{{ usuario.email|default:'' }}">
+                        </div>
+                        {% if not usuario %}
+                        <div class="col-md-6">
+                            <label class="form-label">Senha *</label>
+                            <input type="password" name="password1" class="form-control" required minlength="8">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Confirmar Senha *</label>
+                            <input type="password" name="password2" class="form-control" required minlength="8">
+                        </div>
+                        {% endif %}
+                        <div class="col-md-6">
+                            <label class="form-label">Cargo *</label>
+                            <select name="cargo" class="form-select" required>
+                                <option value="caixa" {% if perfil and perfil.cargo == 'caixa' %}selected{% endif %}>Operador de Caixa</option>
+                                <option value="estoquista" {% if perfil and perfil.cargo == 'estoquista' %}selected{% endif %}>Estoquista</option>
+                                <option value="financeiro" {% if perfil and perfil.cargo == 'financeiro' %}selected{% endif %}>Financeiro</option>
+                                <option value="gerente" {% if perfil and perfil.cargo == 'gerente' %}selected{% endif %}>Gerente</option>
+                                <option value="master" {% if perfil and perfil.cargo == 'master' %}selected{% endif %}>Master (Acesso Total)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label d-block">Opções</label>
+                            <div class="form-check">
+                                <input type="checkbox" name="is_active" class="form-check-input" id="isAtivo"
+                                       {% if not usuario or usuario.is_active %}checked{% endif %}>
+                                <label class="form-check-label" for="isAtivo">Usuário ativo</label>
+                            </div>
+                        </div>
+
+                        {# Permissões por módulo #}
+                        {% if perfil %}
+                        <div class="col-12">
+                            <h6 class="fw-semibold border-bottom pb-2 mt-2 mb-3">Permissões por Módulo</h6>
+                            <div class="row g-2">
+                                {% for perm in permissoes_campos %}
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="{{ perm.campo }}" class="form-check-input"
+                                               id="perm_{{ perm.campo }}"
+                                               {% if perm.valor %}checked{% endif %}>
+                                        <label class="form-check-label small" for="perm_{{ perm.campo }}">
+                                            {{ perm.label }}
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary flex-fill">
+                            <i class="bi bi-save me-1"></i>Salvar Usuário
+                        </button>
+                        <a href="{% url 'autenticacao:usuarios' %}" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

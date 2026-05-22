@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Relatório de Inadimplência{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-exclamation-triangle text-danger me-2"></i>Inadimplência</h4>
+    <button onclick="window.print()" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-printer me-1"></i>Imprimir
+    </button>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 bg-danger text-white">
+            <div class="card-body">
+                <div class="small opacity-75">Total Inadimplente</div>
+                <div class="fw-bold fs-4">R$ {{ total_inadimplente|floatformat:2|default:"0,00" }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 bg-warning text-dark">
+            <div class="card-body">
+                <div class="small opacity-75">Clientes com Atraso</div>
+                <div class="fw-bold fs-4">{{ qtd_clientes }} clientes</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 bg-secondary text-white">
+            <div class="card-body">
+                <div class="small opacity-75">Parcelas Vencidas</div>
+                <div class="fw-bold fs-4">{{ total_parcelas_vencidas }} parcelas</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Carnês vencidos #}
+<div class="card mb-4">
+    <div class="card-header">
+        <h6 class="mb-0"><i class="bi bi-journal-text me-2"></i>Carnês com Parcelas Vencidas</h6>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover table-sm mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-3">Cliente</th>
+                    <th>Carnê</th>
+                    <th class="text-center">Parcelas Vencidas</th>
+                    <th class="text-end">Valor em Atraso</th>
+                    <th>Maior Atraso</th>
+                    <th class="text-center pe-3">Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in carnes_inadimplentes %}
+                <tr>
+                    <td class="ps-3">
+                        <a href="{% url 'clientes:detalhe' c.cliente.pk %}" class="fw-semibold text-decoration-none">
+                            {{ c.cliente.nome }}
+                        </a>
+                        {% if c.cliente.telefone %}
+                        <small class="text-muted d-block">{{ c.cliente.telefone }}</small>
+                        {% endif %}
+                    </td>
+                    <td><a href="{% url 'carne:detalhe' c.pk %}">{{ c.numero }}</a></td>
+                    <td class="text-center"><span class="badge bg-danger">{{ c.parcelas_vencidas }}</span></td>
+                    <td class="text-end text-danger fw-bold">R$ {{ c.valor_pendente|floatformat:2 }}</td>
+                    <td>
+                        {% with maior=c.parcelas.filter|first %}
+                        {{ maior.dias_atraso|default:"—" }} dias
+                        {% endwith %}
+                    </td>
+                    <td class="text-center pe-3">
+                        <a href="{% url 'carne:detalhe' c.pk %}" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-success">
+                        <i class="bi bi-check-circle me-2"></i>Nenhum carnê em atraso!
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{# Contas a receber vencidas #}
+<div class="card">
+    <div class="card-header">
+        <h6 class="mb-0"><i class="bi bi-arrow-down-circle me-2"></i>Contas a Receber Vencidas</h6>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover table-sm mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-3">Cliente</th>
+                    <th>Descrição</th>
+                    <th>Vencimento</th>
+                    <th class="text-center">Atraso</th>
+                    <th class="text-end pe-3">Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for conta in contas_vencidas %}
+                <tr>
+                    <td class="ps-3">{{ conta.cliente|default:"—" }}</td>
+                    <td>{{ conta.descricao }}</td>
+                    <td class="text-danger">{{ conta.data_vencimento|date:"d/m/Y" }}</td>
+                    <td class="text-center"><span class="badge bg-danger">{{ conta.dias_atraso }}d</span></td>
+                    <td class="text-end pe-3 fw-bold text-danger">R$ {{ conta.valor_pendente|floatformat:2 }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-success">
+                        <i class="bi bi-check-circle me-2"></i>Nenhuma conta vencida!
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

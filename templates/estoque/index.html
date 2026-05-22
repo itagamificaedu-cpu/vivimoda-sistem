@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load humanize confec_tags %}
+
+{% block titulo %}Estoque{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-0"><i class="bi bi-boxes text-primary me-2"></i>Posição de Estoque</h4>
+        <small class="text-muted">{{ total }} produto(s)</small>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'estoque:ajuste' %}" class="btn btn-outline-warning">
+            <i class="bi bi-sliders me-1"></i>Ajuste Manual
+        </a>
+        <a href="{% url 'estoque:novo_inventario' %}" class="btn btn-outline-primary">
+            <i class="bi bi-clipboard-check me-1"></i>Novo Inventário
+        </a>
+        <a href="{% url 'estoque:movimentacoes' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left-right me-1"></i>Movimentações
+        </a>
+    </div>
+</div>
+
+{# Cards resumo #}
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 bg-primary text-white">
+            <div class="card-body py-3">
+                <div class="small opacity-75">Total em Estoque</div>
+                <div class="fw-bold fs-5">{{ total_itens|default:0 }} un.</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 bg-success text-white">
+            <div class="card-body py-3">
+                <div class="small opacity-75">Valor em Estoque</div>
+                <div class="fw-bold fs-5">R$ {{ valor_total|floatformat:2|default:"0,00" }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 bg-warning text-dark">
+            <div class="card-body py-3">
+                <div class="small opacity-75">Estoque Baixo</div>
+                <div class="fw-bold fs-5">{{ qtd_estoque_baixo|default:0 }} produtos</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 bg-danger text-white">
+            <div class="card-body py-3">
+                <div class="small opacity-75">Sem Estoque</div>
+                <div class="fw-bold fs-5">{{ qtd_sem_estoque|default:0 }} produtos</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Filtros #}
+<div class="card mb-4">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm"
+                       placeholder="Produto, código, categoria...">
+            </div>
+            <div class="col-md-2">
+                <select name="situacao" class="form-select form-select-sm">
+                    <option value="">Todos</option>
+                    <option value="baixo" {% if situacao == 'baixo' %}selected{% endif %}>Estoque Baixo</option>
+                    <option value="zerado" {% if situacao == 'zerado' %}selected{% endif %}>Sem Estoque</option>
+                    <option value="normal" {% if situacao == 'normal' %}selected{% endif %}>Normal</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="categoria" class="form-select form-select-sm">
+                    <option value="">Todas as Categorias</option>
+                    {% for cat in categorias %}
+                    <option value="{{ cat.pk }}" {% if categoria_id == cat.pk|stringformat:"s" %}selected{% endif %}>{{ cat.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto d-flex gap-1">
+                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
+                <a href="{% url 'estoque:index' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# Tabela #}
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Produto</th>
+                        <th>Categoria</th>
+                        <th>Tipo</th>
+                        <th class="text-center">Estoque Atual</th>
+                        <th class="text-center">Est. Mínimo</th>
+                        <th class="text-end">Custo Unit.</th>
+                        <th class="text-end">Valor Total</th>
+                        <th class="text-center">Situação</th>
+                        <th class="text-center pe-3">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in page_obj %}
+                    <tr class="{% if p.estoque_atual <= 0 %}table-danger{% elif p.estoque_baixo %}table-warning{% endif %}">
+                        <td class="ps-3">
+                            <a href="{% url 'produtos:detalhe' p.pk %}" class="fw-semibold text-decoration-none">
+                                {{ p.nome }}
+                            </a>
+                            <small class="text-muted d-block">{{ p.codigo }}</small>
+                        </td>
+                        <td class="small">{{ p.categoria|default:"—" }}</td>
+                        <td>
+                            {% if p.tipo == 'SIMPLES' %}
+                            <span class="badge bg-secondary-subtle text-secondary">Simples</span>
+                            {% else %}
+                            <span class="badge bg-primary-subtle text-primary">Grade</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center fw-bold {% if p.estoque_atual <= 0 %}text-danger{% elif p.estoque_baixo %}text-warning{% else %}text-success{% endif %}">
+                            {{ p.estoque_atual|floatformat:0 }}
+                        </td>
+                        <td class="text-center text-muted">{{ p.estoque_minimo|floatformat:0 }}</td>
+                        <td class="text-end">R$ {{ p.preco_custo|floatformat:2|default:"—" }}</td>
+                        <td class="text-end">
+                            {% if p.preco_custo %}R$ {{ p.preco_custo|mul:p.estoque_atual|floatformat:2 }}{% else %}—{% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if p.estoque_atual <= 0 %}
+                            <span class="badge bg-danger">Sem estoque</span>
+                            {% elif p.estoque_baixo %}
+                            <span class="badge bg-warning text-dark">Estoque baixo</span>
+                            {% else %}
+                            <span class="badge bg-success">Normal</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center pe-3">
+                            <a href="{% url 'estoque:ajuste' %}?produto={{ p.pk }}"
+                               class="btn btn-sm btn-outline-warning" title="Ajustar estoque">
+                                <i class="bi bi-sliders"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center py-5 text-muted">
+                            <i class="bi bi-boxes display-6 d-block mb-2"></i>
+                            Nenhum produto encontrado.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

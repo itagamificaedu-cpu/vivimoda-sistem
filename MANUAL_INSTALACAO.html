@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIVIMODA — Manual de Instalação</title>
+<style>
+  :root {
+    --roxo: #6f42c1;
+    --roxo-escuro: #4b2d8f;
+    --roxo-claro: #ede9f8;
+    --verde: #198754;
+    --amarelo: #ffc107;
+    --vermelho: #dc3545;
+    --cinza: #6c757d;
+    --borda: #dee2e6;
+    --bg: #f8f9fa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #212529;
+    background: #fff;
+  }
+  /* ---- CAPA ---- */
+  .capa {
+    background: linear-gradient(135deg, var(--roxo-escuro) 0%, var(--roxo) 100%);
+    color: #fff;
+    text-align: center;
+    padding: 60px 40px 50px;
+    page-break-after: always;
+  }
+  .capa .logo-texto {
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    margin-bottom: 8px;
+  }
+  .capa .subtitulo {
+    font-size: 18px;
+    opacity: 0.85;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+  }
+  .capa .titulo-manual {
+    font-size: 28px;
+    font-weight: 700;
+    background: rgba(255,255,255,0.15);
+    display: inline-block;
+    padding: 14px 40px;
+    border-radius: 8px;
+    margin-bottom: 50px;
+    border: 2px solid rgba(255,255,255,0.3);
+  }
+  .capa .meta {
+    font-size: 13px;
+    opacity: 0.7;
+  }
+  /* ---- LAYOUT ---- */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 40px;
+  }
+  /* ---- SUMARIO ---- */
+  .sumario {
+    background: var(--roxo-claro);
+    border-left: 5px solid var(--roxo);
+    padding: 25px 30px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 40px;
+    page-break-after: always;
+  }
+  .sumario h2 {
+    color: var(--roxo-escuro);
+    margin-bottom: 15px;
+    font-size: 18px;
+  }
+  .sumario ol {
+    padding-left: 20px;
+  }
+  .sumario li {
+    margin-bottom: 6px;
+    color: var(--roxo-escuro);
+  }
+  .sumario a { color: var(--roxo-escuro); text-decoration: none; }
+  .sumario a:hover { text-decoration: underline; }
+  /* ---- SECOES ---- */
+  .secao {
+    margin-bottom: 50px;
+    page-break-inside: avoid;
+  }
+  .secao-titulo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--roxo);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px 8px 0 0;
+    font-size: 17px;
+    font-weight: 700;
+  }
+  .secao-numero {
+    background: rgba(255,255,255,0.25);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .secao-corpo {
+    border: 1px solid var(--borda);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 25px;
+  }
+  /* ---- STEPS ---- */
+  .steps { list-style: none; padding: 0; }
+  .steps li {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 18px;
+    align-items: flex-start;
+  }
+  .step-num {
+    background: var(--roxo);
+    color: #fff;
+    border-radius: 50%;
+    min-width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    margin-top: 1px;
+  }
+  /* ---- ALERTAS ---- */
+  .alerta {
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 15px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .alerta-icone { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .alerta-info { background: #cff4fc; border-left: 4px solid #0dcaf0; }
+  .alerta-atencao { background: #fff3cd; border-left: 4px solid var(--amarelo); }
+  .alerta-erro { background: #f8d7da; border-left: 4px solid var(--vermelho); }
+  .alerta-ok { background: #d1e7dd; border-left: 4px solid var(--verde); }
+  /* ---- CODIGO / COMANDO ---- */
+  .cmd {
+    background: #1e1e2e;
+    color: #a6e3a1;
+    font-family: 'Consolas', monospace;
+    font-size: 13px;
+    padding: 12px 18px;
+    border-radius: 6px;
+    margin: 10px 0;
+    overflow-x: auto;
+  }
+  .cmd .comentario { color: #6c7086; }
+  code {
+    background: #ede9f8;
+    color: var(--roxo-escuro);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Consolas', monospace;
+    font-size: 12px;
+  }
+  /* ---- TABELA ---- */
+  table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+  th {
+    background: var(--roxo);
+    color: #fff;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 13px;
+  }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--borda); font-size: 13px; }
+  tr:nth-child(even) td { background: var(--bg); }
+  /* ---- CHECKLIST ---- */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--borda);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .checklist li::before {
+    content: "☐";
+    font-size: 16px;
+    color: var(--roxo);
+    flex-shrink: 0;
+  }
+  /* ---- PILL / BADGE ---- */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .badge-roxo { background: var(--roxo-claro); color: var(--roxo-escuro); }
+  .badge-verde { background: #d1e7dd; color: #0f5132; }
+  .badge-amarelo { background: #fff3cd; color: #664d03; }
+  /* ---- SOLUCAO ---- */
+  .problema { margin-bottom: 20px; }
+  .problema-titulo {
+    background: #fff3cd;
+    border-left: 4px solid var(--amarelo);
+    padding: 10px 15px;
+    font-weight: 700;
+    border-radius: 0 4px 0 0;
+  }
+  .problema-solucao {
+    border: 1px solid #ffd77a;
+    border-top: none;
+    padding: 12px 15px;
+    border-radius: 0 0 4px 4px;
+  }
+  /* ---- RODAPE ---- */
+  .rodape {
+    border-top: 2px solid var(--borda);
+    text-align: center;
+    padding: 25px;
+    color: var(--cinza);
+    font-size: 12px;
+    margin-top: 40px;
+  }
+  /* ---- PRINT ---- */
+  @media print {
+    .sem-print { display: none; }
+    .secao { page-break-inside: avoid; }
+    body { font-size: 12px; }
+    .capa { page-break-after: always; }
+    .container { padding: 10px 20px; }
+  }
+  h3 { color: var(--roxo-escuro); margin: 18px 0 10px; font-size: 15px; }
+  h4 { color: #495057; margin: 12px 0 8px; font-size: 13px; }
+  p { margin-bottom: 10px; }
+  ul, ol { padding-left: 22px; margin-bottom: 10px; }
+  li { margin-bottom: 4px; }
+  hr { border: none; border-top: 1px solid var(--borda); margin: 20px 0; }
+  strong { color: #212529; }
+</style>
+</head>
+<body>
+
+<!-- ===== CAPA ===== -->
+<div class="capa">
+  <div class="logo-texto">VIVIMODA</div>
+  <div class="subtitulo">Sistema de Gestão de Confecções</div>
+  <div class="titulo-manual">📋 MANUAL DE INSTALAÇÃO</div>
+  <div style="font-size:15px; margin-bottom:30px; opacity:0.9;">
+    Guia Completo para Técnicos e Instaladores
+  </div>
+  <div class="meta">
+    Versão 1.0 &nbsp;|&nbsp; 2025 &nbsp;|&nbsp; Uso Interno / Instalador
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ===== SUMÁRIO ===== -->
+<div class="sumario">
+  <h2>📑 Sumário</h2>
+  <ol>
+    <li><a href="#req">Requisitos do Sistema</a></li>
+    <li><a href="#antes">Antes de Começar — Checklist</a></li>
+    <li><a href="#instalacao">Instalação Passo a Passo</a></li>
+    <li><a href="#primeiro-acesso">Primeiro Acesso e Configuração</a></li>
+    <li><a href="#inicio-auto">Início Automático com o Windows</a></li>
+    <li><a href="#rede">Acesso em Rede (múltiplos computadores)</a></li>
+    <li><a href="#backup">Configurar Backup Automático</a></li>
+    <li><a href="#desinstalar">Desinstalar o Sistema</a></li>
+    <li><a href="#problemas">Resolução de Problemas</a></li>
+    <li><a href="#arquivos">Referência de Arquivos</a></li>
+  </ol>
+</div>
+
+<!-- ===== 1 REQUISITOS ===== -->
+<div class="secao" id="req">
+  <div class="secao-titulo">
+    <div class="secao-numero">1</div>
+    Requisitos do Sistema
+  </div>
+  <div class="secao-corpo">
+    <h3>Requisitos Mínimos</h3>
+    <table>
+      <tr><th>Componente</th><th>Mínimo</th><th>Recomendado</th></tr>
+      <tr><td><strong>Sistema Operacional</strong></td><td>Windows 10 (64-bit)</td><td>Windows 10/11 (64-bit)</td></tr>
+      <tr><td><strong>Processador</strong></td><td>Intel/AMD dual-core 2 GHz</td><td>Quad-core 2.5 GHz</td></tr>
+      <tr><td><strong>Memória RAM</strong></td><td>4 GB</td><td>8 GB</td></tr>
+      <tr><td><strong>Espaço em Disco</strong></td><td>2 GB livres</td><td>10 GB livres</td></tr>
+      <tr><td><strong>Navegador</strong></td><td>Chrome 90+ / Edge 90+</td><td>Chrome (mais recente)</td></tr>
+      <tr><td><strong>Internet</strong></td><td>Necessária só na instalação</td><td>—</td></tr>
+      <tr><td><strong>Python</strong></td><td>3.9 ou mais novo</td><td>3.11 ou 3.12</td></tr>
+    </table>
+
+    <div class="alerta alerta-atencao">
+      <div class="alerta-icone">⚠️</div>
+      <div>
+        <strong>Windows 7 e 8 não são suportados.</strong> O sistema requer o Windows 10 ou superior.
+        Python 3.12+ não funciona no Windows 7.
+      </div>
+    </div>
+
+    <h3>O que o instalador faz automaticamente</h3>
+    <ul>
+      <li>Detecta ou instala o Python automaticamente (via winget)</li>
+      <li>Instala todos os pacotes necessários (Django, etc.)</li>
+      <li>Cria o banco de dados SQLite</li>
+      <li>Cria o usuário administrador (login: <code>admin</code> / senha: <code>confec@2024</code>)</li>
+      <li>Cria atalho na Área de Trabalho</li>
+      <li>Configura início automático com o Windows</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== 2 CHECKLIST ===== -->
+<div class="secao" id="antes">
+  <div class="secao-titulo">
+    <div class="secao-numero">2</div>
+    Antes de Começar — Checklist
+  </div>
+  <div class="secao-corpo">
+    <p>Verifique cada item antes de iniciar a instalação:</p>
+    <ul class="checklist">
+      <li>Computador com Windows 10 ou 11 (64 bits)</li>
+      <li>Pelo menos 2 GB de espaço livre no disco C:</li>
+      <li>Conexão com a internet ativa (necessária apenas na instalação)</li>
+      <li>Conta de Administrador do Windows disponível</li>
+      <li>Antivírus desativado temporariamente (ou exceção criada)</li>
+      <li>Pasta do sistema copiada para o computador (ex: <code>C:\VIVIMODA</code>)</li>
+      <li>Navegador Chrome ou Edge instalado</li>
+    </ul>
+
+    <div class="alerta alerta-info">
+      <div class="alerta-icone">💡</div>
+      <div>
+        <strong>Onde colocar a pasta do sistema?</strong><br>
+        Recomendado: <code>C:\VIVIMODA\</code> ou <code>C:\Users\NomeUsuario\VIVIMODA\</code><br>
+        Evite pastas com caracteres especiais ou acentos no caminho.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 3 INSTALAÇÃO ===== -->
+<div class="secao" id="instalacao">
+  <div class="secao-titulo">
+    <div class="secao-numero">3</div>
+    Instalação Passo a Passo
+  </div>
+  <div class="secao-corpo">
+
+    <h3>3.1 — Copiar os arquivos</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div>Copie a pasta <strong>completa do sistema</strong> para o computador da loja.<br>
+        Sugestão: <code>C:\VIVIMODA SISTEM\confec_system\</code></div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div>Certifique-se que todos os arquivos estão presentes:<br>
+        <code>INSTALAR.bat</code>, <code>manage.py</code>, pasta <code>apps\</code>, pasta <code>templates\</code></div>
+      </li>
+    </ol>
+
+    <h3>3.2 — Executar o Instalador</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div>Abra a pasta do sistema no Windows Explorer</div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div>Clique com o botão <strong>direito</strong> no arquivo <code>INSTALAR.bat</code></div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div>Selecione <strong>"Executar como Administrador"</strong></div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div>Na janela de controle de conta (UAC), clique <strong>SIM</strong></div>
+      </li>
+      <li>
+        <div class="step-num">5</div>
+        <div>Aguarde de <strong>3 a 10 minutos</strong> — a janela mostrará o progresso em 7 etapas</div>
+      </li>
+      <li>
+        <div class="step-num">6</div>
+        <div>Ao final, o sistema pergunta se deseja abrir agora. Digite <strong>S</strong> e pressione Enter.</div>
+      </li>
+    </ol>
+
+    <div class="alerta alerta-atencao">
+      <div class="alerta-icone">⚠️</div>
+      <div>
+        <strong>Se aparecer "Windows protegeu seu computador":</strong><br>
+        Clique em <strong>"Mais informações"</strong> e depois em <strong>"Executar assim mesmo"</strong>.
+        Isso acontece porque o arquivo não tem certificado digital.
+      </div>
+    </div>
+
+    <h3>3.3 — O que acontece em cada etapa</h3>
+    <table>
+      <tr><th>Etapa</th><th>O que faz</th><th>Tempo estimado</th></tr>
+      <tr><td>1/7 — Python</td><td>Localiza ou instala o Python</td><td>1–5 min (se precisar instalar)</td></tr>
+      <tr><td>2/7 — Pacotes</td><td>Instala Django e demais bibliotecas</td><td>2–5 min</td></tr>
+      <tr><td>3/7 — Banco</td><td>Cria as tabelas do banco de dados</td><td>30 s</td></tr>
+      <tr><td>4/7 — Admin</td><td>Cria o usuário administrador</td><td>5 s</td></tr>
+      <tr><td>5/7 — Fixtures</td><td>Carrega dados iniciais de exemplo</td><td>15 s</td></tr>
+      <tr><td>6/7 — Atalho</td><td>Cria o atalho na Área de Trabalho</td><td>5 s</td></tr>
+      <tr><td>7/7 — Agendador</td><td>Configura início automático</td><td>5 s</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== 4 PRIMEIRO ACESSO ===== -->
+<div class="secao" id="primeiro-acesso">
+  <div class="secao-titulo">
+    <div class="secao-numero">4</div>
+    Primeiro Acesso e Configuração
+  </div>
+  <div class="secao-corpo">
+
+    <h3>4.1 — Abrir o sistema</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div>Clique duplo no ícone <strong>"VIVIMODA Sistema"</strong> criado na Área de Trabalho</div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div>Aguarde de 3 a 5 segundos — o servidor inicia em segundo plano</div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div>O navegador abre automaticamente na página de login</div>
+      </li>
+    </ol>
+
+    <h3>4.2 — Dados de acesso padrão</h3>
+    <table>
+      <tr><th>Campo</th><th>Valor Padrão</th></tr>
+      <tr><td>Endereço</td><td><code>http://localhost:8000</code></td></tr>
+      <tr><td>Login</td><td><code>admin</code></td></tr>
+      <tr><td>Senha</td><td><code>confec@2024</code></td></tr>
+    </table>
+
+    <div class="alerta alerta-atencao">
+      <div class="alerta-icone">⚠️</div>
+      <div>
+        <strong>IMPORTANTE:</strong> Após o primeiro acesso, oriente o cliente a trocar a senha!<br>
+        Vá em: Menu → Perfil → Alterar Senha
+      </div>
+    </div>
+
+    <h3>4.3 — Configurações iniciais recomendadas</h3>
+    <p>Após fazer login, configure:</p>
+    <table>
+      <tr><th>#</th><th>Onde</th><th>O que configurar</th></tr>
+      <tr><td>1</td><td>Menu → Configurações</td><td>Nome da loja, CNPJ, endereço, telefone</td></tr>
+      <tr><td>2</td><td>Menu → Configurações → Caixas</td><td>Nome do(s) caixa(s) da loja (ex: "Caixa 1")</td></tr>
+      <tr><td>3</td><td>Menu → Produtos → Categorias</td><td>Categorias de produtos (Camisas, Calças, etc.)</td></tr>
+      <tr><td>4</td><td>Menu → Usuários</td><td>Criar usuário para cada vendedor/funcionário</td></tr>
+      <tr><td>5</td><td>Perfil → Alterar Senha</td><td>Trocar a senha padrão do administrador</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== 5 INÍCIO AUTOMÁTICO ===== -->
+<div class="secao" id="inicio-auto">
+  <div class="secao-titulo">
+    <div class="secao-numero">5</div>
+    Início Automático com o Windows
+  </div>
+  <div class="secao-corpo">
+    <p>O instalador configura automaticamente o servidor para iniciar junto com o Windows via Agendador de Tarefas. Veja como verificar:</p>
+
+    <h3>5.1 — Verificar se está configurado</h3>
+    <div class="cmd">schtasks /Query /TN "VIVIMODA Sistema"</div>
+    <p>Execute no Prompt de Comando. Deve mostrar <strong>"VIVIMODA Sistema"</strong> com status <strong>Pronto</strong>.</p>
+
+    <h3>5.2 — Configurar manualmente (se não foi automático)</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div>Pressione <strong>Win + R</strong>, digite <code>taskschd.msc</code>, Enter</div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div>Clique em <strong>"Criar Tarefa Básica"</strong> no painel direito</div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div>Nome: <code>VIVIMODA Sistema</code> → Próximo</div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div>Gatilho: <strong>"Ao fazer logon"</strong> → Próximo</div>
+      </li>
+      <li>
+        <div class="step-num">5</div>
+        <div>Ação: <strong>"Iniciar um programa"</strong> → Próximo</div>
+      </li>
+      <li>
+        <div class="step-num">6</div>
+        <div>Programa: <code>wscript.exe</code><br>
+        Argumentos: <code>/nologo "C:\VIVIMODA SISTEM\confec_system\iniciar_servidor.vbs"</code></div>
+      </li>
+    </ol>
+
+    <h3>5.3 — Tempo de espera</h3>
+    <div class="alerta alerta-info">
+      <div class="alerta-icone">⏱️</div>
+      <div>
+        Após ligar o computador, aguarde <strong>5 a 10 segundos</strong> antes de abrir o navegador.
+        O servidor precisa desse tempo para inicializar.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 6 REDE ===== -->
+<div class="secao" id="rede">
+  <div class="secao-titulo">
+    <div class="secao-numero">6</div>
+    Acesso em Rede (múltiplos computadores)
+  </div>
+  <div class="secao-corpo">
+    <p>O sistema roda em <strong>um computador principal</strong> (servidor) e pode ser acessado de outros computadores na mesma rede local (Wi-Fi ou cabo).</p>
+
+    <h3>6.1 — Descobrir o IP do computador servidor</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div>No computador onde o sistema está instalado, pressione <strong>Win + R</strong></div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div>Digite <code>cmd</code> e pressione Enter</div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div>Digite o comando abaixo e pressione Enter:</div>
+      </li>
+    </ol>
+    <div class="cmd">ipconfig</div>
+    <p>Procure por <strong>"Endereço IPv4"</strong>, exemplo: <code>192.168.1.105</code></p>
+
+    <h3>6.2 — Acessar de outro computador</h3>
+    <p>Em qualquer outro computador da mesma rede, abra o navegador e acesse:</p>
+    <div class="cmd">http://192.168.1.105:8000  <span class="comentario">(substitua pelo IP real)</span></div>
+
+    <h3>6.3 — Liberar o Firewall do Windows</h3>
+    <p>Se outros computadores não conseguirem acessar, libere a porta 8000:</p>
+    <ol class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div>Abra o <strong>Painel de Controle</strong> → Firewall do Windows Defender</div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div>Clique em <strong>"Configurações Avançadas"</strong></div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div>Clique em <strong>"Regras de Entrada"</strong> → <strong>"Nova Regra"</strong></div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div>Tipo: <strong>Porta</strong> → TCP → Porta: <code>8000</code> → Permitir → Todos os perfis → Nome: <code>VIVIMODA</code></div>
+      </li>
+    </ol>
+
+    <p>Ou execute este comando no Prompt como Administrador:</p>
+    <div class="cmd">netsh advfirewall firewall add rule name="VIVIMODA" dir=in action=allow protocol=TCP localport=8000</div>
+
+    <div class="alerta alerta-atencao">
+      <div class="alerta-icone">⚠️</div>
+      <div>
+        <strong>Atenção de segurança:</strong> O sistema foi projetado para rede local (LAN).
+        Não exponha a porta 8000 para a internet sem configurar HTTPS e autenticação adicional.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 7 BACKUP ===== -->
+<div class="secao" id="backup">
+  <div class="secao-titulo">
+    <div class="secao-numero">7</div>
+    Configurar Backup Automático
+  </div>
+  <div class="secao-corpo">
+
+    <h3>7.1 — Backup manual (já incluso)</h3>
+    <p>O arquivo <code>BACKUP_DADOS.bat</code> já está incluso. Execute-o para criar um backup:</p>
+    <ul>
+      <li>Cria uma pasta na Área de Trabalho com a data de hoje</li>
+      <li>Copia o banco de dados e as mídias (fotos de produtos)</li>
+      <li>Abre a pasta automaticamente ao final</li>
+    </ul>
+
+    <h3>7.2 — Backup automático semanal (Agendador de Tarefas)</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div>Pressione <strong>Win + R</strong>, digite <code>taskschd.msc</code></div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div>Clique em <strong>"Criar Tarefa Básica"</strong></div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div>Nome: <code>VIVIMODA Backup Semanal</code></div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div>Gatilho: <strong>Semanalmente</strong> → Sábado → 18:00</div>
+      </li>
+      <li>
+        <div class="step-num">5</div>
+        <div>Programa: <code>C:\VIVIMODA SISTEM\confec_system\BACKUP_DADOS.bat</code></div>
+      </li>
+    </ol>
+
+    <h3>7.3 — O que fazer com o backup</h3>
+    <div class="alerta alerta-ok">
+      <div class="alerta-icone">✅</div>
+      <div>
+        Copie a pasta de backup para um <strong>pen drive</strong> ou <strong>Google Drive</strong>.
+        Nunca deixe o único backup no mesmo computador do sistema — se o HD pifar, você perde tudo.
+      </div>
+    </div>
+
+    <h3>7.4 — Restaurar um backup</h3>
+    <ol class="steps">
+      <li><div class="step-num">1</div><div>Execute <code>PARAR_SERVIDOR.bat</code> para parar o sistema</div></li>
+      <li><div class="step-num">2</div><div>Execute <code>RESTAURAR_BACKUP.bat</code></div></li>
+      <li><div class="step-num">3</div><div>Arraste o arquivo <code>banco_de_dados.sqlite3</code> do backup para a janela aberta</div></li>
+      <li><div class="step-num">4</div><div>Pressione Enter e aguarde a confirmação</div></li>
+      <li><div class="step-num">5</div><div>Abra o sistema normalmente pelo atalho da Área de Trabalho</div></li>
+    </ol>
+  </div>
+</div>
+
+<!-- ===== 8 DESINSTALAR ===== -->
+<div class="secao" id="desinstalar">
+  <div class="secao-titulo">
+    <div class="secao-numero">8</div>
+    Desinstalar o Sistema
+  </div>
+  <div class="secao-corpo">
+    <ol class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div>Execute <code>PARAR_SERVIDOR.bat</code> para encerrar o servidor</div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div>Remova a tarefa do Agendador de Tarefas:
+        <div class="cmd">schtasks /Delete /TN "VIVIMODA Sistema" /F</div></div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div>Exclua o atalho da Área de Trabalho (<code>VIVIMODA Sistema.lnk</code>)</div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div>Faça backup dos dados antes de excluir a pasta!<br>
+        Execute <code>BACKUP_DADOS.bat</code> e guarde em local seguro</div>
+      </li>
+      <li>
+        <div class="step-num">5</div>
+        <div>Delete a pasta completa do sistema</div>
+      </li>
+    </ol>
+    <div class="alerta alerta-atencao">
+      <div class="alerta-icone">⚠️</div>
+      <div>O Python e os pacotes instalados <strong>não</strong> são removidos automaticamente.
+      Para remover o Python, use o Painel de Controle → Programas.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 9 PROBLEMAS ===== -->
+<div class="secao" id="problemas">
+  <div class="secao-titulo">
+    <div class="secao-numero">9</div>
+    Resolução de Problemas
+  </div>
+  <div class="secao-corpo">
+
+    <div class="problema">
+      <div class="problema-titulo">❌ "Python não foi encontrado"</div>
+      <div class="problema-solucao">
+        <p><strong>Causa:</strong> Python não está instalado ou não está no PATH do Windows.</p>
+        <strong>Solução:</strong>
+        <ol>
+          <li>Baixe Python em <strong>python.org/downloads</strong> (versão 3.11 recomendada)</li>
+          <li>Na instalação, marque <strong>"Add Python to PATH"</strong></li>
+          <li>Reinicie o computador</li>
+          <li>Execute <code>INSTALAR.bat</code> novamente</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="problema">
+      <div class="problema-titulo">❌ O sistema não abre no navegador</div>
+      <div class="problema-solucao">
+        <strong>Tente estes passos em ordem:</strong>
+        <ol>
+          <li>Abra o Chrome e acesse manualmente: <code>http://localhost:8000</code></li>
+          <li>Se não carregar, execute <code>PARAR_SERVIDOR.bat</code> e depois clique no atalho novamente</li>
+          <li>Verifique se o antivírus está bloqueando o Python. Adicione uma exceção para a pasta do sistema</li>
+          <li>Execute <code>INSTALAR.bat</code> novamente como Administrador</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="problema">
+      <div class="problema-titulo">❌ Antivírus bloqueando / "ameaça detectada"</div>
+      <div class="problema-solucao">
+        <strong>Causa:</strong> Antivírus pode bloquear o Python ou o arquivo .bat/vbs.<br>
+        <strong>Solução:</strong>
+        <ol>
+          <li>Abra o antivírus e vá em <strong>Exclusões / Exceções</strong></li>
+          <li>Adicione a pasta completa do sistema como exceção</li>
+          <li>Adicione também o executável do Python (caminho em <code>python_path.txt</code>)</li>
+          <li>Execute o instalador novamente</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="problema">
+      <div class="problema-titulo">❌ "Porta 8000 já está em uso"</div>
+      <div class="problema-solucao">
+        <strong>Causa:</strong> Outra instância do servidor está rodando.<br>
+        <strong>Solução:</strong> Execute <code>PARAR_SERVIDOR.bat</code> e aguarde 5 segundos antes de abrir novamente.
+      </div>
+    </div>
+
+    <div class="problema">
+      <div class="problema-titulo">❌ Tela de login aparece mas dá "Senha inválida"</div>
+      <div class="problema-solucao">
+        <p><strong>Usuário:</strong> <code>admin</code> &nbsp;&nbsp; <strong>Senha:</strong> <code>confec@2024</code></p>
+        Se não funcionar, redefina pelo terminal:<br>
+        <div class="cmd">python manage.py changepassword admin --settings=confec_system.settings.local_sqlite</div>
+      </div>
+    </div>
+
+    <div class="problema">
+      <div class="problema-titulo">❌ Instalação parou na etapa 2 (pacotes)</div>
+      <div class="problema-solucao">
+        <strong>Causa:</strong> Sem conexão com internet ou firewall corporativo.<br>
+        <strong>Solução:</strong>
+        <ol>
+          <li>Verifique a conexão com a internet</li>
+          <li>Tente desativar temporariamente o firewall</li>
+          <li>Execute o instalador novamente — ele continua de onde parou</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="problema">
+      <div class="problema-titulo">❌ Atalho da Área de Trabalho não funciona</div>
+      <div class="problema-solucao">
+        <strong>Solução:</strong> Verifique se o arquivo <code>VIVIMODA.vbs</code> está na pasta do sistema.
+        Se não estiver, execute <code>INSTALAR.bat</code> novamente para recriá-lo.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 10 ARQUIVOS ===== -->
+<div class="secao" id="arquivos">
+  <div class="secao-titulo">
+    <div class="secao-numero">10</div>
+    Referência de Arquivos do Sistema
+  </div>
+  <div class="secao-corpo">
+    <table>
+      <tr><th>Arquivo</th><th>Função</th><th>Executar?</th></tr>
+      <tr><td><code>INSTALAR.bat</code></td><td>Instala o sistema completo (executar uma vez)</td><td><span class="badge badge-verde">Sim</span></td></tr>
+      <tr><td><code>VIVIMODA.vbs</code></td><td>Inicia o servidor + abre o navegador (gerado pelo instalador)</td><td><span class="badge badge-verde">Sim</span></td></tr>
+      <tr><td><code>iniciar_servidor.vbs</code></td><td>Usado pelo Agendador de Tarefas (inicia servidor sem abrir navegador)</td><td><span class="badge badge-amarelo">Auto</span></td></tr>
+      <tr><td><code>PARAR_SERVIDOR.bat</code></td><td>Para o servidor Django (encerra o Python)</td><td><span class="badge badge-verde">Sim</span></td></tr>
+      <tr><td><code>BACKUP_DADOS.bat</code></td><td>Cria backup do banco de dados e mídias</td><td><span class="badge badge-verde">Sim</span></td></tr>
+      <tr><td><code>RESTAURAR_BACKUP.bat</code></td><td>Restaura um backup anterior</td><td><span class="badge badge-verde">Sim</span></td></tr>
+      <tr><td><code>python_path.txt</code></td><td>Caminho do Python detectado pelo instalador</td><td><span class="badge badge-roxo">Info</span></td></tr>
+      <tr><td><code>db_local_teste.sqlite3</code></td><td>Banco de dados principal (NÃO deletar!)</td><td><span class="badge badge-roxo">Dados</span></td></tr>
+      <tr><td><code>manage.py</code></td><td>Ferramenta de gerenciamento do Django</td><td><span class="badge badge-roxo">Técnico</span></td></tr>
+      <tr><td><code>confec_system/settings/local_sqlite.py</code></td><td>Configurações do sistema (local)</td><td><span class="badge badge-roxo">Config</span></td></tr>
+      <tr><td><code>media/</code></td><td>Fotos de produtos e outros arquivos enviados</td><td><span class="badge badge-roxo">Dados</span></td></tr>
+      <tr><td><code>LEIA_ME.txt</code></td><td>Instruções rápidas para o usuário final</td><td><span class="badge badge-roxo">Info</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== RODAPÉ ===== -->
+<div class="rodape">
+  <strong>VIVIMODA Sistema de Gestão de Confecções</strong><br>
+  Manual de Instalação — Versão 1.0 — 2025<br>
+  Para uso do técnico/instalador. Não distribuir ao usuário final.<br><br>
+  <em>Suporte: Entre em contato com o desenvolvedor do sistema.</em>
+</div>
+
+</div><!-- /container -->
+
+<div class="sem-print" style="position:fixed;bottom:20px;right:20px;">
+  <button onclick="window.print()" style="background:var(--roxo);color:#fff;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+    🖨️ Imprimir / Salvar PDF
+  </button>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Fechar Caixa{% endblock %}
+
+{% block conteudo %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'caixa:index' %}">Caixa</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'caixa:sessao' sessao.pk %}">Sessão</a></li>
+                <li class="breadcrumb-item active">Fechar</li>
+            </ol>
+        </nav>
+
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-lock me-2"></i>Fechar Caixa — {{ sessao.caixa }}</h5>
+            </div>
+            <div class="card-body">
+                {# Resumo do dia #}
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="bg-light p-3 rounded">
+                            <h6 class="text-muted mb-3">Totais do Sistema</h6>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Abertura</span>
+                                <strong>R$ {{ sessao.valor_abertura|floatformat:2 }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Suprimentos</span>
+                                <strong class="text-success">+ R$ {{ sessao.valor_suprimento|floatformat:2 }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Sangrias</span>
+                                <strong class="text-danger">- R$ {{ sessao.valor_sangria|floatformat:2 }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between border-top pt-1 mt-1">
+                                <span>Dinheiro em Vendas</span>
+                                <strong class="text-success">+ R$ {{ sessao.total_dinheiro|floatformat:2 }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between border-top pt-2 mt-2 fw-bold fs-5 text-primary">
+                                <span>Esperado em Caixa</span>
+                                <span>R$ {{ sessao.saldo_esperado|floatformat:2 }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="bg-light p-3 rounded">
+                            <h6 class="text-muted mb-3">Vendas por Forma</h6>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Dinheiro</span><span>R$ {{ sessao.total_dinheiro|floatformat:2 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>PIX</span><span>R$ {{ sessao.total_pix|floatformat:2 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Crédito</span><span>R$ {{ sessao.total_credito|floatformat:2 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Débito</span><span>R$ {{ sessao.total_debito|floatformat:2 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Crediário</span><span>R$ {{ sessao.total_crediario|floatformat:2 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between border-top pt-2 mt-2 fw-bold">
+                                <span>Total Vendas</span>
+                                <span class="text-success">R$ {{ sessao.total_vendas|floatformat:2 }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="post" x-data="fecharCaixa()" @submit.prevent="confirmar">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            Dinheiro Contado em Caixa *
+                            <small class="text-muted fw-normal">(informe o valor físico)</small>
+                        </label>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text">R$</span>
+                            <input type="number" name="valor_contado_dinheiro" x-model="contado"
+                                   class="form-control" step="0.01" min="0" required
+                                   placeholder="0,00" @input="calcDiferenca">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 p-3 rounded border"
+                         :class="diferenca == 0 ? 'border-success bg-success-subtle' : (diferenca < 0 ? 'border-danger bg-danger-subtle' : 'border-warning bg-warning-subtle')">
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>Diferença</span>
+                            <span :class="diferenca == 0 ? 'text-success' : (diferenca < 0 ? 'text-danger' : 'text-warning text-dark')">
+                                R$ <span x-text="diferencaFmt"></span>
+                            </span>
+                        </div>
+                        <div x-show="diferenca != 0" class="mt-1">
+                            <small x-show="diferenca < 0" class="text-danger">Falta dinheiro no caixa</small>
+                            <small x-show="diferenca > 0" class="text-warning">Sobra dinheiro no caixa</small>
+                        </div>
+                    </div>
+                    <input type="hidden" name="diferenca_caixa" :value="diferenca">
+
+                    <div class="mb-4">
+                        <label class="form-label">Observações do Fechamento</label>
+                        <textarea name="observacoes_fechamento" class="form-control" rows="2"
+                                  placeholder="Observações sobre o fechamento..."></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger flex-fill btn-lg">
+                            <i class="bi bi-lock me-2"></i>Confirmar Fechamento
+                        </button>
+                        <a href="{% url 'caixa:sessao' sessao.pk %}" class="btn btn-outline-secondary btn-lg">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_extra %}
+<script>
+function fecharCaixa() {
+    const esperado = {{ sessao.saldo_esperado }};
+    return {
+        contado: '',
+        diferenca: 0,
+        diferencaFmt: '0,00',
+        calcDiferenca() {
+            const c = parseFloat(this.contado) || 0;
+            this.diferenca = (c - esperado);
+            this.diferencaFmt = this.diferenca.toFixed(2).replace('.',',');
+        },
+        confirmar() {
+            if (this.diferenca !== 0) {
+                if (!confirm('Existe uma diferença de R$ ' + Math.abs(this.diferenca).toFixed(2) + ' no caixa. Confirmar fechamento mesmo assim?')) return;
+            }
+            document.querySelector('form').submit();
+        }
+    }
+}
+</script>
+{% endblock %}

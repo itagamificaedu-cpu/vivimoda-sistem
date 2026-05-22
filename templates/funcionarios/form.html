@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block breadcrumb %}
+<div class="breadcrumb-bar"><nav><ol class="breadcrumb mb-0">
+  <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Início</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'funcionarios:lista' %}">Funcionários</a></li>
+  <li class="breadcrumb-item active">{{ titulo }}</li>
+</ol></nav></div>
+{% endblock %}
+{% block conteudo %}
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  <div class="row g-4">
+    <div class="col-md-8">
+
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold py-3"><i class="bi bi-person me-2 text-primary"></i>Dados Pessoais</div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-12"><label class="form-label">Nome Completo *</label>{{ form.nome_completo }}</div>
+            <div class="col-md-4"><label class="form-label">CPF *</label>{{ form.cpf }}{% if form.cpf.errors %}<div class="text-danger small">{{ form.cpf.errors }}</div>{% endif %}</div>
+            <div class="col-md-4"><label class="form-label">RG</label>{{ form.rg }}</div>
+            <div class="col-md-4"><label class="form-label">Data de Nascimento *</label>{{ form.data_nascimento }}</div>
+            <div class="col-md-4"><label class="form-label">Sexo</label>{{ form.sexo }}</div>
+            <div class="col-md-4"><label class="form-label">Estado Civil</label>{{ form.estado_civil }}</div>
+            <div class="col-md-4"><label class="form-label">Celular *</label>{{ form.celular }}</div>
+            <div class="col-md-4"><label class="form-label">Telefone</label>{{ form.telefone }}</div>
+            <div class="col-md-8"><label class="form-label">E-mail</label>{{ form.email }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold py-3"><i class="bi bi-geo-alt me-2 text-danger"></i>Endereço</div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label">CEP</label>
+              <div class="input-group">{{ form.cep }}<button type="button" class="btn btn-outline-secondary" id="btn-cep"><i class="bi bi-search"></i></button></div>
+            </div>
+            <div class="col-md-6"><label class="form-label">Logradouro</label>{{ form.logradouro }}</div>
+            <div class="col-md-3"><label class="form-label">Número</label>{{ form.numero }}</div>
+            <div class="col-md-4"><label class="form-label">Bairro</label>{{ form.bairro }}</div>
+            <div class="col-md-5"><label class="form-label">Cidade</label>{{ form.cidade }}</div>
+            <div class="col-md-3"><label class="form-label">UF</label>{{ form.estado }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold py-3"><i class="bi bi-briefcase me-2 text-warning"></i>Dados Profissionais</div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label">Cargo *</label>{{ form.cargo }}</div>
+            <div class="col-md-6"><label class="form-label">Setor</label>{{ form.setor }}</div>
+            <div class="col-md-4"><label class="form-label">Tipo de Contrato</label>{{ form.tipo_contrato }}</div>
+            <div class="col-md-4"><label class="form-label">Salário (R$) *</label>{{ form.salario }}</div>
+            <div class="col-md-4"><label class="form-label">Comissão (%)</label>{{ form.comissao_percentual }}</div>
+            <div class="col-md-4"><label class="form-label">Data de Admissão *</label>{{ form.data_admissao }}</div>
+            <div class="col-md-4"><label class="form-label">Data de Demissão</label>{{ form.data_demissao }}</div>
+          </div>
+          {% if funcionario %}<div class="mt-2"><label class="form-label text-muted small">Motivo da alteração salarial (se houver)</label><input type="text" name="motivo_salario" class="form-control form-control-sm" placeholder="Promoção, reajuste anual..."></div>{% endif %}
+        </div>
+      </div>
+
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold py-3"><i class="bi bi-bank me-2 text-success"></i>Dados Bancários</div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-4"><label class="form-label">Banco</label>{{ form.banco }}</div>
+            <div class="col-md-3"><label class="form-label">Agência</label>{{ form.agencia }}</div>
+            <div class="col-md-3"><label class="form-label">Conta</label>{{ form.conta }}</div>
+            <div class="col-md-2"><label class="form-label">Tipo</label>{{ form.tipo_conta }}</div>
+            <div class="col-md-6"><label class="form-label">Chave PIX</label>{{ form.pix }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold py-3"><i class="bi bi-file-earmark-text me-2"></i>Documentos</div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-4"><label class="form-label">CTPS Número</label>{{ form.ctps_numero }}</div>
+            <div class="col-md-3"><label class="form-label">CTPS Série</label>{{ form.ctps_serie }}</div>
+            <div class="col-md-5"><label class="form-label">PIS/PASEP</label>{{ form.pis_pasep }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold py-3"><i class="bi bi-chat-text me-2"></i>Observações</div>
+        <div class="card-body">{{ form.observacoes }}</div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold py-3"><i class="bi bi-image me-2"></i>Foto</div>
+        <div class="card-body text-center">
+          {% if funcionario.foto %}<img src="{{ funcionario.foto.url }}" class="rounded-circle mb-3" width="100" height="100" style="object-fit:cover">{% endif %}
+          {{ form.foto }}
+        </div>
+      </div>
+      <div class="card shadow-sm mb-3">
+        <div class="card-body">
+          <div class="form-check form-switch">
+            {{ form.ativo }}<label class="form-check-label ms-2">Funcionário ativo</label>
+          </div>
+        </div>
+      </div>
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary btn-lg"><i class="bi bi-check-lg me-2"></i>Salvar</button>
+        <a href="{% url 'funcionarios:lista' %}" class="btn btn-outline-secondary"><i class="bi bi-x me-1"></i>Cancelar</a>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.getElementById('btn-cep').addEventListener('click', () => {
+  const cep = document.getElementById('id_cep_func').value;
+  buscarCep(cep, d => {
+    document.querySelector('[name="logradouro"]').value = d.logradouro||'';
+    document.querySelector('[name="bairro"]').value = d.bairro||'';
+    document.querySelector('[name="cidade"]').value = d.cidade||'';
+    document.querySelector('[name="estado"]').value = d.estado||'';
+    document.querySelector('[name="numero"]').focus();
+  });
+});
+</script>
+{% endblock %}

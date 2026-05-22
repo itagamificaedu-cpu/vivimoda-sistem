@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block titulo %}Funcionários{% endblock %}
+{% block breadcrumb %}
+<div class="breadcrumb-bar"><nav><ol class="breadcrumb mb-0">
+  <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Início</a></li>
+  <li class="breadcrumb-item active">Funcionários</li>
+</ol></nav></div>
+{% endblock %}
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <span class="badge bg-secondary">{{ total }} funcionários</span>
+  <a href="{% url 'funcionarios:criar' %}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Novo Funcionário</a>
+</div>
+<div class="card shadow-sm mb-3">
+  <div class="card-body py-2">
+    <form method="get" class="row g-2 align-items-end">
+      <div class="col-md-5"><input type="text" name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Nome, CPF, celular..."></div>
+      <div class="col-md-3"><input type="text" name="cargo" value="{{ cargo }}" class="form-control form-control-sm" placeholder="Cargo..."></div>
+      <div class="col-md-2"><select name="ativo" class="form-select form-select-sm">
+        <option value="1" {% if ativo == '1' %}selected{% endif %}>Ativos</option>
+        <option value="0" {% if ativo == '0' %}selected{% endif %}>Inativos</option>
+        <option value="">Todos</option>
+      </select></div>
+      <div class="col-md-2 d-flex gap-2">
+        <button type="submit" class="btn btn-sm btn-primary flex-fill"><i class="bi bi-search"></i></button>
+        <a href="{% url 'funcionarios:lista' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-x"></i></a>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="card shadow-sm">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr><th>Nome</th><th>CPF</th><th>Cargo</th><th>Celular</th><th>Admissão</th><th>Contrato</th><th class="text-center">Ações</th></tr>
+        </thead>
+        <tbody>
+          {% for f in page_obj %}
+          <tr>
+            <td><a href="{% url 'funcionarios:detalhe' f.pk %}" class="fw-semibold text-decoration-none">{{ f.nome_completo }}</a>
+              {% if not f.ativo %}<span class="badge bg-secondary ms-1">Inativo</span>{% endif %}
+            </td>
+            <td class="text-muted small">{{ f.cpf }}</td>
+            <td>{{ f.cargo }}</td>
+            <td>{{ f.celular }}</td>
+            <td class="text-muted small">{{ f.data_admissao|date:"d/m/Y" }}</td>
+            <td><span class="badge bg-light text-dark border">{{ f.get_tipo_contrato_display }}</span></td>
+            <td class="text-center">
+              <div class="btn-group btn-group-sm">
+                <a href="{% url 'funcionarios:detalhe' f.pk %}" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></a>
+                <a href="{% url 'funcionarios:editar' f.pk %}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i></a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7" class="text-center text-muted py-4"><i class="bi bi-person-badge fs-3 d-block mb-2"></i>Nenhum funcionário encontrado.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% if page_obj.has_other_pages %}
+  <div class="card-footer bg-white d-flex justify-content-center">
+    <nav><ul class="pagination pagination-sm mb-0">
+      {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ q }}">‹</a></li>{% endif %}
+      <li class="page-item disabled"><span class="page-link">{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</span></li>
+      {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ q }}">›</a></li>{% endif %}
+    </ul></nav>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

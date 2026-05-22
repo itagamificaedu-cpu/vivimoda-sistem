@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}{{ produto.nome }}{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="{% url 'produtos:lista' %}">Produtos</a></li>
+                <li class="breadcrumb-item active">{{ produto.nome|truncatechars:30 }}</li>
+            </ol>
+        </nav>
+        <h4 class="fw-bold mb-0">
+            <i class="bi bi-box-seam text-primary me-2"></i>{{ produto.nome }}
+            {% if produto.ativo %}<span class="badge bg-success fs-6">Ativo</span>
+            {% else %}<span class="badge bg-secondary fs-6">Inativo</span>{% endif %}
+        </h4>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'produtos:editar' produto.pk %}" class="btn btn-outline-primary">
+            <i class="bi bi-pencil me-1"></i>Editar
+        </a>
+        <form method="post" action="{% url 'produtos:excluir' produto.pk %}" style="display:inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger"
+                    onclick="return confirm('Desativar produto {{ produto.nome }}?')">
+                <i class="bi bi-toggle-off me-1"></i>Desativar
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="row g-4">
+    {# Coluna esquerda — info principal #}
+    <div class="col-lg-4">
+        {# Foto #}
+        <div class="card mb-4">
+            <div class="card-body text-center p-3">
+                {% if produto.foto_principal %}
+                <img src="{{ produto.foto_principal.url }}" alt="{{ produto.nome }}"
+                     class="img-fluid rounded" style="max-height:250px;object-fit:cover;">
+                {% else %}
+                <div class="text-muted py-5">
+                    <i class="bi bi-image display-3"></i>
+                    <div class="mt-2">Sem foto</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Preços #}
+        <div class="card mb-4">
+            <div class="card-header"><h6 class="mb-0"><i class="bi bi-tag me-2"></i>Preços</h6></div>
+            <div class="card-body">
+                {% if produto.preco_custo %}
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                    <span class="text-muted">Custo</span>
+                    <span>R$ {{ produto.preco_custo|floatformat:2 }}</span>
+                </div>
+                {% endif %}
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                    <span class="text-muted">Venda</span>
+                    <span class="fw-semibold">R$ {{ produto.preco_venda|floatformat:2 }}</span>
+                </div>
+                {% if produto.preco_promocional and produto.em_promocao %}
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                    <span class="text-muted">Promoção</span>
+                    <span class="fw-bold text-danger">R$ {{ produto.preco_promocional|floatformat:2 }}</span>
+                </div>
+                {% endif %}
+                {% if produto.margem_lucro %}
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted">Margem</span>
+                    <span class="text-success">{{ produto.margem_lucro|floatformat:1 }}%</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Estoque #}
+        {% if produto.tipo == 'SIMPLES' %}
+        <div class="card">
+            <div class="card-header"><h6 class="mb-0"><i class="bi bi-boxes me-2"></i>Estoque</h6></div>
+            <div class="card-body text-center">
+                <div class="display-4 fw-bold {% if produto.estoque_atual <= 0 %}text-danger{% elif produto.estoque_baixo %}text-warning{% else %}text-success{% endif %}">
+                    {{ produto.estoque_atual|floatformat:0 }}
+                </div>
+                <div class="text-muted">unidades</div>
+                <div class="mt-2 small text-muted">Mínimo: {{ produto.estoque_minimo|floatformat:0 }}</div>
+                {% if produto.estoque_baixo %}
+                <div class="alert alert-warning py-1 mt-2 mb-0">
+                    <i class="bi bi-exclamation-triangle me-1"></i>Estoque baixo
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {# Coluna direita #}
+    <div class="col-lg-8">
+        {# Dados gerais #}
+        <div class="card mb-4">
+            <div class="card-header"><h6 class="mb-0">Dados Gerais</h6></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <small class="text-muted">Código</small><div>{{ produto.codigo }}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted">Código de Barras</small>
+                        <div>{{ produto.codigo_barras|default:"—" }}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted">Referência</small>
+                        <div>{{ produto.referencia|default:"—" }}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted">Categoria</small>
+                        <div>{{ produto.categoria|default:"—" }}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted">Marca</small>
+                        <div>{{ produto.marca|default:"—" }}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted">Tipo</small>
+                        <div>{{ produto.get_tipo_display }}</div>
+                    </div>
+                    {% if produto.descricao %}
+                    <div class="col-12">
+                        <small class="text-muted">Descrição</small>
+                        <div>{{ produto.descricao }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Grade (se houver) #}
+        {% if produto.tipo == 'GRADE' %}
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0"><i class="bi bi-grid me-2"></i>Grade (Variações)</h6>
+                <a href="{% url 'produtos:detalhe' produto.pk %}#grade" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-plus me-1"></i>Adicionar
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Cor</th>
+                            <th>Tamanho</th>
+                            <th class="text-center">Estoque</th>
+                            <th class="text-end">Preço</th>
+                            <th class="text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grade in grades %}
+                        <tr>
+                            <td class="ps-3">{{ grade.cor }}</td>
+                            <td>{{ grade.tamanho }}</td>
+                            <td class="text-center fw-bold {% if grade.estoque_atual <= 0 %}text-danger{% else %}text-success{% endif %}">
+                                {{ grade.estoque_atual|floatformat:0 }}
+                            </td>
+                            <td class="text-end">R$ {{ grade.preco_final|floatformat:2 }}</td>
+                            <td class="text-center">
+                                {% if grade.ativo %}<span class="badge bg-success">Ativa</span>
+                                {% else %}<span class="badge bg-secondary">Inativa</span>{% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" class="text-center text-muted py-3">Nenhuma variação cadastrada.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        {# Histórico de preços #}
+        {% if historico %}
+        <div class="card">
+            <div class="card-header"><h6 class="mb-0"><i class="bi bi-clock-history me-2"></i>Histórico de Preços</h6></div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Data</th>
+                            <th class="text-end">Anterior</th>
+                            <th class="text-end">Novo</th>
+                            <th>Motivo</th>
+                            <th>Usuário</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for h in historico %}
+                        <tr>
+                            <td class="ps-3 small text-muted">{{ h.criado_em|date:"d/m/Y H:i" }}</td>
+                            <td class="text-end">R$ {{ h.preco_anterior|floatformat:2 }}</td>
+                            <td class="text-end fw-semibold">R$ {{ h.preco_novo|floatformat:2 }}</td>
+                            <td class="small">{{ h.motivo|default:"—" }}</td>
+                            <td class="small">{{ h.usuario.nome_exibicao }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

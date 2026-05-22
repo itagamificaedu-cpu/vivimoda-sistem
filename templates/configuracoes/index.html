@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Configurações{% endblock %}
+
+{% block conteudo %}
+<div class="mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-gear text-primary me-2"></i>Configurações do Sistema</h4>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="row g-4">
+        {# Dados da empresa #}
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-building me-2"></i>Dados da Empresa</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Nome da Empresa *</label>
+                            {{ form.nome_empresa }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">CNPJ</label>
+                            {{ form.cnpj }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Inscrição Estadual</label>
+                            {{ form.inscricao_estadual }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Endereço</label>
+                            {{ form.endereco }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Telefone</label>
+                            {{ form.telefone }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">WhatsApp</label>
+                            {{ form.whatsapp }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">E-mail</label>
+                            {{ form.email }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Logo da Empresa</label>
+                            {% if config.logo %}
+                            <div class="mb-2">
+                                <img src="{{ config.logo.url }}" alt="Logo" style="height:60px;">
+                            </div>
+                            {% endif %}
+                            {{ form.logo }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Parâmetros de venda #}
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-bag-check me-2"></i>Parâmetros de Venda</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Desconto Máximo PDV (%)</label>
+                            {{ form.desconto_maximo_pdv }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Comissão Padrão (%)</label>
+                            {{ form.comissao_padrao }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Mensagem Rodapé Cupom</label>
+                            {{ form.mensagem_rodape_cupom }}
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                {{ form.exigir_cliente_pdv }}
+                                <label class="form-check-label">Exigir cliente na venda PDV</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Parâmetros financeiros #}
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-cash-coin me-2"></i>Parâmetros Financeiros</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Taxa de Juros Padrão (% a.m.)</label>
+                            {{ form.taxa_juros_mes }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Multa por Atraso (%)</label>
+                            {{ form.percentual_multa }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Carência para Juros (dias)</label>
+                            {{ form.carencia_juros_dias }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Dia Padrão Venc. Carnê</label>
+                            {{ form.dia_vencimento_padrao }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Configurações de estoque #}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-boxes me-2"></i>Estoque</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="form-check">
+                                {{ form.controlar_estoque_negativo }}
+                                <label class="form-check-label">Permitir estoque negativo</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Estoque Mínimo Padrão</label>
+                            {{ form.estoque_minimo_padrao }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Aparência #}
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-palette me-2"></i>Aparência</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Cor Principal</label>
+                            {{ form.cor_primaria }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Cor Secundária</label>
+                            {{ form.cor_secundaria }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Nome do Sistema</label>
+                            {{ form.nome_sistema }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary btn-lg">
+            <i class="bi bi-save me-2"></i>Salvar Configurações
+        </button>
+    </div>
+</form>
+{% endblock %}

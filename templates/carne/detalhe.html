@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Carnê {{ carne.numero }}{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="{% url 'carne:lista' %}">Carnês</a></li>
+                <li class="breadcrumb-item active">{{ carne.numero }}</li>
+            </ol>
+        </nav>
+        <h4 class="fw-bold mb-0">
+            <i class="bi bi-journal-text text-primary me-2"></i>{{ carne.numero }}
+            {% if carne.status == 'ATIVO' %}
+                <span class="badge bg-primary fs-6">Ativo</span>
+            {% elif carne.status == 'QUITADO' %}
+                <span class="badge bg-success fs-6">Quitado</span>
+            {% elif carne.status == 'CANCELADO' %}
+                <span class="badge bg-danger fs-6">Cancelado</span>
+            {% elif carne.status == 'RENEGOCIADO' %}
+                <span class="badge bg-secondary fs-6">Renegociado</span>
+            {% endif %}
+        </h4>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'carne:imprimir' carne.pk %}" target="_blank" class="btn btn-outline-secondary">
+            <i class="bi bi-printer me-1"></i>Imprimir
+        </a>
+        {% if carne.status == 'ATIVO' %}
+        <a href="{% url 'carne:renegociar' carne.pk %}" class="btn btn-outline-warning">
+            <i class="bi bi-arrow-repeat me-1"></i>Renegociar
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row g-4">
+    {# Dados do carnê #}
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Informações</h6>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-5 text-muted">Cliente</dt>
+                    <dd class="col-sm-7">
+                        <a href="{% url 'clientes:detalhe' carne.cliente.pk %}">{{ carne.cliente.nome }}</a>
+                    </dd>
+                    {% if carne.venda %}
+                    <dt class="col-sm-5 text-muted">Venda</dt>
+                    <dd class="col-sm-7">
+                        <a href="{% url 'vendas:detalhe' carne.venda.pk %}">{{ carne.venda.numero }}</a>
+                    </dd>
+                    {% endif %}
+                    <dt class="col-sm-5 text-muted">Emissão</dt>
+                    <dd class="col-sm-7">{{ carne.data_emissao|date:"d/m/Y" }}</dd>
+                    <dt class="col-sm-5 text-muted">Vencimento</dt>
+                    <dd class="col-sm-7">Todo dia {{ carne.dia_vencimento }}</dd>
+                    <dt class="col-sm-5 text-muted">Juros</dt>
+                    <dd class="col-sm-7">{{ carne.taxa_juros }}% a.m.</dd>
+                    <dt class="col-sm-5 text-muted">Parcelas</dt>
+                    <dd class="col-sm-7">{{ carne.quantidade_parcelas }}x de R$ {{ carne.valor_parcela|floatformat:2 }}</dd>
+                    {% if carne.entrada %}
+                    <dt class="col-sm-5 text-muted">Entrada</dt>
+                    <dd class="col-sm-7">R$ {{ carne.entrada|floatformat:2 }}</dd>
+                    {% endif %}
+                    <dt class="col-sm-5 text-muted">Operador</dt>
+                    <dd class="col-sm-7">{{ carne.usuario.nome_exibicao }}</dd>
+                </dl>
+            </div>
+        </div>
+
+        {# Resumo financeiro #}
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-cash-coin me-2"></i>Resumo</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                    <span class="text-muted">Total</span>
+                    <span class="fw-bold">R$ {{ carne.valor_total|floatformat:2 }}</span>
+                </div>
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                    <span class="text-muted">Pago</span>
+                    <span class="text-success fw-semibold">R$ {{ carne.valor_pago|floatformat:2 }}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted">Pendente</span>
+                    <span class="{% if carne.valor_pendente > 0 %}text-danger fw-bold{% else %}text-muted{% endif %}">
+                        R$ {{ carne.valor_pendente|floatformat:2 }}
+                    </span>
+                </div>
+                {% if carne.parcelas_vencidas > 0 %}
+                <div class="alert alert-warning mt-3 mb-0 py-2">
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    <strong>{{ carne.parcelas_vencidas }}</strong> parcela(s) vencida(s)
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# Parcelas #}
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0"><i class="bi bi-list-check me-2"></i>Parcelas</h6>
+                {% if carne.status == 'ATIVO' %}
+                <small class="text-muted">Clique em "Baixar" para registrar pagamento</small>
+                {% endif %}
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3 text-center">Nº</th>
+                                <th>Vencimento</th>
+                                <th class="text-end">Valor</th>
+                                <th class="text-end">Juros</th>
+                                <th class="text-end">Multa</th>
+                                <th class="text-end">Desc.</th>
+                                <th class="text-end">Total</th>
+                                <th class="text-center">Pgto</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center pe-3">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for parcela in parcelas %}
+                            <tr class="{% if parcela.dias_atraso > 0 %}table-warning{% elif parcela.status == 'PAGO' %}table-success bg-opacity-25{% endif %}">
+                                <td class="ps-3 text-center fw-semibold">
+                                    {{ parcela.numero }}/{{ carne.quantidade_parcelas }}
+                                </td>
+                                <td>
+                                    {{ parcela.data_vencimento|date:"d/m/Y" }}
+                                    {% if parcela.dias_atraso > 0 %}
+                                    <span class="badge bg-danger ms-1">{{ parcela.dias_atraso }}d</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">R$ {{ parcela.valor_original|floatformat:2 }}</td>
+                                <td class="text-end text-danger">
+                                    {% if parcela.valor_juros %}R$ {{ parcela.valor_juros|floatformat:2 }}{% else %}—{% endif %}
+                                </td>
+                                <td class="text-end text-danger">
+                                    {% if parcela.valor_multa %}R$ {{ parcela.valor_multa|floatformat:2 }}{% else %}—{% endif %}
+                                </td>
+                                <td class="text-end text-success">
+                                    {% if parcela.valor_desconto %}R$ {{ parcela.valor_desconto|floatformat:2 }}{% else %}—{% endif %}
+                                </td>
+                                <td class="text-end fw-semibold">R$ {{ parcela.valor_a_pagar|floatformat:2 }}</td>
+                                <td class="text-center small text-muted">
+                                    {% if parcela.data_pagamento %}{{ parcela.data_pagamento|date:"d/m/Y" }}{% else %}—{% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if parcela.status == 'PAGO' %}
+                                        <span class="badge bg-success">Pago</span>
+                                    {% elif parcela.status == 'PENDENTE' %}
+                                        <span class="badge bg-warning text-dark">Pendente</span>
+                                    {% elif parcela.status == 'VENCIDO' %}
+                                        <span class="badge bg-danger">Vencido</span>
+                                    {% elif parcela.status == 'CANCELADO' %}
+                                        <span class="badge bg-secondary">Cancelado</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center pe-3">
+                                    {% if parcela.status in 'PENDENTE VENCIDO' and carne.status == 'ATIVO' %}
+                                    <a href="{% url 'carne:baixar_parcela' parcela.pk %}"
+                                       class="btn btn-sm btn-success" title="Baixar parcela">
+                                        <i class="bi bi-check-circle"></i>
+                                    </a>
+                                    {% else %}
+                                    <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

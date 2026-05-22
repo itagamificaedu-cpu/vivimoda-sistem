@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Produtos Mais Vendidos{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-trophy text-primary me-2"></i>Produtos Mais Vendidos</h4>
+    <button onclick="window.print()" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-printer me-1"></i>Imprimir
+    </button>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-2"><input type="date" name="data_de" value="{{ data_de|date:'Y-m-d' }}" class="form-control form-control-sm" placeholder="De"></div>
+            <div class="col-md-2"><input type="date" name="data_ate" value="{{ data_ate|date:'Y-m-d' }}" class="form-control form-control-sm" placeholder="Até"></div>
+            <div class="col-md-2">
+                <select name="categoria" class="form-select form-select-sm">
+                    <option value="">Todas Categorias</option>
+                    {% for cat in categorias %}
+                    <option value="{{ cat.pk }}" {% if categoria_id == cat.pk|stringformat:"s" %}selected{% endif %}>{{ cat.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto"><button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button></div>
+        </form>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3 text-center" style="width:50px">Pos.</th>
+                            <th>Produto</th>
+                            <th>Categoria</th>
+                            <th class="text-center">Qtd Vendida</th>
+                            <th class="text-end">Receita Total</th>
+                            <th class="text-end">Ticket Médio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in ranking %}
+                        <tr>
+                            <td class="ps-3 text-center">
+                                {% if forloop.counter == 1 %}<span class="text-warning fs-5">🥇</span>
+                                {% elif forloop.counter == 2 %}<span class="text-secondary fs-5">🥈</span>
+                                {% elif forloop.counter == 3 %}<span class="fs-5">🥉</span>
+                                {% else %}<span class="fw-bold text-muted">{{ forloop.counter }}°</span>{% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'produtos:detalhe' item.produto_id %}" class="fw-semibold text-decoration-none">
+                                    {{ item.produto__nome }}
+                                </a>
+                                <small class="text-muted d-block">{{ item.produto__codigo }}</small>
+                            </td>
+                            <td class="small text-muted">{{ item.produto__categoria__nome|default:"—" }}</td>
+                            <td class="text-center fw-bold">{{ item.total_vendido|floatformat:0 }}</td>
+                            <td class="text-end fw-semibold text-success">R$ {{ item.receita|floatformat:2 }}</td>
+                            <td class="text-end text-muted small">
+                                R$ {% widthratio item.receita item.total_vendido 1 %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">Nenhum dado disponível.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header"><h6 class="mb-0">Top 10 em Receita</h6></div>
+            <div class="card-body"><canvas id="grafProdutos" height="250"></canvas></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const labels = [{% for i in ranking|slice:":10" %}"{{ i.produto__nome|truncatechars:15 }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+const dados = [{% for i in ranking|slice:":10" %}{{ i.receita|default:0 }}{% if not forloop.last %},{% endif %}{% endfor %}];
+new Chart(document.getElementById('grafProdutos'), {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Receita (R$)', data: dados, backgroundColor: 'rgba(25,135,84,0.7)', indexAxis: 'y' }] },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="{% url 'compras:lista' %}">Compras</a></li>
+                <li class="breadcrumb-item active">{{ titulo }}</li>
+            </ol>
+        </nav>
+        <h4 class="fw-bold mb-0"><i class="bi bi-truck text-primary me-2"></i>{{ titulo }}</h4>
+    </div>
+</div>
+
+<form method="post" x-data="formCompra()" @submit.prevent="submitForm">
+    {% csrf_token %}
+    <div class="row g-4">
+        {# Coluna principal #}
+        <div class="col-lg-8">
+            {# Cabeçalho #}
+            <div class="card mb-4">
+                <div class="card-header"><h6 class="mb-0">Dados do Pedido</h6></div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Fornecedor *</label>
+                            <select name="fornecedor" class="form-select select2" required>
+                                <option value="">— Selecione —</option>
+                                {% for f in fornecedores %}
+                                <option value="{{ f.pk }}" {% if oc and oc.fornecedor_id == f.pk %}selected{% endif %}>
+                                    {{ f.razao_social }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Previsão de Entrega</label>
+                            <input type="date" name="data_previsao" class="form-control"
+                                   value="{{ oc.data_previsao|date:'Y-m-d'|default:'' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">NF do Fornecedor</label>
+                            <input type="text" name="numero_nf" class="form-control" maxlength="30"
+                                   value="{{ oc.numero_nf|default:'' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Frete (R$)</label>
+                            <input type="number" name="valor_frete" x-model="frete" class="form-control"
+                                   step="0.01" min="0" value="{{ oc.valor_frete|default:'0' }}"
+                                   @input="calcTotais">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Desconto (R$)</label>
+                            <input type="number" name="valor_desconto" x-model="desconto" class="form-control"
+                                   step="0.01" min="0" value="{{ oc.valor_desconto|default:'0' }}"
+                                   @input="calcTotais">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Prazo de Pagamento</label>
+                            <input type="text" name="prazo_pagamento" class="form-control" maxlength="50"
+                                   placeholder="Ex: 30/60/90 dias" value="{{ oc.prazo_pagamento|default:'' }}">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Observações</label>
+                            <textarea name="observacoes" class="form-control" rows="2">{{ oc.observacoes|default:'' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Itens #}
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="bi bi-cart me-2"></i>Itens do Pedido</h6>
+                    <button type="button" class="btn btn-sm btn-outline-primary" @click="addItem">
+                        <i class="bi bi-plus me-1"></i>Adicionar Item
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Produto</th>
+                                <th style="width:90px">Qtd</th>
+                                <th style="width:120px">Custo Unit.</th>
+                                <th class="text-end">Total</th>
+                                <th style="width:50px"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="(item, idx) in itens" :key="idx">
+                                <tr>
+                                    <td class="ps-3">
+                                        <select :name="'item_produto_' + idx" class="form-select form-select-sm select2"
+                                                x-model="item.produto_id" @change="atualizarCusto(item)" required>
+                                            <option value="">— Produto —</option>
+                                            {% for p in produtos %}
+                                            <option value="{{ p.pk }}" data-custo="{{ p.preco_custo|default:0 }}">
+                                                {{ p.codigo }} — {{ p.nome }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input :name="'item_qtd_' + idx" type="number" x-model="item.quantidade"
+                                               class="form-control form-control-sm text-center"
+                                               step="1" min="1" required @input="calcTotais">
+                                    </td>
+                                    <td>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text">R$</span>
+                                            <input :name="'item_custo_' + idx" type="number" x-model="item.custo"
+                                                   class="form-control" step="0.01" min="0" required @input="calcTotais">
+                                        </div>
+                                    </td>
+                                    <td class="text-end">
+                                        <span x-text="'R$ ' + (parseFloat(item.quantidade||0) * parseFloat(item.custo||0)).toFixed(2).replace('.',',')"></span>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="removeItem(idx)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </template>
+                            <tr x-show="itens.length === 0">
+                                <td colspan="5" class="text-center py-3 text-muted">
+                                    Clique em "Adicionar Item" para incluir produtos.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {# Totais #}
+        <div class="col-lg-4">
+            <div class="card sticky-top" style="top:80px">
+                <div class="card-header"><h6 class="mb-0">Resumo</h6></div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Subtotal</span>
+                        <span x-text="'R$ ' + subtotal.toFixed(2).replace('.',',')"></span>
+                    </div>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Desconto</span>
+                        <span class="text-danger" x-text="'- R$ ' + parseFloat(desconto||0).toFixed(2).replace('.',',')"></span>
+                    </div>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Frete</span>
+                        <span x-text="'R$ ' + parseFloat(frete||0).toFixed(2).replace('.',',')"></span>
+                    </div>
+                    <div class="d-flex justify-content-between py-2 fw-bold fs-5">
+                        <span>Total</span>
+                        <span class="text-primary" x-text="'R$ ' + total.toFixed(2).replace('.',',')"></span>
+                    </div>
+
+                    {# Input hidden totais #}
+                    <input type="hidden" name="valor_subtotal" :value="subtotal">
+                    <input type="hidden" name="valor_total" :value="total">
+                    <input type="hidden" name="itens_json" :value="JSON.stringify(itens)">
+
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save me-1"></i>Salvar Pedido
+                        </button>
+                        <a href="{% url 'compras:lista' %}" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block js_extra %}
+<script>
+function formCompra() {
+    return {
+        itens: {{ itens_json|safe|default:'[]' }},
+        frete: {{ oc.valor_frete|default:0 }},
+        desconto: {{ oc.valor_desconto|default:0 }},
+        subtotal: 0,
+        total: 0,
+
+        addItem() {
+            this.itens.push({ produto_id: '', quantidade: 1, custo: 0 });
+        },
+        removeItem(idx) {
+            this.itens.splice(idx, 1);
+            this.calcTotais();
+        },
+        atualizarCusto(item) {
+            const sel = document.querySelector(`option[value="${item.produto_id}"]`);
+            if (sel) item.custo = parseFloat(sel.dataset.custo) || 0;
+            this.calcTotais();
+        },
+        calcTotais() {
+            this.subtotal = this.itens.reduce((s, i) => s + (parseFloat(i.quantidade||0) * parseFloat(i.custo||0)), 0);
+            this.total = this.subtotal - parseFloat(this.desconto||0) + parseFloat(this.frete||0);
+        },
+        submitForm() {
+            this.calcTotais();
+            document.querySelector('form').submit();
+        }
+    }
+}
+</script>
+{% endblock %}

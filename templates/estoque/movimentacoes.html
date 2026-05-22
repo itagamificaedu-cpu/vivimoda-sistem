@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Movimentações de Estoque{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-0"><i class="bi bi-arrow-left-right text-primary me-2"></i>Movimentações de Estoque</h4>
+        <small class="text-muted">{{ total }} registro(s)</small>
+    </div>
+</div>
+
+{# Filtros #}
+<div class="card mb-4">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm"
+                       placeholder="Produto, código...">
+            </div>
+            <div class="col-md-2">
+                <select name="tipo" class="form-select form-select-sm">
+                    <option value="">Todos os Tipos</option>
+                    <option value="ENTRADA_COMPRA">Entrada Compra</option>
+                    <option value="SAIDA_VENDA">Saída Venda</option>
+                    <option value="AJUSTE_POSITIVO">Ajuste +</option>
+                    <option value="AJUSTE_NEGATIVO">Ajuste -</option>
+                    <option value="DEVOLUCAO_CLIENTE">Dev. Cliente</option>
+                    <option value="DEVOLUCAO_FORNECEDOR">Dev. Fornecedor</option>
+                    <option value="INVENTARIO">Inventário</option>
+                    <option value="TRANSFERENCIA">Transferência</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="data_de" value="{{ data_de }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="data_ate" value="{{ data_ate }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-auto d-flex gap-1">
+                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
+                <a href="{% url 'estoque:movimentacoes' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-sm mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Data/Hora</th>
+                        <th>Produto</th>
+                        <th>Tipo</th>
+                        <th class="text-center">Qtd Ant.</th>
+                        <th class="text-center">Movimento</th>
+                        <th class="text-center">Qtd Atual</th>
+                        <th>Referência</th>
+                        <th>Usuário</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mov in page_obj %}
+                    <tr>
+                        <td class="ps-3 small text-muted">{{ mov.criado_em|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            <a href="{% url 'produtos:detalhe' mov.produto.pk %}" class="text-decoration-none">
+                                {{ mov.produto.nome }}
+                            </a>
+                            {% if mov.grade %}
+                            <small class="text-muted d-block">{{ mov.grade.cor }}/{{ mov.grade.tamanho }}</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if mov.tipo in 'ENTRADA_COMPRA AJUSTE_POSITIVO DEVOLUCAO_CLIENTE' %}
+                            <span class="badge bg-success-subtle text-success">{{ mov.get_tipo_display }}</span>
+                            {% elif mov.tipo in 'SAIDA_VENDA AJUSTE_NEGATIVO DEVOLUCAO_FORNECEDOR' %}
+                            <span class="badge bg-danger-subtle text-danger">{{ mov.get_tipo_display }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary-subtle text-secondary">{{ mov.get_tipo_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">{{ mov.quantidade_anterior|floatformat:0 }}</td>
+                        <td class="text-center fw-bold {% if mov.quantidade > 0 %}text-success{% else %}text-danger{% endif %}">
+                            {% if mov.quantidade > 0 %}+{% endif %}{{ mov.quantidade|floatformat:0 }}
+                        </td>
+                        <td class="text-center fw-bold">{{ mov.quantidade_atual|floatformat:0 }}</td>
+                        <td class="small text-muted">{{ mov.referencia|default:"—" }}</td>
+                        <td class="small">{{ mov.usuario.nome_exibicao }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-box display-6 d-block mb-2"></i>
+                            Nenhuma movimentação encontrada.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

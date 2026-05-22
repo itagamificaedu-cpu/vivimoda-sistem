@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Baixar Recebimento{% endblock %}
+
+{% block conteudo %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'financeiro:receber' %}">Contas a Receber</a></li>
+                <li class="breadcrumb-item active">Baixar</li>
+            </ol>
+        </nav>
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-check-circle me-2"></i>Registrar Recebimento</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info mb-4">
+                    <strong>{{ conta.descricao }}</strong>
+                    <div class="row mt-2 text-sm g-2">
+                        <div class="col-6">
+                            <small class="text-muted">Cliente</small>
+                            <div>{{ conta.cliente|default:"—" }}</div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Vencimento</small>
+                            <div class="{% if conta.dias_atraso > 0 %}text-danger fw-semibold{% endif %}">
+                                {{ conta.data_vencimento|date:"d/m/Y" }}
+                                {% if conta.dias_atraso > 0 %}
+                                ({{ conta.dias_atraso }} dias de atraso)
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Valor Original</small>
+                            <div class="fw-bold">R$ {{ conta.valor|floatformat:2 }}</div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Valor Pendente</small>
+                            <div class="fw-bold text-danger">R$ {{ conta.valor_pendente|floatformat:2 }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="post" x-data="formBaixa()">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Juros</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="number" name="valor_juros" x-model="juros" step="0.01" min="0"
+                                       class="form-control" value="{{ juros_sugerido|floatformat:2|default:0 }}"
+                                       @input="calcular">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Multa</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="number" name="valor_multa" x-model="multa" step="0.01" min="0"
+                                       class="form-control" value="{{ multa_sugerida|floatformat:2|default:0 }}"
+                                       @input="calcular">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Desconto</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="number" name="valor_desconto" x-model="desconto" step="0.01" min="0"
+                                       class="form-control" value="0" @input="calcular">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Total a Receber</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-success text-white">R$</span>
+                                <input type="text" x-model="total" class="form-control fw-bold bg-success-subtle"
+                                       readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Forma de Pagamento *</label>
+                            <select name="forma_pagamento" class="form-select" required>
+                                <option value="DINHEIRO">Dinheiro</option>
+                                <option value="PIX">PIX</option>
+                                <option value="CARTAO_CREDITO">Cartão de Crédito</option>
+                                <option value="CARTAO_DEBITO">Cartão de Débito</option>
+                                <option value="CHEQUE">Cheque</option>
+                                <option value="TRANSFERENCIA">Transferência</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Data do Recebimento *</label>
+                            <input type="date" name="data_recebimento" class="form-control"
+                                   value="{% now 'Y-m-d' %}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Conta Bancária</label>
+                            <select name="conta_bancaria" class="form-select">
+                                <option value="">— Selecione —</option>
+                                {% for cb in contas_bancarias %}
+                                <option value="{{ cb.pk }}">{{ cb.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Observações</label>
+                            <input type="text" name="observacoes" class="form-control" maxlength="200">
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-success flex-fill btn-lg">
+                            <i class="bi bi-check-circle me-2"></i>Confirmar Recebimento
+                        </button>
+                        <a href="{% url 'financeiro:receber' %}" class="btn btn-outline-secondary btn-lg">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_extra %}
+<script>
+function formBaixa() {
+    const pendente = {{ conta.valor_pendente }};
+    return {
+        juros: {{ juros_sugerido|default:0 }},
+        multa: {{ multa_sugerida|default:0 }},
+        desconto: 0,
+        total: '0,00',
+        init() { this.calcular(); },
+        calcular() {
+            const t = pendente + parseFloat(this.juros||0) + parseFloat(this.multa||0) - parseFloat(this.desconto||0);
+            this.total = Math.max(0, t).toFixed(2).replace('.',',');
+        }
+    }
+}
+</script>
+{% endblock %}

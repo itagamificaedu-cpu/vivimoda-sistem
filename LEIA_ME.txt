@@ -1,0 +1,65 @@
+================================================================
+ VIVIMODA - Sistema de Gestao de Confeccoes
+ Versao Local (Computador da Loja)
+================================================================
+
+
+== PRIMEIRA VEZ (instalar) ==
+
+1. Clique DUAS vezes em:  INSTALAR.bat
+2. Clique SIM se aparecer pergunta de permissao
+3. Aguarde de 3 a 5 minutos
+4. Pronto! Um icone aparece na area de trabalho.
+
+
+== USO DIARIO ==
+
+> Para ABRIR o sistema:
+  - Clique duplo no icone "VIVIMODA Sistema" na area de trabalho
+  - O navegador abre sozinho na tela de login
+
+> Para FECHAR o sistema:
+  - Feche o navegador normalmente
+  - O servidor continua rodando em segundo plano
+  - Para parar de vez: execute PARAR_SERVIDOR.bat
+
+> O sistema INICIA AUTOMATICAMENTE quando ligar o computador.
+  Aguarde cerca de 5 segundos antes de abrir o navegador.
+
+
+== ACESSO ==
+
+  Endereco:  http://localhost:8000
+  Login:     admin
+  Senha:     confec@2024
+
+
+== BACKUP (MUITO IMPORTANTE!) ==
+
+Faca backup toda semana!
+
+1. Clique duplo em:  BACKUP_DADOS.bat
+2. Uma pasta e criada na area de trabalho com os dados
+3. Copie essa pasta para um pendrive ou Google Drive
+
+
+== SE O SISTEMA NAO ABRIR ==
+
+1. Verifique se o antivirus nao esta bloqueando
+2. Execute PARAR_SERVIDOR.bat e depois tente novamente
+3. Se persistir, execute INSTALAR.bat novamente
+
+
+== ARQUIVOS IMPORTANTES ==
+
+  INSTALAR.bat       - Instala o sistema (executar uma vez)
+  VIVIMODA.vbs       - Abre o sistema (usado pelo atalho)
+  PARAR_SERVIDOR.bat - Para o servidor
+  BACKUP_DADOS.bat   - Faz backup dos dados
+  RESTAURAR_BACKUP.bat - Restaura um backup anterior
+  LEIA_ME.txt        - Este arquivo
+
+
+================================================================
+ Suporte: contato com o desenvolvedor do sistema
+================================================================

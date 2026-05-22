@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDV — ConfecSystem</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --pdv-bg: #0d0d1a;
+      --pdv-panel: #131328;
+      --pdv-border: #1e1e42;
+      --pdv-accent: #e94560;
+      --pdv-green: #22c55e;
+      --pdv-blue: #3b82f6;
+    }
+    * { box-sizing: border-box; }
+    body { background: var(--pdv-bg); color: #e2e8f0; overflow-x: hidden; font-family: 'Segoe UI', sans-serif; }
+
+    /* HEADER */
+    .pdv-header {
+      background: var(--pdv-panel);
+      padding: 0.4rem 1rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 2px solid var(--pdv-border);
+      height: 46px;
+    }
+
+    /* LAYOUT PRINCIPAL */
+    .pdv-main {
+      display: grid;
+      grid-template-columns: 1fr 390px;
+      height: calc(100vh - 46px);
+    }
+
+    /* ESQUERDA */
+    .pdv-left {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* CAMPO DE BUSCA / SCANNER */
+    .scanner-area {
+      background: var(--pdv-panel);
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--pdv-border);
+    }
+    .scanner-input-wrap {
+      position: relative;
+    }
+    #busca-produto {
+      background: #0a0a1a;
+      border: 2px solid var(--pdv-border);
+      color: #fff;
+      font-size: 1.05rem;
+      padding-left: 2.8rem;
+      padding-right: 7rem;
+      height: 48px;
+      border-radius: 10px;
+      width: 100%;
+      transition: border-color 0.15s;
+    }
+    #busca-produto:focus {
+      border-color: var(--pdv-accent);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(233,69,96,0.2);
+    }
+    #busca-produto.scanner-ativo {
+      border-color: var(--pdv-green);
+      box-shadow: 0 0 0 3px rgba(34,197,94,0.25);
+    }
+    .scan-icon {
+      position: absolute;
+      left: 0.75rem; top: 50%; transform: translateY(-50%);
+      color: #6b7280; font-size: 1.2rem;
+      pointer-events: none;
+      transition: color 0.15s;
+    }
+    #busca-produto.scanner-ativo ~ .scan-icon { color: var(--pdv-green); }
+    .scan-btns {
+      position: absolute;
+      right: 0.4rem; top: 50%; transform: translateY(-50%);
+      display: flex; gap: 0.25rem;
+    }
+
+    /* DROPDOWN SUGESTÕES */
+    .sugestoes-wrap { position: relative; }
+    .sugestoes-lista {
+      position: absolute;
+      top: 100%; left: 0; right: 0;
+      background: #1a1a35;
+      border: 1px solid var(--pdv-border);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      z-index: 999;
+      max-height: 300px;
+      overflow-y: auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .sugestao-item {
+      padding: 0.55rem 1rem;
+      cursor: pointer;
+      border-bottom: 1px solid var(--pdv-border);
+      display: flex; justify-content: space-between; align-items: center;
+      transition: background 0.1s;
+    }
+    .sugestao-item:hover, .sugestao-item.ativo { background: var(--pdv-border); }
+    .sugestao-item:last-child { border-bottom: none; }
+    .sug-nome { font-weight: 600; font-size: 0.92rem; }
+    .sug-cod { color: #94a3b8; font-size: 0.78rem; }
+    .sug-preco { color: var(--pdv-green); font-weight: 700; font-size: 0.95rem; }
+    .sug-estoque { font-size: 0.75rem; }
+
+    /* TABELA DE ITENS */
+    .itens-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.5rem 1rem;
+    }
+    .itens-table { width: 100%; border-collapse: collapse; }
+    .itens-table th {
+      color: #64748b; font-size: 0.72rem; text-transform: uppercase;
+      letter-spacing: 0.05em; padding: 0.4rem 0.5rem;
+      border-bottom: 1px solid var(--pdv-border);
+    }
+    .itens-table td { padding: 0.45rem 0.5rem; vertical-align: middle; }
+    .itens-table tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.1s; }
+    .itens-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+    .itens-table tbody tr.novo-item { animation: flash-verde 0.8s ease-out; }
+    @keyframes flash-verde {
+      0%   { background: rgba(34,197,94,0.25); }
+      100% { background: transparent; }
+    }
+    .item-nome { font-weight: 600; font-size: 0.9rem; }
+    .item-var  { color: #64748b; font-size: 0.75rem; }
+    .item-preco { color: var(--pdv-green); font-weight: 700; }
+    .qtd-input {
+      width: 68px;
+      background: #0a0a1a;
+      border: 1px solid var(--pdv-border);
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 0.2rem 0.3rem;
+      font-size: 0.9rem;
+    }
+    .qtd-input:focus { border-color: var(--pdv-accent); outline: none; }
+    .btn-remover-item {
+      background: none; border: none;
+      color: #ef4444; font-size: 1rem;
+      cursor: pointer; padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      transition: background 0.1s;
+    }
+    .btn-remover-item:hover { background: rgba(239,68,68,0.15); }
+    .vazio-msg {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #4b5563;
+    }
+
+    /* RODAPÉ ESQUERDA */
+    .pdv-footer-left {
+      background: var(--pdv-panel);
+      border-top: 1px solid var(--pdv-border);
+      padding: 0.5rem 1rem;
+      display: flex; gap: 1rem; align-items: center;
+    }
+
+    /* DIREITA */
+    .pdv-right {
+      background: var(--pdv-panel);
+      border-left: 2px solid var(--pdv-border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* CLIENTE */
+    .cliente-area {
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid var(--pdv-border);
+      background: rgba(59,130,246,0.06);
+    }
+    .cliente-area label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* TOTAIS */
+    .totais-area {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--pdv-border);
+    }
+    .tot-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem; }
+    .tot-label { color: #94a3b8; font-size: 0.85rem; }
+    .tot-val { font-weight: 600; }
+    .tot-total-label { color: #e2e8f0; font-size: 1.1rem; font-weight: 700; }
+    .tot-total-val { color: var(--pdv-green); font-size: 1.8rem; font-weight: 800; }
+    .tot-troco { color: #fbbf24; font-size: 1.3rem; font-weight: 800; }
+
+    /* PAGAMENTOS */
+    .pag-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.6rem 0.75rem;
+    }
+    .pag-area label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+    .forma-btn {
+      background: #1e1e42;
+      border: 1px solid var(--pdv-border);
+      color: #cbd5e1;
+      border-radius: 8px;
+      padding: 0.4rem 0.6rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .forma-btn:hover { border-color: var(--pdv-accent); color: #fff; }
+    .forma-btn.ativo { background: var(--pdv-accent); border-color: var(--pdv-accent); color: #fff; font-weight: 700; }
+    .pag-item {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #1e1e42; border-radius: 8px;
+      padding: 0.4rem 0.6rem; margin-bottom: 0.35rem;
+    }
+
+    /* BOTÃO FINALIZAR */
+    .btn-finalizar {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #000; font-weight: 800;
+      font-size: 1.15rem;
+      border: none;
+      padding: 0.85rem;
+      width: 100%;
+      border-radius: 0;
+      letter-spacing: 0.04em;
+      transition: opacity 0.15s;
+    }
+    .btn-finalizar:hover:not(:disabled) { opacity: 0.9; }
+    .btn-finalizar:disabled { background: #374151; color: #6b7280; cursor: not-allowed; }
+
+    /* TOAST SCAN */
+    #toast-scan {
+      position: fixed;
+      bottom: 80px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #16a34a;
+      color: #fff;
+      padding: 0.6rem 1.5rem;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      z-index: 9999;
+      opacity: 0;
+      transition: all 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    #toast-scan.visivel {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* MODAL CÂMERA */
+    #scanner-video { width: 100%; border-radius: 8px; }
+    #scanner-overlay {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+    }
+    .scan-frame {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 200px; height: 200px;
+      border: 3px solid var(--pdv-green);
+      border-radius: 12px;
+      box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);
+    }
+
+    @media (max-width: 768px) {
+      .pdv-main { grid-template-columns: 1fr; height: auto; }
+      .pdv-right { border-left: none; border-top: 2px solid var(--pdv-border); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<div class="pdv-header">
+  <div class="d-flex align-items-center gap-3">
+    <a href="{% url 'core:dashboard' %}" class="text-decoration-none text-secondary">
+      <i class="bi bi-arrow-left"></i>
+    </a>
+    <span class="fw-bold"><i class="bi bi-shop me-1 text-success"></i>PDV</span>
+    {% if sessao_caixa %}
+    <span class="badge bg-success py-1"><i class="bi bi-safe me-1"></i>Caixa {{ sessao_caixa.caixa.numero }}</span>
+    {% else %}
+    <span class="badge bg-warning text-dark py-1"><i class="bi bi-exclamation-triangle me-1"></i>Sem caixa</span>
+    {% endif %}
+  </div>
+  <div class="d-flex align-items-center gap-3">
+    <span class="text-secondary small d-none d-md-inline">F2=Buscar · F4=Cliente · F6=Pagar · Esc=Limpar</span>
+    <span class="text-white small fw-bold" id="relogio"></span>
+    <a href="{% url 'vendas:lista' %}" class="btn btn-sm btn-outline-secondary text-white border-0">
+      <i class="bi bi-list-ul"></i>
+    </a>
+  </div>
+</div>
+
+<!-- ══ LAYOUT PRINCIPAL ══ -->
+<div class="pdv-main">
+
+  <!-- ════ ESQUERDA ════ -->
+  <div class="pdv-left">
+
+    <!-- Scanner / Busca -->
+    <div class="scanner-area">
+      <div class="sugestoes-wrap">
+        <div class="scanner-input-wrap">
+          <i class="bi bi-upc-scan scan-icon" id="scan-icon"></i>
+          <input type="text" id="busca-produto"
+                 placeholder="Código de barras, QR Code ou nome do produto... (F2)"
+                 autocomplete="off" spellcheck="false">
+          <div class="scan-btns">
+            <button class="btn btn-sm btn-outline-secondary text-white border-0 py-1"
+                    onclick="abrirScannerCamera()" title="Câmera QR Code">
+              <i class="bi bi-camera"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-secondary text-white border-0 py-1"
+                    onclick="document.getElementById('busca-produto').focus()" title="Focar scanner">
+              <i class="bi bi-lightning-charge"></i>
+            </button>
+          </div>
+        </div>
+        <div class="sugestoes-lista d-none" id="sugestoes"></div>
+      </div>
+    </div>
+
+    <!-- Tabela de itens -->
+    <div class="itens-area">
+      <table class="itens-table">
+        <thead>
+          <tr>
+            <th style="width:38%">Produto</th>
+            <th class="text-center" style="width:80px">Qtd</th>
+            <th class="text-end">Unit.</th>
+            <th class="text-center" style="width:60px">Desc%</th>
+            <th class="text-end">Total</th>
+            <th style="width:36px"></th>
+          </tr>
+        </thead>
+        <tbody id="itens-tbody">
+          <tr id="linha-vazia">
+            <td colspan="6">
+              <div class="vazio-msg">
+                <i class="bi bi-upc-scan" style="font-size:3rem;display:block;margin-bottom:0.75rem;opacity:0.2"></i>
+                <div style="font-size:1rem;margin-bottom:0.3rem">Nenhum produto adicionado</div>
+                <small>Aponte o scanner para o código de barras ou<br>busque pelo nome acima</small>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Rodapé: obs + desconto + canal -->
+    <div class="pdv-footer-left">
+      <input type="text" id="observacoes"
+             class="form-control form-control-sm bg-dark border-secondary text-white"
+             placeholder="Observações..." style="flex:2">
+      <div style="flex:1;min-width:120px">
+        <div class="input-group input-group-sm">
+          <span class="input-group-text bg-dark border-secondary text-muted">R$</span>
+          <input type="number" id="desconto-global"
+                 class="form-control bg-dark border-secondary text-white"
+                 value="0" min="0" step="0.01" placeholder="Desc."
+                 onchange="atualizarTotais()" title="Desconto global">
+        </div>
+      </div>
+      <select id="canal" class="form-select form-select-sm bg-dark border-secondary text-white" style="width:130px">
+        <option value="LOJA">Loja Física</option>
+        <option value="WHATSAPP">WhatsApp</option>
+        <option value="INSTAGRAM">Instagram</option>
+        <option value="TELEFONE">Telefone</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ════ DIREITA ════ -->
+  <div class="pdv-right">
+
+    <!-- Cliente -->
+    <div class="cliente-area">
+      <label class="d-block mb-1"><i class="bi bi-person me-1"></i>Cliente (F4)</label>
+      <div class="sugestoes-wrap">
+        <div class="d-flex gap-1">
+          <input type="text" id="busca-cliente"
+                 class="form-control form-control-sm bg-dark border-secondary text-white"
+                 placeholder="Nome, CPF ou celular..." autocomplete="off">
+          <button class="btn btn-sm btn-outline-secondary text-white border-0"
+                  id="btn-limpar-cliente" title="Remover cliente">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+        <div class="sugestoes-lista d-none" id="sugestoes-cliente"></div>
+      </div>
+      <div id="cliente-selecionado" class="mt-1 d-none">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-person-check text-success"></i>
+          <div>
+            <div class="fw-semibold small" id="cliente-nome"></div>
+            <small class="text-muted" id="cliente-info"></small>
+          </div>
+          <div id="cliente-devedor" class="d-none ms-auto">
+            <span class="badge bg-danger"><i class="bi bi-exclamation-triangle me-1"></i>Devedor</span>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" id="cliente-id" value="">
+    </div>
+
+    <!-- Totais -->
+    <div class="totais-area">
+      <div class="tot-row">
+        <span class="tot-label">Subtotal</span>
+        <span class="tot-val" id="exib-subtotal">R$ 0,00</span>
+      </div>
+      <div class="tot-row">
+        <span class="tot-label">Desconto</span>
+        <span class="tot-val text-danger" id="exib-desconto">- R$ 0,00</span>
+      </div>
+      <hr style="border-color:var(--pdv-border);margin:0.4rem 0">
+      <div class="tot-row">
+        <span class="tot-total-label">TOTAL</span>
+        <span class="tot-total-val" id="exib-total">R$ 0,00</span>
+      </div>
+      <hr style="border-color:var(--pdv-border);margin:0.4rem 0">
+      <div class="tot-row">
+        <span class="tot-label">Pago</span>
+        <span class="tot-val text-info" id="exib-pago">R$ 0,00</span>
+      </div>
+      <div class="tot-row">
+        <span class="tot-label">Troco</span>
+        <span class="tot-troco" id="exib-troco">R$ 0,00</span>
+      </div>
+    </div>
+
+    <!-- Formas de pagamento -->
+    <div class="pag-area">
+      <label class="d-block mb-2"><i class="bi bi-credit-card me-1"></i>Forma de Pagamento</label>
+      <div class="d-flex flex-wrap gap-1 mb-3">
+        {% for val, label in formas_pagamento %}
+        <button class="forma-btn" data-forma="{{ val }}" onclick="selecionarForma('{{ val }}', '{{ label }}')">
+          {{ label }}
+        </button>
+        {% endfor %}
+      </div>
+
+      <!-- Pagamentos registrados -->
+      <div id="lista-pagamentos" class="mb-2"></div>
+
+      <!-- Input de valor -->
+      <div class="d-none" id="input-pagamento">
+        <label class="d-block mb-1" id="label-forma-sel" style="font-size:0.8rem;color:#94a3b8"></label>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text bg-dark border-secondary text-muted">R$</span>
+          <input type="number" id="valor-pagamento"
+                 class="form-control bg-dark border-secondary text-white"
+                 step="0.01" min="0" placeholder="0,00">
+          <input type="number" id="parcelas-pagamento"
+                 class="form-control bg-dark border-secondary text-white"
+                 value="1" min="1" max="24" style="max-width:65px" title="Nº de parcelas">
+          <button class="btn btn-success btn-sm" onclick="adicionarPagamento()">
+            <i class="bi bi-plus-lg"></i>
+          </button>
+        </div>
+        <small class="text-muted">Restante: <span class="text-warning fw-bold" id="restante">R$ 0,00</span></small>
+      </div>
+    </div>
+
+    <!-- Botão finalizar -->
+    <div>
+      <button class="btn-finalizar" id="btn-finalizar" disabled onclick="finalizarVenda()">
+        <i class="bi bi-check-circle me-2"></i>FINALIZAR (F6)
+      </button>
+      <div class="d-flex gap-1 p-1" style="background:var(--pdv-panel);border-top:1px solid var(--pdv-border)">
+        <button class="btn btn-sm btn-outline-danger flex-fill" onclick="limparVenda()">
+          <i class="bi bi-trash me-1"></i>Limpar (Esc)
+        </button>
+        {% if sessao_caixa %}
+        <a href="{% url 'caixa:sessao' sessao_caixa.pk %}" class="btn btn-sm btn-outline-secondary text-white">
+          <i class="bi bi-safe"></i>
+        </a>
+        {% endif %}
+        <a href="{% url 'vendas:lista' %}" class="btn btn-sm btn-outline-secondary text-white">
+          <i class="bi bi-list-ul"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Quantidade / Preço ══ -->
+<div class="modal fade" id="modalItem" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content border-0" style="background:#1a1a35;color:#e2e8f0">
+      <div class="modal-header border-secondary py-2">
+        <div>
+          <div class="fw-bold" id="modal-produto-nome" style="font-size:0.95rem"></div>
+          <small class="text-muted" id="modal-produto-cod"></small>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body py-2">
+        <div class="mb-2">
+          <label class="form-label small text-muted mb-1">Quantidade</label>
+          <input type="number" id="modal-quantidade"
+                 class="form-control bg-dark border-secondary text-white text-center fw-bold"
+                 style="font-size:1.3rem" value="1" min="0.001" step="1">
+        </div>
+        <div class="mb-2">
+          <label class="form-label small text-muted mb-1">Preço unitário (R$)</label>
+          <input type="number" id="modal-preco"
+                 class="form-control bg-dark border-secondary text-white"
+                 step="0.01" min="0">
+        </div>
+        <div class="mb-2">
+          <label class="form-label small text-muted mb-1">Desconto (%)</label>
+          <input type="number" id="modal-desconto-item"
+                 class="form-control bg-dark border-secondary text-white"
+                 value="0" min="0" max="100" step="0.01">
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-1 px-2 rounded"
+             style="background:#0d0d1a">
+          <span class="text-muted small">Total do item:</span>
+          <strong style="color:var(--pdv-green);font-size:1.1rem" id="modal-total-item">R$ 0,00</strong>
+        </div>
+      </div>
+      <div class="modal-footer border-secondary py-1">
+        <button class="btn btn-success w-100 fw-bold" onclick="confirmarItem()">
+          <i class="bi bi-cart-plus me-1"></i>Adicionar ao Carrinho
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Câmera QR Code ══ -->
+<div class="modal fade" id="modalCamera" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content border-0" style="background:#1a1a35;color:#e2e8f0">
+      <div class="modal-header border-secondary">
+        <h6 class="modal-title"><i class="bi bi-camera me-2"></i>Scanner de Câmera</h6>
+        <button type="button" class="btn-close btn-close-white"
+                data-bs-dismiss="modal" onclick="pararCamera()"></button>
+      </div>
+      <div class="modal-body p-2">
+        <div class="position-relative">
+          <video id="scanner-video" autoplay playsinline muted></video>
+          <div id="scanner-overlay">
+            <div class="scan-frame"></div>
+          </div>
+          <canvas id="scanner-canvas" style="display:none"></canvas>
+        </div>
+        <p class="text-center text-muted small mt-2 mb-0">
+          <i class="bi bi-info-circle me-1"></i>Aponte a câmera para o código de barras ou QR Code
+        </p>
+        <div id="camera-resultado" class="alert alert-success mt-2 d-none py-1 text-center"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Venda Finalizada ══ -->
+<div class="modal fade" id="modalSucesso" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content border-0" style="background:#0f2b1f;color:#e2e8f0;border:2px solid #22c55e !important">
+      <div class="modal-body text-center py-4">
+        <div style="font-size:4rem;line-height:1">✅</div>
+        <h4 class="mt-2 fw-bold" style="color:#22c55e">Venda Finalizada!</h4>
+        <p class="text-muted mb-1">Nº <strong class="text-white" id="suc-numero"></strong></p>
+        <div class="rounded p-3 my-2" style="background:#0a1f12">
+          <div class="d-flex justify-content-between mb-1">
+            <span class="text-muted">Total</span><span class="fw-bold" id="suc-total"></span>
+          </div>
+          <div class="d-flex justify-content-between mb-1">
+            <span class="text-muted">Pago</span><span id="suc-pago"></span>
+          </div>
+          <hr style="border-color:#1e4030">
+          <div class="d-flex justify-content-between">
+            <span class="fw-bold" style="color:#fbbf24">TROCO</span>
+            <span class="fw-bold" style="color:#fbbf24;font-size:1.6rem" id="suc-troco"></span>
+          </div>
+        </div>
+        <div class="d-flex gap-2 justify-content-center mt-2">
+          <button class="btn btn-outline-secondary" onclick="novaVenda()">
+            <i class="bi bi-plus me-1"></i>Nova Venda
+          </button>
+          <a id="link-cupom" href="#" target="_blank" class="btn btn-outline-light">
+            <i class="bi bi-printer me-1"></i>Cupom
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST SCAN ══ -->
+<div id="toast-scan">
+  <i class="bi bi-check-circle me-2"></i>
+  <span id="toast-scan-msg"></span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jsQR para leitura de QR Code via câmera -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  ESTADO DO PDV
+// ═══════════════════════════════════════════════════════════════
+let itens      = [];    // [{produto_id, grade_id, nome, codigo, variacao, quantidade, preco_unitario, desconto, total}]
+let pagamentos = [];    // [{forma, label, valor, parcelas}]
+let produtoTemp = null; // produto aguardando confirmação no modal
+let formaTemp   = null; // forma de pagamento selecionada
+let sugestoesList = []; // resultados do dropdown (para navegação por setas)
+let sugestaoIdx = -1;
+
+// Variáveis do scanner de câmera
+let cameraStream    = null;
+let cameraInterval  = null;
+
+// Detecção de scanner físico (digita muito rápido)
+let lastKeyTime = 0;
+let scanBuffer  = '';
+let scanTimeout = null;
+
+// ═══════════════════════════════════════════════════════════════
+//  RELÓGIO
+// ═══════════════════════════════════════════════════════════════
+setInterval(() => {
+  document.getElementById('relogio').textContent = new Date().toLocaleTimeString('pt-BR');
+}, 1000);
+
+// ═══════════════════════════════════════════════════════════════
+//  BUSCA DE PRODUTO — com detecção de scanner físico
+// ═══════════════════════════════════════════════════════════════
+const inputBusca = document.getElementById('busca-produto');
+let debounceTimer = null;
+
+inputBusca.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    clearTimeout(debounceTimer);
+    const q = this.value.trim();
+    if (q.length >= 1) buscarImediato(q);
+    return;
+  }
+  if (e.key === 'ArrowDown') { e.preventDefault(); moverSugestao(1); return; }
+  if (e.key === 'ArrowUp')   { e.preventDefault(); moverSugestao(-1); return; }
+  if (e.key === 'Escape')    { fecharSugestoes(); return; }
+});
+
+inputBusca.addEventListener('input', function() {
+  const q = this.value.trim();
+  const agora = Date.now();
+  const intervalo = agora - lastKeyTime;
+  lastKeyTime = agora;
+
+  // Se intervalo < 50ms → provavelmente scanner físico digitando rápido
+  if (intervalo < 50 && q.length > 1) {
+    clearTimeout(scanTimeout);
+    clearTimeout(debounceTimer);
+    scanBuffer = q;
+    scanTimeout = setTimeout(() => {
+      // Após parar de digitar (scanner terminou)
+      buscarImediato(scanBuffer);
+      scanBuffer = '';
+    }, 120);
+    return;
+  }
+
+  // Digitação normal: debounce de 300ms
+  clearTimeout(debounceTimer);
+  if (q.length < 2) { fecharSugestoes(); return; }
+  debounceTimer = setTimeout(() => buscarDropdown(q), 300);
+});
+
+// Busca imediata (Enter ou scanner) — tenta auto-adicionar se houver 1 resultado exato
+function buscarImediato(q) {
+  fetch(`/produtos/buscar/?q=${encodeURIComponent(q)}`)
+    .then(r => r.json())
+    .then(data => {
+      if (!data.results || data.results.length === 0) {
+        mostrarToast(`Produto não encontrado: "${q}"`, 'erro');
+        inputBusca.value = '';
+        fecharSugestoes();
+        return;
+      }
+
+      // Prioridade: código de barras exato
+      const exato = data.results.find(p =>
+        p.codigo === q || p.codigo_barras === q
+      );
+
+      if (exato || data.results.length === 1) {
+        // Auto-adiciona direto ao carrinho!
+        const p = exato || data.results[0];
+        autoAdicionarProduto(p);
+        inputBusca.value = '';
+        fecharSugestoes();
+      } else {
+        // Vários resultados → mostra dropdown
+        mostrarSugestoes(data.results);
+      }
+    })
+    .catch(() => {
+      mostrarToast('Erro ao buscar produto', 'erro');
+    });
+}
+
+// Busca com dropdown (digitação normal)
+function buscarDropdown(q) {
+  fetch(`/produtos/buscar/?q=${encodeURIComponent(q)}`)
+    .then(r => r.json())
+    .then(data => {
+      if (!data.results || data.results.length === 0) {
+        document.getElementById('sugestoes').innerHTML =
+          '<div class="sugestao-item text-muted"><small>Nenhum produto encontrado</small></div>';
+        document.getElementById('sugestoes').classList.remove('d-none');
+        return;
+      }
+      mostrarSugestoes(data.results);
+    });
+}
+
+function mostrarSugestoes(results) {
+  sugestoesList = results;
+  sugestaoIdx = -1;
+  const lista = document.getElementById('sugestoes');
+  lista.innerHTML = results.map((p, i) => `
+    <div class="sugestao-item" data-idx="${i}"
+         onclick="selecionarDaLista(${i})"
+         onmouseenter="sugestaoIdx=${i};realcarSugestao()">
+      <div>
+        <div class="sug-nome">${p.nome}${p.cor ? ` <small class="text-muted">${p.cor}/${p.tamanho}</small>` : ''}</div>
+        <div class="sug-cod"><i class="bi bi-upc me-1"></i>${p.codigo}${p.codigo_barras ? ' · ' + p.codigo_barras : ''}</div>
+      </div>
+      <div class="text-end">
+        <div class="sug-preco">R$ ${fmt(p.preco)}</div>
+        <div class="sug-estoque ${parseFloat(p.estoque) <= 0 ? 'text-danger' : 'text-muted'}">
+          Est: ${parseFloat(p.estoque || 0).toFixed(0)}
+          ${parseFloat(p.estoque) <= 0 ? '<i class="bi bi-exclamation-triangle"></i>' : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+  lista.classList.remove('d-none');
+}
+
+function moverSugestao(dir) {
+  if (!sugestoesList.length) return;
+  sugestaoIdx = Math.max(-1, Math.min(sugestoesList.length - 1, sugestaoIdx + dir));
+  realcarSugestao();
+  if (sugestaoIdx >= 0) {
+    const el = document.querySelector(`[data-idx="${sugestaoIdx}"]`);
+    if (el) el.scrollIntoView({block:'nearest'});
+  }
+}
+
+function realcarSugestao() {
+  document.querySelectorAll('.sugestao-item').forEach((el, i) => {
+    el.classList.toggle('ativo', i === sugestaoIdx);
+  });
+}
+
+// Ao pressionar Enter com item selecionado no dropdown
+inputBusca.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && sugestaoIdx >= 0 && sugestoesList.length > 0) {
+    e.preventDefault();
+    selecionarDaLista(sugestaoIdx);
+  }
+}, true); // capture para rodar antes do handler anterior
+
+function selecionarDaLista(idx) {
+  const p = sugestoesList[idx];
+  if (!p) return;
+  fecharSugestoes();
+  inputBusca.value = '';
+  abrirModalItem(p);
+}
+
+function fecharSugestoes() {
+  document.getElementById('sugestoes').classList.add('d-none');
+  sugestoesList = [];
+  sugestaoIdx = -1;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  AUTO-ADICIONAR (scan exato → vai direto para o carrinho com qtd=1)
+// ═══════════════════════════════════════════════════════════════
+function autoAdicionarProduto(p) {
+  const qtd = 1;
+  const preco = parseFloat(p.preco);
+  const total = preco * qtd;
+
+  // Verifica se já existe no carrinho → incrementa
+  const existente = itens.findIndex(i =>
+    i.produto_id === p.id && i.grade_id === (p.grade_id || null)
+  );
+
+  if (existente >= 0) {
+    itens[existente].quantidade += 1;
+    itens[existente].total = itens[existente].preco_unitario * itens[existente].quantidade * (1 - itens[existente].desconto / 100);
+    renderizarItens(existente);
+    atualizarTotais();
+    mostrarToast(`+1 ${p.nome}`, 'ok');
+    return;
+  }
+
+  itens.push({
+    produto_id: p.id,
+    grade_id: p.grade_id || null,
+    nome: p.nome,
+    codigo: p.codigo,
+    variacao: p.cor ? `${p.cor} / ${p.tamanho}` : '',
+    quantidade: qtd,
+    preco_unitario: preco,
+    desconto: 0,
+    total: total,
+  });
+
+  renderizarItens(itens.length - 1);
+  atualizarTotais();
+  mostrarToast(`${p.nome} adicionado!`, 'ok');
+  document.getElementById('busca-produto').focus();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MODAL DE CONFIRMAÇÃO DE ITEM
+// ═══════════════════════════════════════════════════════════════
+function abrirModalItem(p) {
+  produtoTemp = p;
+  document.getElementById('modal-produto-nome').textContent =
+    p.nome + (p.cor ? ` — ${p.cor} / ${p.tamanho}` : '');
+  document.getElementById('modal-produto-cod').textContent = `Cód: ${p.codigo}`;
+  document.getElementById('modal-quantidade').value = 1;
+  document.getElementById('modal-preco').value = parseFloat(p.preco).toFixed(2);
+  document.getElementById('modal-desconto-item').value = 0;
+  calcularModalTotal();
+  new bootstrap.Modal(document.getElementById('modalItem')).show();
+  setTimeout(() => document.getElementById('modal-quantidade').select(), 300);
+}
+
+// Mantém compatibilidade com o click no dropdown
+function selecionarProduto(p) {
+  abrirModalItem(p);
+}
+
+function calcularModalTotal() {
+  const qtd   = parseFloat(document.getElementById('modal-quantidade').value) || 0;
+  const preco = parseFloat(document.getElementById('modal-preco').value) || 0;
+  const desc  = parseFloat(document.getElementById('modal-desconto-item').value) || 0;
+  document.getElementById('modal-total-item').textContent =
+    'R$ ' + (preco * qtd * (1 - desc / 100)).toLocaleString('pt-BR', {minimumFractionDigits: 2});
+}
+['modal-quantidade','modal-preco','modal-desconto-item'].forEach(id =>
+  document.getElementById(id).addEventListener('input', calcularModalTotal)
+);
+document.getElementById('modal-quantidade').addEventListener('keydown', e => {
+  if (e.key === 'Enter') confirmarItem();
+});
+
+function confirmarItem() {
+  const qtd   = parseFloat(document.getElementById('modal-quantidade').value) || 1;
+  const preco = parseFloat(document.getElementById('modal-preco').value);
+  const desc  = parseFloat(document.getElementById('modal-desconto-item').value) || 0;
+  const total = preco * qtd * (1 - desc / 100);
+
+  itens.push({
+    produto_id: produtoTemp.id,
+    grade_id:   produtoTemp.grade_id || null,
+    nome:       produtoTemp.nome,
+    codigo:     produtoTemp.codigo,
+    variacao:   produtoTemp.cor ? `${produtoTemp.cor} / ${produtoTemp.tamanho}` : '',
+    quantidade: qtd,
+    preco_unitario: preco,
+    desconto:   desc,
+    total:      total,
+  });
+
+  bootstrap.Modal.getInstance(document.getElementById('modalItem')).hide();
+  renderizarItens(itens.length - 1);
+  atualizarTotais();
+  inputBusca.focus();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  RENDERIZAÇÃO DA TABELA
+// ═══════════════════════════════════════════════════════════════
+function renderizarItens(novoIdx) {
+  const tbody = document.getElementById('itens-tbody');
+  document.getElementById('linha-vazia').style.display = itens.length ? 'none' : '';
+  tbody.querySelectorAll('.linha-item').forEach(el => el.remove());
+
+  itens.forEach((item, idx) => {
+    const tr = document.createElement('tr');
+    tr.className = 'linha-item';
+    if (idx === novoIdx) tr.classList.add('novo-item');
+    tr.innerHTML = `
+      <td>
+        <div class="item-nome">${item.nome}</div>
+        ${item.variacao ? `<div class="item-var">${item.variacao}</div>` : ''}
+      </td>
+      <td class="text-center">
+        <input type="number" class="qtd-input"
+               value="${item.quantidade}" min="0.001" step="1"
+               onchange="editarQtd(${idx}, this.value)">
+      </td>
+      <td class="text-end item-preco">R$ ${fmt(item.preco_unitario)}</td>
+      <td class="text-center text-muted">${item.desconto > 0 ? item.desconto + '%' : '—'}</td>
+      <td class="text-end item-preco">R$ ${fmt(item.total)}</td>
+      <td class="text-center">
+        <button class="btn-remover-item" onclick="removerItem(${idx})" title="Remover">
+          <i class="bi bi-x-circle"></i>
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function editarQtd(idx, val) {
+  itens[idx].quantidade = parseFloat(val) || 0;
+  itens[idx].total = itens[idx].preco_unitario * itens[idx].quantidade * (1 - itens[idx].desconto / 100);
+  renderizarItens(-1);
+  atualizarTotais();
+}
+
+function removerItem(idx) {
+  itens.splice(idx, 1);
+  renderizarItens(-1);
+  atualizarTotais();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TOTAIS
+// ═══════════════════════════════════════════════════════════════
+function atualizarTotais() {
+  const subtotal  = itens.reduce((s, i) => s + i.total, 0);
+  const descGlobal = parseFloat(document.getElementById('desconto-global').value) || 0;
+  const total     = Math.max(0, subtotal - descGlobal);
+  const totalPago = pagamentos.reduce((s, p) => s + p.valor, 0);
+  const troco     = Math.max(0, totalPago - total);
+  const restante  = Math.max(0, total - totalPago);
+
+  document.getElementById('exib-subtotal').textContent  = 'R$ ' + fmt(subtotal);
+  document.getElementById('exib-desconto').textContent  = '- R$ ' + fmt(descGlobal);
+  document.getElementById('exib-total').textContent     = 'R$ ' + fmt(total);
+  document.getElementById('exib-pago').textContent      = 'R$ ' + fmt(totalPago);
+  document.getElementById('exib-troco').textContent     = 'R$ ' + fmt(troco);
+  document.getElementById('restante').textContent       = 'R$ ' + fmt(restante);
+
+  const inputPag = document.getElementById('valor-pagamento');
+  if (inputPag && restante > 0) inputPag.value = restante.toFixed(2);
+
+  document.getElementById('btn-finalizar').disabled =
+    !(itens.length > 0 && pagamentos.length > 0 && totalPago >= total);
+}
+
+function fmt(v) {
+  return parseFloat(v || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PAGAMENTOS
+// ═══════════════════════════════════════════════════════════════
+function selecionarForma(forma, label) {
+  formaTemp = {forma, label};
+  document.getElementById('label-forma-sel').textContent = label;
+  document.getElementById('input-pagamento').classList.remove('d-none');
+  document.querySelectorAll('.forma-btn').forEach(b => b.classList.remove('ativo'));
+  document.querySelector(`[data-forma="${forma}"]`)?.classList.add('ativo');
+
+  // Preenche com valor restante
+  const subtotal   = itens.reduce((s, i) => s + i.total, 0);
+  const descGlobal = parseFloat(document.getElementById('desconto-global').value) || 0;
+  const total      = Math.max(0, subtotal - descGlobal);
+  const totalPago  = pagamentos.reduce((s, p) => s + p.valor, 0);
+  const restante   = Math.max(0, total - totalPago);
+  document.getElementById('valor-pagamento').value = restante.toFixed(2);
+  setTimeout(() => document.getElementById('valor-pagamento').select(), 50);
+}
+
+document.getElementById('valor-pagamento').addEventListener('keydown', e => {
+  if (e.key === 'Enter') adicionarPagamento();
+});
+
+function adicionarPagamento() {
+  if (!formaTemp) return;
+  const valor    = parseFloat(document.getElementById('valor-pagamento').value) || 0;
+  const parcelas = parseInt(document.getElementById('parcelas-pagamento').value) || 1;
+  if (valor <= 0) return;
+
+  pagamentos.push({forma: formaTemp.forma, label: formaTemp.label, valor, parcelas});
+  renderizarPagamentos();
+  atualizarTotais();
+  document.getElementById('input-pagamento').classList.add('d-none');
+  document.querySelectorAll('.forma-btn').forEach(b => b.classList.remove('ativo'));
+  formaTemp = null;
+}
+
+function renderizarPagamentos() {
+  document.getElementById('lista-pagamentos').innerHTML = pagamentos.map((p, idx) => `
+    <div class="pag-item">
+      <div>
+        <span class="badge bg-secondary me-1">${p.label}</span>
+        ${p.parcelas > 1 ? `<small class="text-muted">${p.parcelas}x</small>` : ''}
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <span style="color:var(--pdv-green);font-weight:700">R$ ${fmt(p.valor)}</span>
+        <button class="btn-remover-item" onclick="removerPagamento(${idx})"><i class="bi bi-x"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function removerPagamento(idx) {
+  pagamentos.splice(idx, 1);
+  renderizarPagamentos();
+  atualizarTotais();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  BUSCA DE CLIENTE
+// ═══════════════════════════════════════════════════════════════
+let debounceCliente = null;
+document.getElementById('busca-cliente').addEventListener('input', function() {
+  clearTimeout(debounceCliente);
+  const q = this.value.trim();
+  if (q.length < 2) { document.getElementById('sugestoes-cliente').classList.add('d-none'); return; }
+  debounceCliente = setTimeout(() => {
+    fetch(`/clientes/buscar/?q=${encodeURIComponent(q)}`)
+      .then(r => r.json())
+      .then(data => {
+        const lista = document.getElementById('sugestoes-cliente');
+        lista.innerHTML = (data.results && data.results.length)
+          ? data.results.map(c => `
+              <div class="sugestao-item"
+                   onclick="selecionarCliente(${c.id}, \`${c.nome.replace(/`/g,'')}\`, \`${(c.celular||'').replace(/`/g,'')}\`, \`${c.saldo}\`)">
+                <div>
+                  <div class="sug-nome">${c.nome}</div>
+                  <small class="text-muted">${c.celular || '—'}</small>
+                </div>
+                ${parseFloat(c.saldo) > 0 ? '<span class="badge bg-danger">Devedor</span>' : ''}
+              </div>`).join('')
+          : '<div class="sugestao-item text-muted"><small>Nenhum cliente encontrado</small></div>';
+        lista.classList.remove('d-none');
+      });
+  }, 300);
+});
+
+function selecionarCliente(id, nome, celular, saldo) {
+  document.getElementById('cliente-id').value     = id;
+  document.getElementById('cliente-nome').textContent  = nome;
+  document.getElementById('cliente-info').textContent  = celular;
+  document.getElementById('cliente-selecionado').classList.remove('d-none');
+  document.getElementById('sugestoes-cliente').classList.add('d-none');
+  document.getElementById('busca-cliente').value  = '';
+  document.getElementById('cliente-devedor').classList.toggle('d-none', parseFloat(saldo) <= 0);
+}
+
+document.getElementById('btn-limpar-cliente').addEventListener('click', () => {
+  document.getElementById('cliente-id').value = '';
+  document.getElementById('cliente-selecionado').classList.add('d-none');
+  document.getElementById('cliente-devedor').classList.add('d-none');
+  document.getElementById('busca-cliente').value = '';
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  SCANNER DE CÂMERA (jsQR)
+// ═══════════════════════════════════════════════════════════════
+function abrirScannerCamera() {
+  new bootstrap.Modal(document.getElementById('modalCamera')).show();
+  setTimeout(iniciarCamera, 400);
+}
+
+function iniciarCamera() {
+  const video  = document.getElementById('scanner-video');
+  const canvas = document.getElementById('scanner-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  navigator.mediaDevices.getUserMedia({video: {facingMode: 'environment'}})
+    .then(stream => {
+      cameraStream = stream;
+      video.srcObject = stream;
+      video.play();
+      cameraInterval = setInterval(() => {
+        if (video.readyState !== video.HAVE_ENOUGH_DATA) return;
+        canvas.width  = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0);
+        const img  = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(img.data, img.width, img.height, {inversionAttempts: 'dontInvert'});
+        if (code && code.data) {
+          processarCodigoCamara(code.data);
+        }
+      }, 250);
+    })
+    .catch(err => {
+      document.getElementById('camera-resultado').textContent =
+        'Câmera não disponível: ' + err.message;
+      document.getElementById('camera-resultado').classList.remove('d-none');
+    });
+}
+
+function processarCodigoCamara(codigo) {
+  pararCamera();
+  const modal = bootstrap.Modal.getInstance(document.getElementById('modalCamera'));
+  if (modal) modal.hide();
+
+  document.getElementById('busca-produto').value = codigo;
+  buscarImediato(codigo);
+}
+
+function pararCamera() {
+  clearInterval(cameraInterval);
+  cameraInterval = null;
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(t => t.stop());
+    cameraStream = null;
+  }
+}
+document.getElementById('modalCamera').addEventListener('hidden.bs.modal', pararCamera);
+
+// ═══════════════════════════════════════════════════════════════
+//  TOAST / NOTIFICAÇÃO VISUAL
+// ═══════════════════════════════════════════════════════════════
+let toastTimer = null;
+function mostrarToast(msg, tipo) {
+  const el  = document.getElementById('toast-scan');
+  const txt = document.getElementById('toast-scan-msg');
+  txt.textContent = msg;
+  el.style.background = tipo === 'erro' ? '#dc2626' : '#16a34a';
+  el.classList.add('visivel');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('visivel'), 2200);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  FINALIZAR VENDA
+// ═══════════════════════════════════════════════════════════════
+function finalizarVenda() {
+  if (itens.length === 0 || pagamentos.length === 0) return;
+  const btn = document.getElementById('btn-finalizar');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processando...';
+
+  const subtotal   = itens.reduce((s, i) => s + i.total, 0);
+  const descGlobal = parseFloat(document.getElementById('desconto-global').value) || 0;
+  const totalPago  = pagamentos.reduce((s, p) => s + p.valor, 0);
+
+  const payload = {
+    cliente_id: document.getElementById('cliente-id').value || null,
+    itens: itens.map(i => ({
+      produto_id:     i.produto_id,
+      grade_id:       i.grade_id,
+      quantidade:     i.quantidade,
+      preco_unitario: i.preco_unitario,
+      desconto:       i.desconto,
+    })),
+    pagamentos: pagamentos.map(p => ({forma: p.forma, valor: p.valor, parcelas: p.parcelas})),
+    desconto:     descGlobal,
+    observacoes:  document.getElementById('observacoes').value,
+    canal:        document.getElementById('canal').value,
+  };
+
+  fetch('{% url "vendas:finalizar" %}', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': '{{ csrf_token }}',
+    },
+    body: JSON.stringify(payload),
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) {
+      document.getElementById('suc-numero').textContent = data.numero;
+      document.getElementById('suc-total').textContent  = 'R$ ' + fmt(subtotal - descGlobal);
+      document.getElementById('suc-pago').textContent   = 'R$ ' + fmt(totalPago);
+      document.getElementById('suc-troco').textContent  = 'R$ ' + fmt(parseFloat(data.troco));
+      document.getElementById('link-cupom').href = `/vendas/${data.venda_id}/cupom/`;
+      new bootstrap.Modal(document.getElementById('modalSucesso')).show();
+    } else {
+      alert('Erro: ' + data.mensagem);
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>FINALIZAR (F6)';
+    }
+  })
+  .catch(() => {
+    alert('Erro de comunicação. Tente novamente.');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>FINALIZAR (F6)';
+  });
+}
+
+function novaVenda() {
+  bootstrap.Modal.getInstance(document.getElementById('modalSucesso'))?.hide();
+  limparVenda();
+}
+
+function limparVenda() {
+  itens = []; pagamentos = [];
+  renderizarItens(-1);
+  renderizarPagamentos();
+  atualizarTotais();
+  document.getElementById('desconto-global').value = 0;
+  document.getElementById('observacoes').value     = '';
+  document.getElementById('cliente-id').value      = '';
+  document.getElementById('cliente-selecionado').classList.add('d-none');
+  inputBusca.focus();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ATALHOS DE TECLADO
+// ═══════════════════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.key === 'F2') { e.preventDefault(); inputBusca.focus(); inputBusca.select(); }
+  if (e.key === 'F4') { e.preventDefault(); document.getElementById('busca-cliente').focus(); }
+  if (e.key === 'F6') {
+    e.preventDefault();
+    if (!document.getElementById('btn-finalizar').disabled) finalizarVenda();
+  }
+  if (e.key === 'Escape') {
+    fecharSugestoes();
+    document.getElementById('sugestoes-cliente').classList.add('d-none');
+  }
+});
+
+// Fechar dropdowns ao clicar fora
+document.addEventListener('click', e => {
+  if (!e.target.closest('#busca-produto') && !e.target.closest('#sugestoes'))
+    fecharSugestoes();
+  if (!e.target.closest('#busca-cliente') && !e.target.closest('#sugestoes-cliente'))
+    document.getElementById('sugestoes-cliente').classList.add('d-none');
+});
+
+// Foco automático no campo de busca ao carregar
+inputBusca.focus();
+</script>
+</body>
+</html>

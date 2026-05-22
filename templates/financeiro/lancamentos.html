@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Lançamentos Financeiros{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-0"><i class="bi bi-journal-bookmark text-primary me-2"></i>Lançamentos Financeiros</h4>
+        <small class="text-muted">{{ total }} registro(s)</small>
+    </div>
+    <a href="{% url 'financeiro:novo_lancamento' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i>Novo Lançamento
+    </a>
+</div>
+
+{# Filtros #}
+<div class="card mb-4">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm"
+                       placeholder="Descrição, plano de contas...">
+            </div>
+            <div class="col-md-2">
+                <select name="tipo" class="form-select form-select-sm">
+                    <option value="">Todos</option>
+                    <option value="RECEITA" {% if tipo == 'RECEITA' %}selected{% endif %}>Receita</option>
+                    <option value="DESPESA" {% if tipo == 'DESPESA' %}selected{% endif %}>Despesa</option>
+                    <option value="TRANSFERENCIA" {% if tipo == 'TRANSFERENCIA' %}selected{% endif %}>Transferência</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="data_de" value="{{ data_de }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="data_ate" value="{{ data_ate }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-auto d-flex gap-1">
+                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
+                <a href="{% url 'financeiro:lancamentos' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# Tabela #}
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Data</th>
+                        <th>Descrição</th>
+                        <th>Plano de Contas</th>
+                        <th>Conta Bancária</th>
+                        <th class="text-center">Tipo</th>
+                        <th class="text-end pe-3">Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lanc in page_obj %}
+                    <tr>
+                        <td class="ps-3 text-muted small">{{ lanc.data|date:"d/m/Y" }}</td>
+                        <td>
+                            <div class="fw-semibold">{{ lanc.descricao }}</div>
+                            {% if lanc.numero_documento %}
+                            <small class="text-muted">Doc: {{ lanc.numero_documento }}</small>
+                            {% endif %}
+                        </td>
+                        <td class="small">{{ lanc.plano_contas|default:"—" }}</td>
+                        <td class="small">{{ lanc.conta_bancaria|default:"—" }}</td>
+                        <td class="text-center">
+                            {% if lanc.tipo == 'RECEITA' %}
+                                <span class="badge bg-success">Receita</span>
+                            {% elif lanc.tipo == 'DESPESA' %}
+                                <span class="badge bg-danger">Despesa</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Transferência</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-3 fw-semibold {% if lanc.tipo == 'RECEITA' %}text-success{% elif lanc.tipo == 'DESPESA' %}text-danger{% endif %}">
+                            {% if lanc.tipo == 'DESPESA' %}-{% endif %}
+                            R$ {{ lanc.valor|floatformat:2 }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-journal-x display-6 d-block mb-2"></i>
+                            Nenhum lançamento encontrado.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                {% if page_obj %}
+                <tfoot class="table-light">
+                    <tr>
+                        <td colspan="5" class="ps-3 fw-semibold">Saldo da página</td>
+                        <td class="text-end pe-3 fw-bold {% if saldo_pagina >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            R$ {{ saldo_pagina|floatformat:2|default:"0,00" }}
+                        </td>
+                    </tr>
+                </tfoot>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

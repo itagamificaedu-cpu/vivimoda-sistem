@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIVIMODA — Manual do Usuário</title>
+<style>
+  :root {
+    --roxo: #6f42c1;
+    --roxo-escuro: #4b2d8f;
+    --roxo-claro: #ede9f8;
+    --verde: #198754;
+    --amarelo: #ffc107;
+    --vermelho: #dc3545;
+    --cinza: #6c757d;
+    --borda: #dee2e6;
+    --bg: #f8f9fa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #212529;
+    background: #fff;
+  }
+  /* ---- CAPA ---- */
+  .capa {
+    background: linear-gradient(135deg, #2d1b69 0%, var(--roxo) 60%, #a855f7 100%);
+    color: #fff;
+    text-align: center;
+    padding: 60px 40px 50px;
+    page-break-after: always;
+  }
+  .capa .logo-texto {
+    font-size: 56px;
+    font-weight: 900;
+    letter-spacing: 6px;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+  .capa .subtitulo {
+    font-size: 16px;
+    opacity: 0.85;
+    margin-bottom: 45px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .capa .titulo-manual {
+    font-size: 26px;
+    font-weight: 700;
+    background: rgba(255,255,255,0.15);
+    display: inline-block;
+    padding: 16px 50px;
+    border-radius: 50px;
+    margin-bottom: 45px;
+    border: 2px solid rgba(255,255,255,0.4);
+    backdrop-filter: blur(4px);
+  }
+  .capa .descricao {
+    font-size: 14px;
+    opacity: 0.8;
+    max-width: 500px;
+    margin: 0 auto 30px;
+    line-height: 1.6;
+  }
+  .capa .meta { font-size: 12px; opacity: 0.6; }
+  /* ---- LAYOUT ---- */
+  .container { max-width: 900px; margin: 0 auto; padding: 30px 40px; }
+  /* ---- INTRO ---- */
+  .intro-box {
+    background: var(--roxo-claro);
+    border: 2px solid #c8b8f0;
+    border-radius: 12px;
+    padding: 25px 30px;
+    margin-bottom: 35px;
+    text-align: center;
+  }
+  .intro-box h2 { color: var(--roxo-escuro); margin-bottom: 10px; font-size: 20px; }
+  .intro-box p { color: #495057; font-size: 14px; }
+  /* ---- ACESSO RAPIDO ---- */
+  .acesso-rapido {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 35px;
+  }
+  .card-acesso {
+    background: #fff;
+    border: 2px solid var(--borda);
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+    border-top: 4px solid var(--roxo);
+  }
+  .card-acesso .icon { font-size: 28px; margin-bottom: 8px; }
+  .card-acesso .label { font-size: 12px; color: var(--cinza); text-transform: uppercase; letter-spacing: 1px; }
+  .card-acesso .value { font-size: 15px; font-weight: 700; color: var(--roxo-escuro); font-family: monospace; }
+  /* ---- SUMARIO ---- */
+  .sumario {
+    background: var(--roxo-claro);
+    border-left: 5px solid var(--roxo);
+    padding: 25px 30px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 40px;
+  }
+  .sumario h2 { color: var(--roxo-escuro); margin-bottom: 15px; font-size: 17px; }
+  .sumario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 30px; }
+  .sumario a { color: var(--roxo-escuro); text-decoration: none; font-size: 13px; display: block; padding: 3px 0; border-bottom: 1px dotted #c8b8f0; }
+  .sumario a:hover { text-decoration: underline; }
+  .sumario a span { background: var(--roxo); color: #fff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; font-size: 11px; font-weight: 700; margin-right: 8px; }
+  /* ---- SECOES ---- */
+  .secao { margin-bottom: 50px; }
+  .secao-titulo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(90deg, var(--roxo-escuro), var(--roxo));
+    color: #fff;
+    padding: 14px 22px;
+    border-radius: 10px 10px 0 0;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .secao-emoji { font-size: 22px; }
+  .secao-corpo {
+    border: 1px solid var(--borda);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 28px;
+  }
+  /* ---- STEPS ---- */
+  .steps { list-style: none; padding: 0; }
+  .steps li {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+  .step-num {
+    background: var(--roxo);
+    color: #fff;
+    border-radius: 50%;
+    min-width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+  .step-body { flex: 1; }
+  /* ---- ALERTAS ---- */
+  .alerta {
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 15px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .alerta-icone { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .alerta-info { background: #cff4fc; border-left: 4px solid #0dcaf0; }
+  .alerta-atencao { background: #fff3cd; border-left: 4px solid var(--amarelo); }
+  .alerta-ok { background: #d1e7dd; border-left: 4px solid var(--verde); }
+  .alerta-dica { background: #f0e6ff; border-left: 4px solid var(--roxo); }
+  /* ---- TABELA ---- */
+  table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+  th { background: var(--roxo); color: #fff; padding: 10px 14px; text-align: left; font-size: 13px; }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--borda); font-size: 13px; vertical-align: top; }
+  tr:nth-child(even) td { background: var(--bg); }
+  /* ---- TECLA ---- */
+  kbd {
+    background: #e9ecef;
+    border: 1px solid #adb5bd;
+    border-bottom: 2px solid #adb5bd;
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: 12px;
+    font-family: 'Consolas', monospace;
+    color: #212529;
+  }
+  code {
+    background: #ede9f8;
+    color: var(--roxo-escuro);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Consolas', monospace;
+    font-size: 12px;
+  }
+  /* ---- GRADE FUNCIONALIDADES ---- */
+  .func-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 15px 0; }
+  .func-card {
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    padding: 14px;
+    border-top: 3px solid var(--roxo);
+  }
+  .func-card h4 { color: var(--roxo-escuro); margin-bottom: 6px; font-size: 13px; }
+  .func-card p { font-size: 12px; color: #495057; margin: 0; }
+  /* ---- FLUXO ---- */
+  .fluxo {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 15px 0;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .fluxo-item {
+    background: var(--roxo);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+  }
+  .fluxo-seta { color: var(--roxo); font-size: 20px; font-weight: 700; margin: 0 2px; }
+  /* ---- ATALHOS ---- */
+  .atalhos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+  .atalho-item {
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    background: var(--bg);
+  }
+  .atalho-item .tecla { font-size: 16px; font-weight: 900; margin-bottom: 4px; }
+  .atalho-item .desc { font-size: 11px; color: var(--cinza); }
+  /* ---- RODAPÉ ---- */
+  .rodape {
+    border-top: 2px solid var(--borda);
+    text-align: center;
+    padding: 25px;
+    color: var(--cinza);
+    font-size: 12px;
+    margin-top: 40px;
+  }
+  @media print {
+    .sem-print { display: none; }
+    .secao { page-break-inside: avoid; }
+    .capa { page-break-after: always; }
+    .container { padding: 10px 20px; }
+    body { font-size: 12px; }
+    .acesso-rapido, .func-grid, .atalhos { grid-template-columns: repeat(2, 1fr); }
+  }
+  h3 { color: var(--roxo-escuro); margin: 20px 0 10px; font-size: 15px; }
+  h4 { color: #495057; margin: 12px 0 8px; font-size: 13px; }
+  p { margin-bottom: 10px; }
+  ul, ol { padding-left: 22px; margin-bottom: 10px; }
+  li { margin-bottom: 5px; }
+  hr { border: none; border-top: 1px solid var(--borda); margin: 20px 0; }
+  strong { color: #212529; }
+</style>
+</head>
+<body>
+
+<!-- ===== CAPA ===== -->
+<div class="capa">
+  <div class="logo-texto">VIVIMODA</div>
+  <div class="subtitulo">Sistema de Gestão de Confecções</div>
+  <div class="titulo-manual">📖 MANUAL DO USUÁRIO</div>
+  <div class="descricao">
+    Guia completo para usar o sistema no dia a dia da sua loja —
+    vendas, caixa, estoque, clientes, carnê e muito mais.
+  </div>
+  <div class="meta">Versão 1.0 &nbsp;|&nbsp; 2025</div>
+</div>
+
+<div class="container">
+
+<!-- ===== BOAS-VINDAS ===== -->
+<div class="intro-box">
+  <h2>👋 Bem-vindo ao VIVIMODA!</h2>
+  <p>Este manual foi feito para você que vai usar o sistema no dia a dia da loja.<br>
+  Não precisa ser especialista em informática — está explicado de forma simples e direta.<br>
+  Guarde este manual sempre à mão!</p>
+</div>
+
+<!-- ===== ACESSO RÁPIDO ===== -->
+<div class="acesso-rapido">
+  <div class="card-acesso">
+    <div class="icon">🌐</div>
+    <div class="label">Endereço do Sistema</div>
+    <div class="value">localhost:8000</div>
+  </div>
+  <div class="card-acesso">
+    <div class="icon">👤</div>
+    <div class="label">Login Padrão</div>
+    <div class="value">admin</div>
+  </div>
+  <div class="card-acesso">
+    <div class="icon">🔑</div>
+    <div class="label">Senha Padrão</div>
+    <div class="value">confec@2024</div>
+  </div>
+</div>
+
+<!-- ===== SUMÁRIO ===== -->
+<div class="sumario">
+  <h2>📑 O que tem neste manual</h2>
+  <div class="sumario-grid">
+    <div>
+      <a href="#comecar"><span>1</span> Começando — abrir o sistema</a>
+      <a href="#pdv"><span>2</span> PDV — Fazer uma venda</a>
+      <a href="#caixa"><span>3</span> Caixa — Abrir e fechar</a>
+      <a href="#clientes"><span>4</span> Clientes — Cadastro</a>
+      <a href="#carne"><span>5</span> Carnê — Vendas a prazo</a>
+      <a href="#produtos"><span>6</span> Produtos — Cadastro</a>
+    </div>
+    <div>
+      <a href="#estoque"><span>7</span> Estoque — Controle</a>
+      <a href="#compras"><span>8</span> Compras — Fornecedores</a>
+      <a href="#financeiro"><span>9</span> Financeiro</a>
+      <a href="#relatorios"><span>10</span> Relatórios</a>
+      <a href="#backup"><span>11</span> Backup dos dados</a>
+      <a href="#ajuda"><span>12</span> Se algo não funcionar</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 1 COMEÇANDO ===== -->
+<div class="secao" id="comecar">
+  <div class="secao-titulo">
+    <div class="secao-emoji">🚀</div>
+    1. Começando — Como abrir o sistema
+  </div>
+  <div class="secao-corpo">
+
+    <h3>Abrindo o sistema</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-body">
+          Procure na Área de Trabalho o ícone<br>
+          <strong>"VIVIMODA Sistema"</strong>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-body">Dê um <strong>duplo clique</strong> nele</div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-body">Aguarde de <strong>3 a 5 segundos</strong> — o sistema inicia automaticamente</div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div class="step-body">O navegador (Chrome ou Edge) abrirá na tela de <strong>login</strong></div>
+      </li>
+      <li>
+        <div class="step-num">5</div>
+        <div class="step-body">Digite seu <strong>usuário e senha</strong> e clique em Entrar</div>
+      </li>
+    </ol>
+
+    <div class="alerta alerta-info">
+      <div class="alerta-icone">💡</div>
+      <div>
+        <strong>O sistema inicia junto com o Windows!</strong><br>
+        Quando você liga o computador, o VIVIMODA já está rodando em segundo plano.
+        Basta abrir o navegador e acessar <code>http://localhost:8000</code>
+      </div>
+    </div>
+
+    <h3>Tela Inicial (Dashboard)</h3>
+    <p>Após fazer login, você verá o painel principal com:</p>
+    <div class="func-grid">
+      <div class="func-card">
+        <h4>📊 Resumo do Dia</h4>
+        <p>Total de vendas do dia, número de pedidos e ticket médio</p>
+      </div>
+      <div class="func-card">
+        <h4>💰 Caixa Atual</h4>
+        <p>Status do caixa aberto e saldo disponível</p>
+      </div>
+      <div class="func-card">
+        <h4>⚠️ Alertas de Estoque</h4>
+        <p>Produtos com estoque baixo ou zerado</p>
+      </div>
+      <div class="func-card">
+        <h4>📈 Gráfico de Vendas</h4>
+        <p>Vendas dos últimos 7 dias em gráfico</p>
+      </div>
+    </div>
+
+    <h3>Fechando o sistema</h3>
+    <ul>
+      <li>Para <strong>sair do navegador</strong>: feche normalmente (o servidor continua rodando)</li>
+      <li>Para <strong>parar o servidor de vez</strong>: clique duplo em <code>PARAR_SERVIDOR.bat</code> na pasta do sistema</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== 2 PDV ===== -->
+<div class="secao" id="pdv">
+  <div class="secao-titulo">
+    <div class="secao-emoji">🛒</div>
+    2. PDV — Fazer uma Venda
+  </div>
+  <div class="secao-corpo">
+    <p>O PDV (Ponto de Venda) é onde você registra as vendas da loja.</p>
+
+    <div class="alerta alerta-atencao">
+      <div class="alerta-icone">⚠️</div>
+      <div>
+        <strong>Antes de vender, o caixa precisa estar aberto!</strong><br>
+        Se aparecer mensagem de "caixa fechado", vá ao menu <strong>Caixa → Abrir Caixa</strong> primeiro.
+      </div>
+    </div>
+
+    <h3>Passo a passo de uma venda</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-body">No menu, clique em <strong>Vendas → PDV</strong></div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Adicionar produto:</strong> Você pode:
+          <ul style="margin-top:8px;">
+            <li>🔍 Digitar o nome ou código do produto no campo de busca e pressionar Enter</li>
+            <li>📷 Usar o leitor de código de barras (aponte para o código e leia)</li>
+            <li>📱 Clicar no ícone de câmera para ler QR Code pela webcam</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-body">O produto aparece na lista da venda. Ajuste a <strong>quantidade</strong> se necessário clicando nos botões + e −</div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div class="step-body">(Opcional) Clique em <strong>"Vincular Cliente"</strong> para associar a venda a um cliente cadastrado</div>
+      </li>
+      <li>
+        <div class="step-num">5</div>
+        <div class="step-body">Clique em <strong>"Finalizar Venda"</strong> (ou pressione <kbd>F6</kbd>)</div>
+      </li>
+      <li>
+        <div class="step-num">6</div>
+        <div class="step-body">
+          Escolha a <strong>forma de pagamento</strong>:
+          <ul style="margin-top:8px;">
+            <li>💵 Dinheiro — informe o valor recebido para calcular o troco</li>
+            <li>💳 Cartão de Débito / Crédito</li>
+            <li>📱 PIX</li>
+            <li>📋 Carnê (venda a prazo)</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">7</div>
+        <div class="step-body">Clique em <strong>"Confirmar Pagamento"</strong> — a venda é registrada!</div>
+      </li>
+    </ol>
+
+    <h3>Atalhos de Teclado do PDV</h3>
+    <div class="atalhos">
+      <div class="atalho-item">
+        <div class="tecla"><kbd>F2</kbd></div>
+        <div class="desc">Focar no campo de busca de produto</div>
+      </div>
+      <div class="atalho-item">
+        <div class="tecla"><kbd>F4</kbd></div>
+        <div class="desc">Buscar / Vincular cliente</div>
+      </div>
+      <div class="atalho-item">
+        <div class="tecla"><kbd>F6</kbd></div>
+        <div class="desc">Finalizar a venda</div>
+      </div>
+      <div class="atalho-item">
+        <div class="tecla"><kbd>Esc</kbd></div>
+        <div class="desc">Cancelar / Limpar campo de busca</div>
+      </div>
+      <div class="atalho-item">
+        <div class="tecla"><kbd>Enter</kbd></div>
+        <div class="desc">Adicionar produto encontrado</div>
+      </div>
+      <div class="atalho-item">
+        <div class="tecla">Scanner</div>
+        <div class="desc">Adiciona automaticamente ao ler o código</div>
+      </div>
+    </div>
+
+    <h3>Como funciona o leitor de código de barras</h3>
+    <p>Se você tem um <strong>leitor USB de código de barras</strong>:</p>
+    <ol>
+      <li>Conecte o leitor no computador (porta USB)</li>
+      <li>Clique na tela do PDV para que fique ativa</li>
+      <li>Aponte o leitor para o código de barras do produto</li>
+      <li>O produto é encontrado e adicionado automaticamente ao carrinho!</li>
+    </ol>
+
+    <div class="alerta alerta-dica">
+      <div class="alerta-icone">💜</div>
+      <div>
+        <strong>Dica:</strong> O sistema detecta automaticamente se está usando o leitor (velocidade de digitação)
+        ou se o usuário está digitando. Não precisa configurar nada!
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 3 CAIXA ===== -->
+<div class="secao" id="caixa">
+  <div class="secao-titulo">
+    <div class="secao-emoji">💼</div>
+    3. Caixa — Abrir, Usar e Fechar
+  </div>
+  <div class="secao-corpo">
+
+    <h3>Abrindo o caixa (início do dia)</h3>
+    <ol class="steps">
+      <li><div class="step-num">1</div><div class="step-body">Vá em <strong>Menu → Caixa</strong></div></li>
+      <li><div class="step-num">2</div><div class="step-body">Clique em <strong>"Abrir Caixa"</strong></div></li>
+      <li><div class="step-num">3</div><div class="step-body">Selecione o caixa (se houver mais de um)</div></li>
+      <li><div class="step-num">4</div><div class="step-body">Informe o <strong>valor de abertura</strong> (troco disponível em dinheiro, exemplo: R$ 100,00)</div></li>
+      <li><div class="step-num">5</div><div class="step-body">Clique em <strong>"Abrir"</strong></div></li>
+    </ol>
+
+    <h3>Sangria (retirar dinheiro durante o dia)</h3>
+    <p>Quando quiser retirar dinheiro do caixa (ex.: enviar para o banco):</p>
+    <ol class="steps">
+      <li><div class="step-num">1</div><div class="step-body">Vá em <strong>Caixa → Sangria</strong></div></li>
+      <li><div class="step-num">2</div><div class="step-body">Informe o valor e o motivo</div></li>
+      <li><div class="step-num">3</div><div class="step-body">Confirme — o valor é descontado do saldo</div></li>
+    </ol>
+
+    <h3>Suprimento (adicionar dinheiro durante o dia)</h3>
+    <p>Para adicionar dinheiro ao caixa (ex.: troco extra):</p>
+    <ol>
+      <li>Vá em <strong>Caixa → Suprimento</strong></li>
+      <li>Informe o valor e o motivo → Confirmar</li>
+    </ol>
+
+    <h3>Fechando o caixa (fim do dia)</h3>
+    <ol class="steps">
+      <li><div class="step-num">1</div><div class="step-body">Vá em <strong>Caixa → Fechar Caixa</strong></div></li>
+      <li><div class="step-num">2</div><div class="step-body">O sistema mostra um resumo de todas as movimentações do dia</div></li>
+      <li><div class="step-num">3</div><div class="step-body">Conte o dinheiro físico e informe o <strong>valor real em caixa</strong></div></li>
+      <li><div class="step-num">4</div><div class="step-body">O sistema calcula automaticamente a diferença (sobra ou falta)</div></li>
+      <li><div class="step-num">5</div><div class="step-body">Clique em <strong>"Fechar Caixa"</strong> para confirmar</div></li>
+    </ol>
+
+    <div class="alerta alerta-ok">
+      <div class="alerta-icone">✅</div>
+      <div>
+        Após fechar o caixa, é gerado um <strong>relatório de fechamento</strong> com todos os valores
+        do dia — guarde ou imprima para controle.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 4 CLIENTES ===== -->
+<div class="secao" id="clientes">
+  <div class="secao-titulo">
+    <div class="secao-emoji">👥</div>
+    4. Clientes — Cadastro e Consulta
+  </div>
+  <div class="secao-corpo">
+
+    <h3>Cadastrar novo cliente</h3>
+    <ol class="steps">
+      <li><div class="step-num">1</div><div class="step-body">Vá em <strong>Menu → Clientes</strong></div></li>
+      <li><div class="step-num">2</div><div class="step-body">Clique em <strong>"Novo Cliente"</strong></div></li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-body">
+          Preencha os dados:
+          <table style="margin-top:10px;">
+            <tr><th>Campo</th><th>Obrigatório?</th><th>Exemplo</th></tr>
+            <tr><td>Nome completo</td><td>✅ Sim</td><td>Maria Silva</td></tr>
+            <tr><td>CPF</td><td>Recomendado</td><td>123.456.789-00</td></tr>
+            <tr><td>Telefone / WhatsApp</td><td>Recomendado</td><td>(11) 99999-9999</td></tr>
+            <tr><td>Endereço</td><td>Opcional</td><td>Rua das Flores, 123</td></tr>
+            <tr><td>Data de nascimento</td><td>Opcional</td><td>15/03/1985</td></tr>
+            <tr><td>E-mail</td><td>Opcional</td><td>maria@email.com</td></tr>
+            <tr><td>Limite de crédito</td><td>Opcional</td><td>R$ 500,00</td></tr>
+          </table>
+        </div>
+      </li>
+      <li><div class="step-num">4</div><div class="step-body">Clique em <strong>"Salvar"</strong></div></li>
+    </ol>
+
+    <h3>Consultar histórico do cliente</h3>
+    <p>Na ficha do cliente você vê:</p>
+    <ul>
+      <li>Todas as <strong>compras realizadas</strong></li>
+      <li><strong>Carnês abertos</strong> e parcelas em aberto</li>
+      <li>Total gasto na loja</li>
+      <li>Últimas 10 vendas</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== 5 CARNÊ ===== -->
+<div class="secao" id="carne">
+  <div class="secao-titulo">
+    <div class="secao-emoji">📋</div>
+    5. Carnê — Vendas a Prazo (Fiado)
+  </div>
+  <div class="secao-corpo">
+    <p>O carnê permite vender a prazo e controlar as parcelas de cada cliente.</p>
+
+    <h3>Criar um carnê (venda a prazo)</h3>
+    <ol class="steps">
+      <li><div class="step-num">1</div><div class="step-body">Vá em <strong>Menu → Carnê</strong></div></li>
+      <li><div class="step-num">2</div><div class="step-body">Clique em <strong>"Novo Carnê"</strong></div></li>
+      <li><div class="step-num">3</div><div class="step-body">Selecione o <strong>cliente</strong></div></li>
+      <li>
+        <div class="step-num">4</div>
+        <div class="step-body">
+          Informe:
+          <ul style="margin-top:6px;">
+            <li><strong>Valor total</strong> da venda</li>
+            <li><strong>Entrada</strong> (pode ser R$ 0 se não tiver entrada)</li>
+            <li><strong>Número de parcelas</strong> (ex.: 3x, 5x, 10x)</li>
+            <li><strong>Vencimento da primeira parcela</strong></li>
+          </ul>
+        </div>
+      </li>
+      <li><div class="step-num">5</div><div class="step-body">O sistema calcula e mostra todas as parcelas</div></li>
+      <li><div class="step-num">6</div><div class="step-body">Clique em <strong>"Salvar"</strong> para criar o carnê</div></li>
+      <li><div class="step-num">7</div><div class="step-body">Clique em <strong>"Imprimir"</strong> para entregar ao cliente</div></li>
+    </ol>
+
+    <h3>Receber uma parcela</h3>
+    <ol class="steps">
+      <li><div class="step-num">1</div><div class="step-body">Vá em <strong>Menu → Carnê</strong></div></li>
+      <li><div class="step-num">2</div><div class="step-body">Busque o cliente ou encontre o carnê na lista</div></li>
+      <li><div class="step-num">3</div><div class="step-body">Clique no carnê para abrir</div></li>
+      <li><div class="step-num">4</div><div class="step-body">Clique em <strong>"Baixar Parcela"</strong> na parcela que está sendo paga</div></li>
+      <li><div class="step-num">5</div><div class="step-body">Informe a data de pagamento e o valor recebido</div></li>
+      <li><div class="step-num">6</div><div class="step-body">Clique em <strong>"Confirmar"</strong></div></li>
+    </ol>
+
+    <h3>Clientes inadimplentes</h3>
+    <p>Para ver quem está com parcelas atrasadas:</p>
+    <ul>
+      <li>Vá em <strong>Relatórios → Inadimplência</strong></li>
+      <li>O sistema mostra todos os clientes com parcelas vencidas e os valores em aberto</li>
+    </ul>
+
+    <div class="alerta alerta-dica">
+      <div class="alerta-icone">💜</div>
+      <div>
+        <strong>Dica:</strong> Você também pode criar um carnê direto pelo PDV!
+        Na hora de finalizar a venda, escolha a forma de pagamento <strong>"Carnê"</strong>
+        e configure as parcelas ali mesmo.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 6 PRODUTOS ===== -->
+<div class="secao" id="produtos">
+  <div class="secao-titulo">
+    <div class="secao-emoji">👕</div>
+    6. Produtos — Cadastro e Gerenciamento
+  </div>
+  <div class="secao-corpo">
+
+    <h3>Cadastrar novo produto</h3>
+    <ol class="steps">
+      <li><div class="step-num">1</div><div class="step-body">Vá em <strong>Menu → Produtos</strong></div></li>
+      <li><div class="step-num">2</div><div class="step-body">Clique em <strong>"Novo Produto"</strong></div></li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <table>
+            <tr><th>Campo</th><th>Obrigatório?</th><th>Dica</th></tr>
+            <tr><td>Nome do produto</td><td>✅ Sim</td><td>Ex: Camiseta Básica Masculina</td></tr>
+            <tr><td>Código (SKU)</td><td>Recomendado</td><td>Código interno da loja</td></tr>
+            <tr><td>Código de barras</td><td>Opcional</td><td>Leia com o scanner ou digite</td></tr>
+            <tr><td>Categoria</td><td>Recomendado</td><td>Camisetas, Calças, etc.</td></tr>
+            <tr><td>Preço de venda</td><td>✅ Sim</td><td>Ex: 39,90</td></tr>
+            <tr><td>Custo</td><td>Recomendado</td><td>Para calcular margem de lucro</td></tr>
+            <tr><td>Estoque inicial</td><td>Recomendado</td><td>Quantidade em estoque agora</td></tr>
+            <tr><td>Estoque mínimo</td><td>Opcional</td><td>Alerta quando atingir este valor</td></tr>
+            <tr><td>Foto</td><td>Opcional</td><td>Aparece no PDV e no cadastro</td></tr>
+          </table>
+        </div>
+      </li>
+      <li><div class="step-num">4</div><div class="step-body">Clique em <strong>"Salvar"</strong></div></li>
+    </ol>
+
+    <h3>Categorias de Produtos</h3>
+    <p>Organize seus produtos em categorias para facilitar a busca no PDV:</p>
+    <ul>
+      <li>Vá em <strong>Produtos → Categorias</strong></li>
+      <li>Clique em <strong>"Nova Categoria"</strong></li>
+      <li>Exemplos: Camisetas, Calças, Vestidos, Blusas, Acessórios, Infantil</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== 7 ESTOQUE ===== -->
+<div class="secao" id="estoque">
+  <div class="secao-titulo">
+    <div class="secao-emoji">📦</div>
+    7. Estoque — Controle e Movimentações
+  </div>
+  <div class="secao-corpo">
+
+    <h3>Ver situação do estoque</h3>
+    <p>Vá em <strong>Menu → Estoque</strong> para ver:</p>
+    <ul>
+      <li>Lista de todos os produtos e quantidades atuais</li>
+      <li>Produtos com estoque abaixo do mínimo (destacados em vermelho)</li>
+      <li>Histórico de entradas e saídas</li>
+    </ul>
+
+    <h3>Ajuste de estoque</h3>
+    <p>Use quando precisar corrigir a quantidade de um produto (inventário, perda, etc.):</p>
+    <ol class="steps">
+      <li><div class="step-num">1</div><div class="step-body">Vá em <strong>Estoque → Ajuste</strong></div></li>
+      <li><div class="step-num">2</div><div class="step-body">Selecione o produto</div></li>
+      <li><div class="step-num">3</div><div class="step-body">Informe o tipo: <strong>Entrada</strong> (chegou mercadoria) ou <strong>Saída</strong> (perdeu, avariou)</div></li>
+      <li><div class="step-num">4</div><div class="step-body">Informe a quantidade e o motivo</div></li>
+      <li><div class="step-num">5</div><div class="step-body">Confirmar</div></li>
+    </ol>
+
+    <h3>Inventário</h3>
+    <p>Para fazer um inventário completo da loja:</p>
+    <ol>
+      <li>Vá em <strong>Estoque → Inventário → Novo Inventário</strong></li>
+      <li>O sistema lista todos os produtos com o estoque atual</li>
+      <li>Conte os produtos fisicamente e informe a quantidade real</li>
+      <li>Finalize o inventário — o sistema ajusta automaticamente as diferenças</li>
+    </ol>
+
+    <div class="alerta alerta-info">
+      <div class="alerta-icone">💡</div>
+      <div>
+        O estoque é atualizado <strong>automaticamente</strong> a cada venda realizada no PDV
+        e a cada compra recebida. Você só precisa ajustar manualmente em caso de erros ou perdas.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 8 COMPRAS ===== -->
+<div class="secao" id="compras">
+  <div class="secao-titulo">
+    <div class="secao-emoji">🚚</div>
+    8. Compras — Pedidos para Fornecedores
+  </div>
+  <div class="secao-corpo">
+
+    <h3>Registrar uma compra</h3>
+    <p>Quando receber mercadoria de um fornecedor:</p>
+    <ol class="steps">
+      <li><div class="step-num">1</div><div class="step-body">Vá em <strong>Menu → Compras</strong></div></li>
+      <li><div class="step-num">2</div><div class="step-body">Clique em <strong>"Nova Compra"</strong></div></li>
+      <li><div class="step-num">3</div><div class="step-body">Selecione o <strong>fornecedor</strong> (ou cadastre um novo)</div></li>
+      <li><div class="step-num">4</div><div class="step-body">Informe o número da nota fiscal (opcional)</div></li>
+      <li><div class="step-num">5</div><div class="step-body">Adicione os produtos comprados com quantidade e custo unitário</div></li>
+      <li><div class="step-num">6</div><div class="step-body">Salve a compra</div></li>
+      <li><div class="step-num">7</div><div class="step-body">Quando a mercadoria chegar fisicamente, clique em <strong>"Receber"</strong> — o estoque é atualizado automaticamente</div></li>
+    </ol>
+
+    <h3>Cadastrar fornecedor</h3>
+    <p>Vá em <strong>Menu → Fornecedores → Novo Fornecedor</strong> e informe: nome, CNPJ, telefone, endereço e e-mail.</p>
+  </div>
+</div>
+
+<!-- ===== 9 FINANCEIRO ===== -->
+<div class="secao" id="financeiro">
+  <div class="secao-titulo">
+    <div class="secao-emoji">💰</div>
+    9. Financeiro
+  </div>
+  <div class="secao-corpo">
+
+    <h3>Contas a Receber</h3>
+    <p>Lista todas as receitas previstas (vendas parceladas, carnês, etc.).</p>
+    <ul>
+      <li>Vá em <strong>Financeiro → Contas a Receber</strong></li>
+      <li>Clique em <strong>"Baixar"</strong> quando receber um pagamento</li>
+    </ul>
+
+    <h3>Contas a Pagar</h3>
+    <p>Liste as despesas da loja (aluguel, fornecedores, etc.).</p>
+    <ul>
+      <li>Vá em <strong>Financeiro → Contas a Pagar</strong></li>
+      <li>Clique em <strong>"Nova Conta"</strong> para registrar uma despesa</li>
+      <li>Clique em <strong>"Baixar"</strong> quando efetuar o pagamento</li>
+    </ul>
+
+    <h3>Fluxo de Caixa</h3>
+    <p>Mostra entradas e saídas de dinheiro em um período. Ideal para saber se o dinheiro está sobrando ou faltando.</p>
+    <ul>
+      <li>Vá em <strong>Financeiro → Fluxo de Caixa</strong></li>
+      <li>Selecione o período desejado e clique em Filtrar</li>
+    </ul>
+
+    <h3>Lançamentos</h3>
+    <p>Registro de todas as movimentações financeiras da loja em ordem cronológica.</p>
+  </div>
+</div>
+
+<!-- ===== 10 RELATÓRIOS ===== -->
+<div class="secao" id="relatorios">
+  <div class="secao-titulo">
+    <div class="secao-emoji">📊</div>
+    10. Relatórios
+  </div>
+  <div class="secao-corpo">
+    <p>Os relatórios ajudam você a entender como a loja está indo. Vá em <strong>Menu → Relatórios</strong>.</p>
+
+    <table>
+      <tr><th>Relatório</th><th>Para que serve</th></tr>
+      <tr>
+        <td><strong>Vendas por Período</strong></td>
+        <td>Ver o total de vendas de um dia, semana, mês ou período específico. Divide por forma de pagamento.</td>
+      </tr>
+      <tr>
+        <td><strong>Produtos Mais Vendidos</strong></td>
+        <td>Ranking dos produtos que mais saem. Ótimo para decidir o que pedir mais para o fornecedor.</td>
+      </tr>
+      <tr>
+        <td><strong>Inadimplência</strong></td>
+        <td>Clientes com carnê ou conta atrasada. Mostra o valor em aberto de cada um.</td>
+      </tr>
+      <tr>
+        <td><strong>DRE (Resultado)</strong></td>
+        <td>Demonstrativo de Resultado — receitas menos despesas. Mostra se a loja está dando lucro.</td>
+      </tr>
+      <tr>
+        <td><strong>Comissões</strong></td>
+        <td>Vendas por vendedor e comissões a pagar (se configurado).</td>
+      </tr>
+    </table>
+
+    <div class="alerta alerta-dica">
+      <div class="alerta-icone">💜</div>
+      <div>
+        <strong>Dica:</strong> Todos os relatórios podem ser <strong>exportados para Excel</strong> ou
+        <strong>impressos</strong>. Procure os botões "Excel" e "Imprimir" em cada relatório.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 11 BACKUP ===== -->
+<div class="secao" id="backup">
+  <div class="secao-titulo">
+    <div class="secao-emoji">💾</div>
+    11. Backup — Salvar os Dados
+  </div>
+  <div class="secao-corpo">
+
+    <div class="alerta alerta-atencao">
+      <div class="alerta-icone">⚠️</div>
+      <div>
+        <strong>MUITO IMPORTANTE!</strong> Se o computador pifar sem backup,
+        você perde TODOS os dados da loja — clientes, vendas, carnês, tudo.
+        Faça backup <strong>toda semana</strong>!
+      </div>
+    </div>
+
+    <h3>Como fazer o backup</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-body">Abra a pasta do sistema no computador<br>
+        (ex.: <code>C:\VIVIMODA SISTEM\confec_system\</code>)</div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-body">Dê duplo clique no arquivo <code>BACKUP_DADOS.bat</code></div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-body">Uma pasta é criada automaticamente na <strong>Área de Trabalho</strong> com a data de hoje</div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <strong>Copie essa pasta</strong> para um local seguro:
+          <ul style="margin-top:6px;">
+            <li>📁 Pendrive / HD externo</li>
+            <li>☁️ Google Drive / OneDrive / Dropbox</li>
+          </ul>
+        </div>
+      </li>
+    </ol>
+
+    <h3>Restaurar um backup</h3>
+    <p>Se precisar recuperar dados de um backup anterior:</p>
+    <ol>
+      <li>Dê duplo clique em <code>RESTAURAR_BACKUP.bat</code></li>
+      <li>Arraste o arquivo <code>banco_de_dados.sqlite3</code> do backup para a janela</li>
+      <li>Pressione Enter e confirme</li>
+      <li>Abra o sistema normalmente</li>
+    </ol>
+
+    <div class="alerta alerta-info">
+      <div class="alerta-icone">💡</div>
+      <div>
+        <strong>Sugestão de rotina:</strong><br>
+        Todo <strong>sábado ao fechar a loja</strong>: execute o backup, copie para o pendrive.
+        Mantenha ao menos os últimos 3 backups guardados.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 12 AJUDA ===== -->
+<div class="secao" id="ajuda">
+  <div class="secao-titulo">
+    <div class="secao-emoji">🆘</div>
+    12. Se Algo Não Funcionar
+  </div>
+  <div class="secao-corpo">
+
+    <h3>Problemas mais comuns e soluções</h3>
+
+    <table>
+      <tr><th>Problema</th><th>O que fazer</th></tr>
+      <tr>
+        <td>Sistema não abre no navegador</td>
+        <td>
+          1. Dê duplo clique no atalho "VIVIMODA Sistema" na Área de Trabalho<br>
+          2. Aguarde 5 segundos<br>
+          3. Se não abrir: execute <code>PARAR_SERVIDOR.bat</code> e tente novamente
+        </td>
+      </tr>
+      <tr>
+        <td>Esqueceu a senha</td>
+        <td>Entre em contato com o técnico/suporte para redefinir</td>
+      </tr>
+      <tr>
+        <td>Produto não aparece no PDV</td>
+        <td>Verifique se o produto está ativo em <strong>Produtos → Editar</strong> e se tem estoque</td>
+      </tr>
+      <tr>
+        <td>Venda não finaliza (erro de caixa)</td>
+        <td>Verifique se o caixa está aberto em <strong>Menu → Caixa</strong></td>
+      </tr>
+      <tr>
+        <td>Leitor de código não funciona</td>
+        <td>
+          1. Verifique se o leitor está conectado no USB<br>
+          2. Clique na tela do PDV antes de ler<br>
+          3. Certifique-se que o produto tem código de barras cadastrado
+        </td>
+      </tr>
+      <tr>
+        <td>Computador ficou lento</td>
+        <td>Reinicie o computador e aguarde 10 segundos antes de abrir o sistema</td>
+      </tr>
+      <tr>
+        <td>Página em branco ou erro vermelho</td>
+        <td>Anote o erro (tire foto da tela) e entre em contato com o suporte</td>
+      </tr>
+    </table>
+
+    <h3>Antes de chamar o suporte, tente:</h3>
+    <ol>
+      <li>Feche o navegador completamente</li>
+      <li>Execute <code>PARAR_SERVIDOR.bat</code></li>
+      <li>Aguarde 10 segundos</li>
+      <li>Abra o sistema pelo atalho da Área de Trabalho</li>
+    </ol>
+
+    <div class="alerta alerta-ok">
+      <div class="alerta-icone">📞</div>
+      <div>
+        <strong>Suporte:</strong> Entre em contato com o técnico/instalador do sistema.<br>
+        Tenha em mãos: uma descrição do problema e, se possível, uma foto da tela com o erro.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GUIA RÁPIDO FINAL ===== -->
+<div style="background: linear-gradient(135deg, var(--roxo-escuro), var(--roxo)); color:#fff; border-radius:12px; padding:30px; margin-bottom:40px;">
+  <h2 style="color:#fff; margin-bottom:20px; font-size:18px; text-align:center;">⚡ Guia Rápido — Rotina Diária da Loja</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+    <div>
+      <h4 style="color:#e0d0ff; margin-bottom:10px;">🌅 MANHÃ — Ao abrir a loja</h4>
+      <ol style="padding-left:20px; color:#f0e8ff;">
+        <li>Ligar o computador</li>
+        <li>Aguardar 10 segundos</li>
+        <li>Clicar no atalho VIVIMODA</li>
+        <li>Fazer login</li>
+        <li>Abrir o caixa com o troco do dia</li>
+        <li>Pronto para vender!</li>
+      </ol>
+    </div>
+    <div>
+      <h4 style="color:#e0d0ff; margin-bottom:10px;">🌇 NOITE — Ao fechar a loja</h4>
+      <ol style="padding-left:20px; color:#f0e8ff;">
+        <li>Fechar o caixa</li>
+        <li>Conferir relatório do dia</li>
+        <li>Fazer backup (sábados)</li>
+        <li>Fechar o navegador</li>
+        <li>Desligar o computador</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RODAPÉ ===== -->
+<div class="rodape">
+  <strong>VIVIMODA — Sistema de Gestão de Confecções</strong><br>
+  Manual do Usuário — Versão 1.0 — 2025<br><br>
+  <em>Em caso de dúvidas, entre em contato com o suporte técnico.</em>
+</div>
+
+</div><!-- /container -->
+
+<div class="sem-print" style="position:fixed;bottom:20px;right:20px;">
+  <button onclick="window.print()" style="background:var(--roxo);color:#fff;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+    🖨️ Imprimir / Salvar PDF
+  </button>
+</div>
+
+</body>
+</html>

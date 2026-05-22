@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Carnê {{ carne.numero }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; font-size: 12px; padding: 15px; }
+        h1 { font-size: 16px; text-align: center; margin-bottom: 5px; }
+        .empresa { text-align: center; margin-bottom: 15px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+        .info-carne { background: #f5f5f5; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .parcelas-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .parcela-card {
+            border: 2px dashed #333; padding: 10px; border-radius: 4px; page-break-inside: avoid;
+        }
+        .parcela-numero { font-size: 18px; font-weight: bold; text-align: center; }
+        .parcela-info { font-size: 11px; margin: 3px 0; }
+        .parcela-valor { font-size: 16px; font-weight: bold; text-align: center; margin: 5px 0; }
+        .assinatura { margin-top: 20px; border-top: 1px solid #000; padding-top: 5px; font-size: 10px; text-align: center; }
+        @media print { @page { size: A4 portrait; margin: 10mm; } }
+    </style>
+</head>
+<body>
+    <div class="empresa">
+        <h1>{{ config_loja.nome_empresa|default:"CONFEC SYSTEM" }}</h1>
+        {% if config_loja.cnpj %}<div>CNPJ: {{ config_loja.cnpj }}</div>{% endif %}
+        {% if config_loja.telefone %}<div>Tel: {{ config_loja.telefone }}</div>{% endif %}
+    </div>
+
+    <div class="info-carne">
+        <div class="info-row"><strong>CARNÊ Nº:</strong><span>{{ carne.numero }}</span></div>
+        <div class="info-row"><strong>CLIENTE:</strong><span>{{ carne.cliente.nome }}</span></div>
+        {% if carne.cliente.cpf_cnpj %}
+        <div class="info-row"><strong>CPF/CNPJ:</strong><span>{{ carne.cliente.cpf_cnpj }}</span></div>
+        {% endif %}
+        <div class="info-row"><strong>EMISSÃO:</strong><span>{{ carne.data_emissao|date:"d/m/Y" }}</span></div>
+        <div class="info-row"><strong>TOTAL:</strong><span>R$ {{ carne.valor_total|floatformat:2 }}</span></div>
+        <div class="info-row"><strong>PARCELAS:</strong><span>{{ carne.quantidade_parcelas }}x de R$ {{ carne.valor_parcela|floatformat:2 }}</span></div>
+        {% if carne.taxa_juros %}
+        <div class="info-row"><strong>JUROS:</strong><span>{{ carne.taxa_juros }}% a.m.</span></div>
+        {% endif %}
+    </div>
+
+    <div class="parcelas-grid">
+        {% for parcela in parcelas %}
+        <div class="parcela-card">
+            <div class="parcela-numero">{{ parcela.numero }}/{{ carne.quantidade_parcelas }}</div>
+            <div class="parcela-info">Carnê: <strong>{{ carne.numero }}</strong></div>
+            <div class="parcela-info">Cliente: {{ carne.cliente.nome|truncatechars:25 }}</div>
+            <div class="parcela-info">Vencimento: <strong>{{ parcela.data_vencimento|date:"d/m/Y" }}</strong></div>
+            <div class="parcela-valor">R$ {{ parcela.valor_original|floatformat:2 }}</div>
+            <div class="assinatura">_________________________<br>Assinatura</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>window.print();</script>
+</body>
+</html>

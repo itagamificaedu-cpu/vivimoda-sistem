@@ -1,0 +1,112 @@
+version: '3.9'
+
+services:
+  # Banco de dados PostgreSQL
+  db:
+    image: postgres:16-alpine
+    container_name: confec_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-confec_system}
+      POSTGRES_USER: ${DB_USER:-confec_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-confec_senha123}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-confec_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Cache e broker de mensagens
+  redis:
+    image: redis:7-alpine
+    container_name: confec_redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Aplicação Django
+  web:
+    build: .
+    container_name: confec_web
+    restart: unless-stopped
+    command: >
+      sh -c "python manage.py migrate --settings=confec_system.settings.development &&
+             python manage.py collectstatic --noinput --settings=confec_system.settings.development &&
+             gunicorn confec_system.wsgi:application --bind 0.0.0.0:8000 --workers 3 --reload"
+    environment:
+      DJANGO_SETTINGS_MODULE: confec_system.settings.development
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - media_data:/app/media
+      - static_data:/app/staticfiles
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Worker Celery para tarefas assíncronas
+  celery_worker:
+    build: .
+    container_name: confec_celery_worker
+    restart: unless-stopped
+    command: celery -A confec_system worker --loglevel=info --concurrency=2
+    environment:
+      DJANGO_SETTINGS_MODULE: confec_system.settings.development
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - media_data:/app/media
+    depends_on:
+      - web
+      - redis
+
+  # Celery Beat para agendamentos automáticos
+  celery_beat:
+    build: .
+    container_name: confec_celery_beat
+    restart: unless-stopped
+    command: celery -A confec_system beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    environment:
+      DJANGO_SETTINGS_MODULE: confec_system.settings.development
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    depends_on:
+      - web
+      - redis
+
+  # Nginx como proxy reverso
+  nginx:
+    image: nginx:alpine
+    container_name: confec_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - static_data:/app/staticfiles
+      - media_data:/app/media
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
+  redis_data:
+  media_data:
+  static_data:

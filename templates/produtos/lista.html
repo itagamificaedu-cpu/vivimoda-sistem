@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Produtos{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-0"><i class="bi bi-box-seam text-primary me-2"></i>Produtos</h4>
+        <small class="text-muted">{{ total }} registro(s)</small>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'produtos:categorias' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-tags me-1"></i>Categorias
+        </a>
+        <a href="{% url 'produtos:criar' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i>Novo Produto
+        </a>
+    </div>
+</div>
+
+{# Filtros #}
+<div class="card mb-4">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm"
+                       placeholder="Nome, código, código de barras, referência...">
+            </div>
+            <div class="col-md-2">
+                <select name="categoria" class="form-select form-select-sm">
+                    <option value="">Todas as Categorias</option>
+                    {% for cat in categorias %}
+                    <option value="{{ cat.pk }}" {% if categoria_id == cat.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ cat.nome }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="ativo" class="form-select form-select-sm">
+                    <option value="1" {% if ativo == '1' %}selected{% endif %}>Ativos</option>
+                    <option value="0" {% if ativo == '0' %}selected{% endif %}>Inativos</option>
+                    <option value="" {% if ativo == '' %}selected{% endif %}>Todos</option>
+                </select>
+            </div>
+            <div class="col-auto d-flex gap-1">
+                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
+                <a href="{% url 'produtos:lista' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3" style="width:60px">Foto</th>
+                        <th>Produto</th>
+                        <th>Categoria</th>
+                        <th>Tipo</th>
+                        <th class="text-end">Custo</th>
+                        <th class="text-end">Preço</th>
+                        <th class="text-center">Estoque</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center pe-3">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for produto in page_obj %}
+                    <tr class="{% if not produto.ativo %}table-secondary{% elif produto.estoque_baixo %}table-warning{% endif %}">
+                        <td class="ps-3 py-1">
+                            {% if produto.foto_principal %}
+                            <img src="{{ produto.foto_principal.url }}" alt="{{ produto.nome }}"
+                                 class="rounded" style="width:40px;height:40px;object-fit:cover;">
+                            {% else %}
+                            <div class="rounded bg-light d-flex align-items-center justify-content-center"
+                                 style="width:40px;height:40px;">
+                                <i class="bi bi-image text-muted"></i>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'produtos:detalhe' produto.pk %}" class="fw-semibold text-decoration-none">
+                                {{ produto.nome }}
+                            </a>
+                            <small class="text-muted d-block">Cód: {{ produto.codigo }}</small>
+                            {% if produto.em_promocao %}
+                            <span class="badge bg-danger-subtle text-danger">Em promoção</span>
+                            {% endif %}
+                        </td>
+                        <td class="small">{{ produto.categoria|default:"—" }}</td>
+                        <td>
+                            {% if produto.tipo == 'GRADE' %}
+                            <span class="badge bg-primary-subtle text-primary">Grade</span>
+                            {% else %}
+                            <span class="badge bg-secondary-subtle text-secondary">Simples</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end small text-muted">
+                            {% if produto.preco_custo %}R$ {{ produto.preco_custo|floatformat:2 }}{% else %}—{% endif %}
+                        </td>
+                        <td class="text-end fw-semibold">
+                            R$ {{ produto.preco_vigente|floatformat:2 }}
+                        </td>
+                        <td class="text-center fw-bold {% if produto.estoque_atual <= 0 %}text-danger{% elif produto.estoque_baixo %}text-warning{% else %}text-success{% endif %}">
+                            {% if produto.tipo == 'GRADE' %}
+                            <span class="text-muted small">Grade</span>
+                            {% else %}
+                            {{ produto.estoque_atual|floatformat:0 }}
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if produto.ativo %}
+                            <span class="badge bg-success">Ativo</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Inativo</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center pe-3">
+                            <a href="{% url 'produtos:detalhe' produto.pk %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'produtos:editar' produto.pk %}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center py-5 text-muted">
+                            <i class="bi bi-box display-6 d-block mb-2"></i>
+                            Nenhum produto encontrado.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav class="mt-3">
+    <ul class="pagination pagination-sm justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ q }}&ativo={{ ativo }}"><i class="bi bi-chevron-left"></i></a></li>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item"><a class="page-link" href="?page={{ num }}&q={{ q }}&ativo={{ ativo }}">{{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ q }}&ativo={{ ativo }}"><i class="bi bi-chevron-right"></i></a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

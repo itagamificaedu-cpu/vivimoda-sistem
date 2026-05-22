@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Log de Acessos{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-shield-check text-primary me-2"></i>Log de Auditoria</h4>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm"
+                       placeholder="Usuário, ação, modelo...">
+            </div>
+            <div class="col-md-2">
+                <select name="acao" class="form-select form-select-sm">
+                    <option value="">Todas as ações</option>
+                    <option value="LOGIN">Login</option>
+                    <option value="LOGOUT">Logout</option>
+                    <option value="CRIAR">Criar</option>
+                    <option value="EDITAR">Editar</option>
+                    <option value="EXCLUIR">Excluir</option>
+                    <option value="VENDA">Venda</option>
+                    <option value="CANCELAMENTO">Cancelamento</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="data_de" value="{{ data_de }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="data_ate" value="{{ data_ate }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-auto d-flex gap-1">
+                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
+                <a href="{% url 'autenticacao:logs' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Data/Hora</th>
+                        <th>Usuário</th>
+                        <th>Ação</th>
+                        <th>Modelo</th>
+                        <th>Objeto</th>
+                        <th>IP</th>
+                        <th>Detalhes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in page_obj %}
+                    <tr>
+                        <td class="ps-3 small text-muted">{{ log.criado_em|date:"d/m/Y H:i:s" }}</td>
+                        <td class="small">{{ log.usuario.nome_exibicao }}</td>
+                        <td>
+                            <span class="badge bg-{% if log.acao == 'LOGIN' %}success{% elif log.acao in 'EXCLUIR CANCELAMENTO' %}danger{% elif log.acao == 'CRIAR' %}primary{% elif log.acao == 'EDITAR' %}warning text-dark{% else %}secondary{% endif %} bg-opacity-75">
+                                {{ log.acao }}
+                            </span>
+                        </td>
+                        <td class="small">{{ log.modelo|default:"—" }}</td>
+                        <td class="small">{{ log.objeto_repr|default:"—"|truncatechars:30 }}</td>
+                        <td class="small text-muted font-monospace">{{ log.ip_address|default:"—" }}</td>
+                        <td class="small text-muted">{{ log.detalhes|default:"—"|truncatechars:50 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">Nenhum registro de auditoria encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

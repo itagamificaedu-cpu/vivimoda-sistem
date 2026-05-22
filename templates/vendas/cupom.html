@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cupom — {{ venda.numero }}</title>
+    <style>
+        /* Estilo cupom 58mm / 80mm para impressoras térmicas */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            width: 280px;
+            margin: 0 auto;
+            padding: 8px;
+            color: #000;
+        }
+        .centro { text-align: center; }
+        .direita { text-align: right; }
+        .bold { font-weight: bold; }
+        .separador {
+            border-top: 1px dashed #000;
+            margin: 6px 0;
+        }
+        .logo-empresa {
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        .item-nome {
+            font-size: 11px;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+        .destaque {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        @media print {
+            @page { margin: 0; size: 58mm auto; }
+            body { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    {# Cabeçalho da empresa #}
+    <div class="centro">
+        <div class="logo-empresa">{{ config_loja.nome_empresa|default:"CONFEC SYSTEM" }}</div>
+        {% if config_loja.cnpj %}
+        <div>CNPJ: {{ config_loja.cnpj }}</div>
+        {% endif %}
+        {% if config_loja.endereco %}
+        <div>{{ config_loja.endereco }}</div>
+        {% endif %}
+        {% if config_loja.telefone %}
+        <div>Tel: {{ config_loja.telefone }}</div>
+        {% endif %}
+    </div>
+
+    <div class="separador"></div>
+
+    {# Dados da venda #}
+    <div class="info-item">
+        <span>CUPOM:</span>
+        <span class="bold">{{ venda.numero }}</span>
+    </div>
+    <div class="info-item">
+        <span>DATA:</span>
+        <span>{{ venda.data_venda|date:"d/m/Y H:i" }}</span>
+    </div>
+    {% if venda.cliente %}
+    <div class="info-item">
+        <span>CLIENTE:</span>
+        <span>{{ venda.cliente.nome }}</span>
+    </div>
+    {% endif %}
+    {% if venda.vendedor %}
+    <div class="info-item">
+        <span>VENDEDOR:</span>
+        <span>{{ venda.vendedor.nome_completo }}</span>
+    </div>
+    {% endif %}
+
+    <div class="separador"></div>
+
+    {# Cabeçalho itens #}
+    <div class="bold">ITEM          QTD    UNIT    TOTAL</div>
+    <div class="separador"></div>
+
+    {# Itens da venda #}
+    {% for item in venda.itens.all %}
+    <div class="item-nome">{{ forloop.counter }}. {{ item.produto.nome|truncatechars:22 }}</div>
+    {% if item.grade %}
+    <div class="item-nome" style="padding-left:8px;color:#555;">
+        Cor: {{ item.grade.cor }} / Tam: {{ item.grade.tamanho }}
+    </div>
+    {% endif %}
+    <div class="info-item">
+        <span></span>
+        <span>{{ item.quantidade|floatformat:0 }} x {{ item.preco_unitario|floatformat:2 }} = R${{ item.valor_total|floatformat:2 }}</span>
+    </div>
+    {% if item.desconto %}
+    <div class="direita" style="font-size:11px;color:#555;">Desc: {{ item.desconto|floatformat:1 }}%</div>
+    {% endif %}
+    {% endfor %}
+
+    <div class="separador"></div>
+
+    {# Totais #}
+    <div class="info-item">
+        <span>Subtotal</span>
+        <span>R$ {{ venda.valor_produtos|floatformat:2 }}</span>
+    </div>
+    {% if venda.valor_desconto %}
+    <div class="info-item">
+        <span>Desconto</span>
+        <span>- R$ {{ venda.valor_desconto|floatformat:2 }}</span>
+    </div>
+    {% endif %}
+    {% if venda.valor_frete %}
+    <div class="info-item">
+        <span>Frete</span>
+        <span>R$ {{ venda.valor_frete|floatformat:2 }}</span>
+    </div>
+    {% endif %}
+
+    <div class="separador"></div>
+
+    <div class="total-row destaque">
+        <span>TOTAL</span>
+        <span>R$ {{ venda.valor_total|floatformat:2 }}</span>
+    </div>
+
+    <div class="separador"></div>
+
+    {# Pagamentos #}
+    <div class="bold">PAGAMENTOS:</div>
+    {% for pag in venda.pagamentos.all %}
+    <div class="info-item">
+        <span>{{ pag.get_forma_display }}</span>
+        <span>R$ {{ pag.valor|floatformat:2 }}</span>
+    </div>
+    {% endfor %}
+    {% if venda.valor_troco %}
+    <div class="info-item bold">
+        <span>TROCO</span>
+        <span>R$ {{ venda.valor_troco|floatformat:2 }}</span>
+    </div>
+    {% endif %}
+
+    <div class="separador"></div>
+
+    {# Rodapé #}
+    <div class="centro">
+        <div>{{ config_loja.mensagem_rodape_cupom|default:"Obrigado pela preferência!" }}</div>
+        <div style="font-size:10px;margin-top:4px;">
+            Sistema ConfecSystem
+        </div>
+        <div style="font-size:10px;">{{ venda.data_venda|date:"d/m/Y H:i:s" }}</div>
+    </div>
+
+    <script>window.print();</script>
+</body>
+</html>

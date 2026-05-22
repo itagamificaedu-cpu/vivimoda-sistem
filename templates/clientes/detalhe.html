@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}{{ cliente.nome }}{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="{% url 'clientes:lista' %}">Clientes</a></li>
+                <li class="breadcrumb-item active">{{ cliente.nome|truncatechars:30 }}</li>
+            </ol>
+        </nav>
+        <h4 class="fw-bold mb-0">
+            <i class="bi bi-person text-primary me-2"></i>{{ cliente.nome }}
+            {% if cliente.ativo %}<span class="badge bg-success">Ativo</span>
+            {% else %}<span class="badge bg-secondary">Inativo</span>{% endif %}
+            {% if cliente.tipo == 'VIP' or cliente.vip %}<span class="badge bg-warning text-dark">VIP</span>{% endif %}
+            {% if cliente.inadimplente %}<span class="badge bg-danger">Inadimplente</span>{% endif %}
+        </h4>
+    </div>
+    <a href="{% url 'clientes:editar' cliente.pk %}" class="btn btn-outline-primary">
+        <i class="bi bi-pencil me-1"></i>Editar
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header"><h6 class="mb-0">Informações Pessoais</h6></div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-5 text-muted">Tipo</dt>
+                    <dd class="col-sm-7">{{ cliente.get_tipo_pessoa_display }}</dd>
+                    <dt class="col-sm-5 text-muted">CPF/CNPJ</dt>
+                    <dd class="col-sm-7">{{ cliente.cpf_cnpj|default:"—" }}</dd>
+                    {% if cliente.data_nascimento %}
+                    <dt class="col-sm-5 text-muted">Nascimento</dt>
+                    <dd class="col-sm-7">
+                        {{ cliente.data_nascimento|date:"d/m/Y" }}
+                        {% if cliente.aniversario_hoje %}<span class="badge bg-warning text-dark ms-1">🎂 Hoje!</span>{% endif %}
+                    </dd>
+                    {% endif %}
+                    <dt class="col-sm-5 text-muted">Telefone</dt>
+                    <dd class="col-sm-7">{{ cliente.telefone|default:"—" }}</dd>
+                    <dt class="col-sm-5 text-muted">Celular</dt>
+                    <dd class="col-sm-7">{{ cliente.celular|default:"—" }}</dd>
+                    <dt class="col-sm-5 text-muted">E-mail</dt>
+                    <dd class="col-sm-7">{{ cliente.email|default:"—" }}</dd>
+                    <dt class="col-sm-5 text-muted">Cadastrado em</dt>
+                    <dd class="col-sm-7">{{ cliente.criado_em|date:"d/m/Y" }}</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header"><h6 class="mb-0">Endereço</h6></div>
+            <div class="card-body">
+                {% if cliente.logradouro %}
+                <address class="mb-0">
+                    {{ cliente.logradouro }}, {{ cliente.numero }}
+                    {% if cliente.complemento %} — {{ cliente.complemento }}{% endif %}<br>
+                    {{ cliente.bairro }}<br>
+                    {{ cliente.cidade }}/{{ cliente.estado }} — CEP: {{ cliente.cep }}
+                </address>
+                {% else %}
+                <span class="text-muted">Endereço não informado</span>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Resumo financeiro #}
+        <div class="card">
+            <div class="card-header"><h6 class="mb-0"><i class="bi bi-wallet me-2"></i>Resumo Financeiro</h6></div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                    <span class="text-muted">Total comprado</span>
+                    <span class="fw-semibold">R$ {{ total_comprado|floatformat:2|default:"0,00" }}</span>
+                </div>
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                    <span class="text-muted">Limite de crédito</span>
+                    <span>R$ {{ cliente.limite_credito|floatformat:2 }}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted">Saldo devedor</span>
+                    <span class="{% if saldo_devedor > 0 %}text-danger fw-bold{% else %}text-muted{% endif %}">
+                        R$ {{ saldo_devedor|floatformat:2|default:"0,00" }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        {# Últimas vendas #}
+        <div class="card mb-4">
+            <div class="card-header"><h6 class="mb-0"><i class="bi bi-bag-check me-2"></i>Últimas Compras</h6></div>
+            <div class="card-body p-0">
+                <table class="table table-sm table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Nº</th>
+                            <th>Data</th>
+                            <th class="text-end">Total</th>
+                            <th class="text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for venda in ultimas_vendas %}
+                        <tr>
+                            <td class="ps-3"><a href="{% url 'vendas:detalhe' venda.pk %}">{{ venda.numero }}</a></td>
+                            <td class="small text-muted">{{ venda.data_venda|date:"d/m/Y" }}</td>
+                            <td class="text-end">R$ {{ venda.valor_total|floatformat:2 }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-{% if venda.status == 'PAGO' %}success{% elif venda.status == 'CANCELADO' %}danger{% else %}warning text-dark{% endif %}">
+                                    {{ venda.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center text-muted py-3">Nenhuma compra registrada.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {# Carnês #}
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <h6 class="mb-0"><i class="bi bi-journal-text me-2"></i>Carnês / Crediário</h6>
+                <a href="{% url 'carne:novo' %}?cliente={{ cliente.pk }}" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-plus me-1"></i>Novo Carnê
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Número</th>
+                            <th>Emissão</th>
+                            <th class="text-end">Total</th>
+                            <th class="text-end">Pendente</th>
+                            <th class="text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for carne in carnes %}
+                        <tr>
+                            <td class="ps-3"><a href="{% url 'carne:detalhe' carne.pk %}">{{ carne.numero }}</a></td>
+                            <td class="small text-muted">{{ carne.data_emissao|date:"d/m/Y" }}</td>
+                            <td class="text-end">R$ {{ carne.valor_total|floatformat:2 }}</td>
+                            <td class="text-end {% if carne.valor_pendente > 0 %}text-danger fw-semibold{% else %}text-muted{% endif %}">
+                                R$ {{ carne.valor_pendente|floatformat:2 }}
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-{% if carne.status == 'QUITADO' %}success{% elif carne.status == 'ATIVO' %}primary{% elif carne.status == 'CANCELADO' %}danger{% else %}secondary{% endif %}">
+                                    {{ carne.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" class="text-center text-muted py-3">Nenhum carnê.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

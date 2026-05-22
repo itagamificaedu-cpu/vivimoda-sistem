@@ -1,0 +1,302 @@
+[
+  {
+    "model": "produtos.produto", "pk": 1,
+    "fields": {
+      "codigo": "CAM001", "codigo_barras": "7890001000010", "referencia": "CAM-001",
+      "nome": "Camiseta Básica Feminina Algodão",
+      "descricao": "Camiseta básica 100% algodão, meia malha 30.1",
+      "categoria": 1, "subcategoria": 1, "marca": 1, "tipo": "SIMPLES",
+      "preco_custo": "18.00", "margem_lucro": "100.00", "preco_venda": "36.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "85.00", "estoque_minimo": "10.00", "estoque_maximo": "200.00",
+      "unidade": "UN", "localizacao": "A1", "ncm": "61091000",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 2,
+    "fields": {
+      "codigo": "CAM002", "codigo_barras": "7890001000027", "referencia": "CAM-002",
+      "nome": "Camiseta Básica Masculina Algodão",
+      "descricao": "Camiseta básica masculina 100% algodão, pré-lavada",
+      "categoria": 1, "subcategoria": 1, "marca": 1, "tipo": "SIMPLES",
+      "preco_custo": "20.00", "margem_lucro": "95.00", "preco_venda": "39.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "120.00", "estoque_minimo": "15.00", "estoque_maximo": "300.00",
+      "unidade": "UN", "localizacao": "A2", "ncm": "61091000",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 3,
+    "fields": {
+      "codigo": "CSO001", "codigo_barras": "7890001000034", "referencia": "SOC-001",
+      "nome": "Camisa Social Masculina Slim Fit",
+      "descricao": "Camisa social slim fit, tecido passa fácil, manga longa",
+      "categoria": 1, "subcategoria": 2, "marca": 2, "tipo": "SIMPLES",
+      "preco_custo": "55.00", "margem_lucro": "80.00", "preco_venda": "99.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "40.00", "estoque_minimo": "5.00", "estoque_maximo": "80.00",
+      "unidade": "UN", "localizacao": "B1", "ncm": "62051000",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 4,
+    "fields": {
+      "codigo": "CPO001", "codigo_barras": "7890001000041", "referencia": "POL-001",
+      "nome": "Camisa Polo Masculina Piquet",
+      "descricao": "Camisa polo masculina em piquet, botões na gola",
+      "categoria": 1, "subcategoria": 3, "marca": 3, "tipo": "SIMPLES",
+      "preco_custo": "40.00", "margem_lucro": "87.50", "preco_venda": "75.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "60.00", "estoque_minimo": "8.00", "estoque_maximo": "120.00",
+      "unidade": "UN", "localizacao": "B2", "ncm": "61051000",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 5,
+    "fields": {
+      "codigo": "CJE001", "codigo_barras": "7890001000058", "referencia": "JNS-001",
+      "nome": "Calça Jeans Feminina Skinny",
+      "descricao": "Calça jeans feminina skinny, elastano 2%, lavagem stone",
+      "categoria": 2, "subcategoria": 4, "marca": 2, "tipo": "SIMPLES",
+      "preco_custo": "60.00", "margem_lucro": "83.33", "preco_venda": "110.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "55.00", "estoque_minimo": "8.00", "estoque_maximo": "100.00",
+      "unidade": "UN", "localizacao": "C1", "ncm": "62034200",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 6,
+    "fields": {
+      "codigo": "CJE002", "codigo_barras": "7890001000065", "referencia": "JNS-002",
+      "nome": "Calça Jeans Masculina Slim",
+      "descricao": "Calça jeans masculina slim, corte moderno, lavagem média",
+      "categoria": 2, "subcategoria": 4, "marca": 1, "tipo": "SIMPLES",
+      "preco_custo": "65.00", "margem_lucro": "69.23", "preco_venda": "110.00",
+      "preco_promocional": "89.90", "promocao_inicio": "2025-06-01", "promocao_fim": "2025-07-31",
+      "estoque_atual": "48.00", "estoque_minimo": "8.00", "estoque_maximo": "100.00",
+      "unidade": "UN", "localizacao": "C2", "ncm": "62034200",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 7,
+    "fields": {
+      "codigo": "BER001", "codigo_barras": "7890001000072", "referencia": "BER-001",
+      "nome": "Bermuda Masculina Tactel Secagem Rápida",
+      "descricao": "Bermuda masculina em tactel, secagem rápida, bolso lateral",
+      "categoria": 2, "subcategoria": 5, "marca": 3, "tipo": "SIMPLES",
+      "preco_custo": "30.00", "margem_lucro": "100.00", "preco_venda": "60.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "70.00", "estoque_minimo": "10.00", "estoque_maximo": "150.00",
+      "unidade": "UN", "localizacao": "C3", "ncm": "62034900",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 8,
+    "fields": {
+      "codigo": "VES001", "codigo_barras": "7890001000089", "referencia": "VES-001",
+      "nome": "Vestido Casual Floral Midi",
+      "descricao": "Vestido midi estampa floral, manga curta, decote V",
+      "categoria": 3, "subcategoria": null, "marca": 4, "tipo": "SIMPLES",
+      "preco_custo": "70.00", "margem_lucro": "71.43", "preco_venda": "120.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "30.00", "estoque_minimo": "5.00", "estoque_maximo": "60.00",
+      "unidade": "UN", "localizacao": "D1", "ncm": "62044200",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 9,
+    "fields": {
+      "codigo": "VES002", "codigo_barras": "7890001000096", "referencia": "VES-002",
+      "nome": "Vestido Longo Festa",
+      "descricao": "Vestido longo para festas, tecido crepe, bordado na cintura",
+      "categoria": 3, "subcategoria": null, "marca": 4, "tipo": "SIMPLES",
+      "preco_custo": "150.00", "margem_lucro": "66.67", "preco_venda": "250.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "12.00", "estoque_minimo": "2.00", "estoque_maximo": "30.00",
+      "unidade": "UN", "localizacao": "D2", "ncm": "62044900",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 10,
+    "fields": {
+      "codigo": "SAI001", "codigo_barras": "7890001000102", "referencia": "SAI-001",
+      "nome": "Saia Midi Plissada",
+      "descricao": "Saia midi plissada, tecido fluído, elástico na cintura",
+      "categoria": 3, "subcategoria": null, "marca": 1, "tipo": "SIMPLES",
+      "preco_custo": "45.00", "margem_lucro": "88.89", "preco_venda": "85.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "25.00", "estoque_minimo": "4.00", "estoque_maximo": "50.00",
+      "unidade": "UN", "localizacao": "D3", "ncm": "62045900",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 11,
+    "fields": {
+      "codigo": "LIN001", "codigo_barras": "7890001000119", "referencia": "LIN-001",
+      "nome": "Conjunto Lingerie Renda",
+      "descricao": "Conjunto lingerie em renda, sutiã e calcinha, várias cores",
+      "categoria": 4, "subcategoria": null, "marca": 2, "tipo": "SIMPLES",
+      "preco_custo": "25.00", "margem_lucro": "120.00", "preco_venda": "55.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "50.00", "estoque_minimo": "10.00", "estoque_maximo": "100.00",
+      "unidade": "KIT", "localizacao": "E1", "ncm": "62121000",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 12,
+    "fields": {
+      "codigo": "LIN002", "codigo_barras": "7890001000126", "referencia": "LIN-002",
+      "nome": "Pijama Feminino Curto",
+      "descricao": "Pijama curto feminino, 100% viscose, manga curta, estampa variada",
+      "categoria": 4, "subcategoria": null, "marca": 1, "tipo": "SIMPLES",
+      "preco_custo": "30.00", "margem_lucro": "100.00", "preco_venda": "60.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "35.00", "estoque_minimo": "5.00", "estoque_maximo": "80.00",
+      "unidade": "UN", "localizacao": "E2", "ncm": "62072100",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 13,
+    "fields": {
+      "codigo": "CIN001", "codigo_barras": "7890001000133", "referencia": "CIN-001",
+      "nome": "Cinto Couro Legítimo Masculino",
+      "descricao": "Cinto couro legítimo, fivela metal, largura 3,5cm",
+      "categoria": 5, "subcategoria": null, "marca": 3, "tipo": "SIMPLES",
+      "preco_custo": "20.00", "margem_lucro": "150.00", "preco_venda": "50.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "3.00", "estoque_minimo": "5.00", "estoque_maximo": "40.00",
+      "unidade": "UN", "localizacao": "F1", "ncm": "42031000",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 14,
+    "fields": {
+      "codigo": "MEI001", "codigo_barras": "7890001000140", "referencia": "MEI-001",
+      "nome": "Meia Soquete Algodão (par)",
+      "descricao": "Meia soquete 100% algodão, sem costura, tamanho único",
+      "categoria": 5, "subcategoria": null, "marca": 4, "tipo": "SIMPLES",
+      "preco_custo": "5.00", "margem_lucro": "100.00", "preco_venda": "10.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "200.00", "estoque_minimo": "30.00", "estoque_maximo": "500.00",
+      "unidade": "PAR", "localizacao": "F2", "ncm": "61151000",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 15,
+    "fields": {
+      "codigo": "BOL001", "codigo_barras": "7890001000157", "referencia": "BOL-001",
+      "nome": "Bolsa Tote Bag Feminina",
+      "descricao": "Tote bag feminina em lona reforçada, alças duplas, zíper",
+      "categoria": 5, "subcategoria": null, "marca": 2, "tipo": "SIMPLES",
+      "preco_custo": "45.00", "margem_lucro": "100.00", "preco_venda": "90.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "18.00", "estoque_minimo": "3.00", "estoque_maximo": "40.00",
+      "unidade": "UN", "localizacao": "F3", "ncm": "42022200",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 16,
+    "fields": {
+      "codigo": "CAL001", "codigo_barras": "7890001000164", "referencia": "CAL-001",
+      "nome": "Calça Jogger Moletom Feminina",
+      "descricao": "Calça jogger em moletom, punho na barra, bolsos laterais",
+      "categoria": 2, "subcategoria": null, "marca": 1, "tipo": "SIMPLES",
+      "preco_custo": "48.00", "margem_lucro": "87.50", "preco_venda": "89.90",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "42.00", "estoque_minimo": "8.00", "estoque_maximo": "80.00",
+      "unidade": "UN", "localizacao": "C4", "ncm": "61046200",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 17,
+    "fields": {
+      "codigo": "REG001", "codigo_barras": "7890001000171", "referencia": "REG-001",
+      "nome": "Regata Feminina Nadador",
+      "descricao": "Regata feminina nadador, tecido canelado, alças finas",
+      "categoria": 1, "subcategoria": null, "marca": 4, "tipo": "SIMPLES",
+      "preco_custo": "15.00", "margem_lucro": "100.00", "preco_venda": "30.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "90.00", "estoque_minimo": "15.00", "estoque_maximo": "200.00",
+      "unidade": "UN", "localizacao": "A3", "ncm": "61091000",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 18,
+    "fields": {
+      "codigo": "MAC001", "codigo_barras": "7890001000188", "referencia": "MAC-001",
+      "nome": "Macacão Jeans Feminino",
+      "descricao": "Macacão jeans feminino, lavagem média, botões frontais",
+      "categoria": 3, "subcategoria": null, "marca": 3, "tipo": "SIMPLES",
+      "preco_custo": "90.00", "margem_lucro": "66.67", "preco_venda": "150.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "20.00", "estoque_minimo": "3.00", "estoque_maximo": "40.00",
+      "unidade": "UN", "localizacao": "D4", "ncm": "62049900",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 19,
+    "fields": {
+      "codigo": "BLU001", "codigo_barras": "7890001000195", "referencia": "BLU-001",
+      "nome": "Blusa de Frio Fleece Feminina",
+      "descricao": "Blusa de frio em fleece, zíper frontal, capuz com regulagem",
+      "categoria": 1, "subcategoria": null, "marca": 2, "tipo": "SIMPLES",
+      "preco_custo": "70.00", "margem_lucro": "71.43", "preco_venda": "120.00",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "38.00", "estoque_minimo": "5.00", "estoque_maximo": "70.00",
+      "unidade": "UN", "localizacao": "A4", "ncm": "61102000",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "produtos.produto", "pk": 20,
+    "fields": {
+      "codigo": "SHO001", "codigo_barras": "7890001000201", "referencia": "SHO-001",
+      "nome": "Short Fitness Feminino Supplex",
+      "descricao": "Short fitness em supplex, cintura alta, bermudinha com bolso",
+      "categoria": 2, "subcategoria": null, "marca": 3, "tipo": "SIMPLES",
+      "preco_custo": "32.00", "margem_lucro": "87.50", "preco_venda": "59.90",
+      "preco_promocional": null, "promocao_inicio": null, "promocao_fim": null,
+      "estoque_atual": "0.00", "estoque_minimo": "10.00", "estoque_maximo": "100.00",
+      "unidade": "UN", "localizacao": "C5", "ncm": "61046200",
+      "cest": "", "cfop": "5102", "origem": "0", "foto_principal": "", "ativo": true,
+      "criado_em": "2025-01-10T10:00:00Z", "atualizado_em": "2025-01-10T10:00:00Z"
+    }
+  }
+]

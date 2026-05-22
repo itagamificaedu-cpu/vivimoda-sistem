@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Abrir Caixa{% endblock %}
+
+{% block conteudo %}
+<div class="row justify-content-center">
+    <div class="col-lg-5">
+
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'caixa:index' %}">Caixa</a></li>
+                <li class="breadcrumb-item active">Abrir Sessão</li>
+            </ol>
+        </nav>
+
+        <div class="card border-success shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-unlock-fill me-2"></i>Abrir Sessão de Caixa</h5>
+            </div>
+            <div class="card-body">
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if caixas.count == 0 %}
+                    {# Nenhum caixa cadastrado #}
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Nenhum caixa cadastrado. Cadastre um caixa primeiro.
+                    </div>
+                    {% else %}
+
+                    {# Seleção de caixa #}
+                    {% if caixas.count == 1 %}
+                    {# Um único caixa: campo oculto + exibe nome #}
+                    <input type="hidden" name="caixa_id" value="{{ caixa.pk }}">
+                    <div class="mb-4 p-3 rounded text-center"
+                         style="background:#f0fdf4;border:1px solid #bbf7d0">
+                        <i class="bi bi-safe2 fs-2 text-success d-block mb-1"></i>
+                        <h5 class="mb-0 fw-bold">{{ caixa }}</h5>
+                        <small class="text-muted">Caixa selecionado</small>
+                    </div>
+                    {% else %}
+                    {# Vários caixas: dropdown de seleção #}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Selecionar Caixa</label>
+                        <select name="caixa_id" class="form-select" required>
+                            <option value="">— Escolha o caixa —</option>
+                            {% for cx in caixas %}
+                            <option value="{{ cx.pk }}"
+                                    {% if caixa and caixa.pk == cx.pk %}selected{% endif %}>
+                                {{ cx }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    {# Operador #}
+                    <div class="mb-3 text-muted small d-flex align-items-center gap-2">
+                        <i class="bi bi-person-circle"></i>
+                        Operador: <strong class="text-body">{{ request.user.nome_exibicao }}</strong>
+                    </div>
+
+                    {# Valor de abertura #}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            Fundo de Caixa (R$)
+                        </label>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text bg-white">R$</span>
+                            <input type="number" name="valor_abertura"
+                                   class="form-control form-control-lg text-end fw-bold"
+                                   step="0.01" min="0" value="0.00"
+                                   placeholder="0,00" autofocus>
+                        </div>
+                        <div class="form-text">
+                            Valor em dinheiro disponível no início da operação.
+                        </div>
+                    </div>
+
+                    {# Observações #}
+                    <div class="mb-4">
+                        <label class="form-label">Observações <small class="text-muted">(opcional)</small></label>
+                        <textarea name="observacoes" class="form-control" rows="2"
+                                  placeholder="Ex.: Fundo de troco separado"></textarea>
+                    </div>
+
+                    {# Botões #}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg fw-bold">
+                            <i class="bi bi-unlock-fill me-2"></i>Confirmar Abertura
+                        </button>
+                        <a href="{% url 'caixa:index' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Cancelar
+                        </a>
+                    </div>
+
+                    {% endif %}{# fim if caixas.count == 0 #}
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

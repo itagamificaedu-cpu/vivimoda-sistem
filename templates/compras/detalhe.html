@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Ordem de Compra {{ oc.numero }}{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="{% url 'compras:lista' %}">Compras</a></li>
+                <li class="breadcrumb-item active">{{ oc.numero }}</li>
+            </ol>
+        </nav>
+        <h4 class="fw-bold mb-0">
+            <i class="bi bi-truck text-primary me-2"></i>{{ oc.numero }}
+            {% if oc.status == 'RECEBIDA' %}<span class="badge bg-success fs-6">Recebida</span>
+            {% elif oc.status == 'ENVIADA' %}<span class="badge bg-primary fs-6">Enviada</span>
+            {% elif oc.status == 'RASCUNHO' %}<span class="badge bg-secondary fs-6">Rascunho</span>
+            {% elif oc.status == 'PARCIAL' %}<span class="badge bg-warning text-dark fs-6">Parcial</span>
+            {% elif oc.status == 'CANCELADA' %}<span class="badge bg-danger fs-6">Cancelada</span>
+            {% endif %}
+        </h4>
+    </div>
+    <div class="d-flex gap-2">
+        {% if oc.status not in 'RECEBIDA CANCELADA' %}
+        <a href="{% url 'compras:editar' oc.pk %}" class="btn btn-outline-primary">
+            <i class="bi bi-pencil me-1"></i>Editar
+        </a>
+        <a href="{% url 'compras:receber' oc.pk %}" class="btn btn-success">
+            <i class="bi bi-box-arrow-in-down me-1"></i>Receber
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header"><h6 class="mb-0">Informações</h6></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <small class="text-muted">Fornecedor</small>
+                        <div><a href="{% url 'fornecedores:detalhe' oc.fornecedor.pk %}">{{ oc.fornecedor.razao_social }}</a></div>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted">Data do Pedido</small>
+                        <div>{{ oc.data_pedido|date:"d/m/Y" }}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted">Previsão de Entrega</small>
+                        <div>{{ oc.data_previsao|date:"d/m/Y"|default:"—" }}</div>
+                    </div>
+                    {% if oc.numero_nf %}
+                    <div class="col-md-4">
+                        <small class="text-muted">NF</small>
+                        <div>{{ oc.numero_nf }}</div>
+                    </div>
+                    {% endif %}
+                    <div class="col-md-4">
+                        <small class="text-muted">Operador</small>
+                        <div>{{ oc.usuario.nome_exibicao }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><h6 class="mb-0"><i class="bi bi-cart me-2"></i>Itens do Pedido</h6></div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Produto</th>
+                            <th class="text-center">Qtd Pedida</th>
+                            <th class="text-center">Qtd Recebida</th>
+                            <th class="text-end">Custo Unit.</th>
+                            <th class="text-end pe-3">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in oc.itens.all %}
+                        <tr>
+                            <td class="ps-3">
+                                <div class="fw-semibold">{{ item.produto.nome }}</div>
+                                {% if item.grade %}
+                                <small class="text-muted">{{ item.grade.cor }}/{{ item.grade.tamanho }}</small>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">{{ item.quantidade|floatformat:0 }}</td>
+                            <td class="text-center">{{ item.quantidade_recebida|floatformat:0 }}</td>
+                            <td class="text-end">R$ {{ item.preco_unitario|floatformat:2 }}</td>
+                            <td class="text-end pe-3 fw-semibold">R$ {{ item.valor_total|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header"><h6 class="mb-0"><i class="bi bi-calculator me-2"></i>Totais</h6></div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-muted">Subtotal</span>
+                    <span>R$ {{ oc.valor_subtotal|floatformat:2 }}</span>
+                </div>
+                {% if oc.valor_desconto %}
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-muted">Desconto</span>
+                    <span class="text-danger">- R$ {{ oc.valor_desconto|floatformat:2 }}</span>
+                </div>
+                {% endif %}
+                {% if oc.valor_frete %}
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-muted">Frete</span>
+                    <span>R$ {{ oc.valor_frete|floatformat:2 }}</span>
+                </div>
+                {% endif %}
+                <div class="d-flex justify-content-between py-2 fw-bold fs-5">
+                    <span>Total</span>
+                    <span class="text-primary">R$ {{ oc.valor_total|floatformat:2 }}</span>
+                </div>
+                {% if oc.prazo_pagamento %}
+                <hr>
+                <div class="small">
+                    <span class="text-muted">Prazo:</span> {{ oc.prazo_pagamento }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

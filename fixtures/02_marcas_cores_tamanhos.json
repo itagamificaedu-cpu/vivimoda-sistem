@@ -1,0 +1,33 @@
+[
+  {"model": "produtos.marca", "pk": 1, "fields": {"nome": "Vivimoda", "ativo": true}},
+  {"model": "produtos.marca", "pk": 2, "fields": {"nome": "Confec Brasil", "ativo": true}},
+  {"model": "produtos.marca", "pk": 3, "fields": {"nome": "Fashion Line", "ativo": true}},
+  {"model": "produtos.marca", "pk": 4, "fields": {"nome": "Básico & Chique", "ativo": true}},
+
+  {"model": "produtos.cor", "pk": 1,  "fields": {"nome": "Branco",     "codigo_hex": "#FFFFFF"}},
+  {"model": "produtos.cor", "pk": 2,  "fields": {"nome": "Preto",      "codigo_hex": "#000000"}},
+  {"model": "produtos.cor", "pk": 3,  "fields": {"nome": "Azul",       "codigo_hex": "#0066CC"}},
+  {"model": "produtos.cor", "pk": 4,  "fields": {"nome": "Vermelho",   "codigo_hex": "#CC0000"}},
+  {"model": "produtos.cor", "pk": 5,  "fields": {"nome": "Verde",      "codigo_hex": "#006600"}},
+  {"model": "produtos.cor", "pk": 6,  "fields": {"nome": "Amarelo",    "codigo_hex": "#FFCC00"}},
+  {"model": "produtos.cor", "pk": 7,  "fields": {"nome": "Rosa",       "codigo_hex": "#FF69B4"}},
+  {"model": "produtos.cor", "pk": 8,  "fields": {"nome": "Cinza",      "codigo_hex": "#808080"}},
+  {"model": "produtos.cor", "pk": 9,  "fields": {"nome": "Marrom",     "codigo_hex": "#8B4513"}},
+  {"model": "produtos.cor", "pk": 10, "fields": {"nome": "Bege",       "codigo_hex": "#F5F5DC"}},
+
+  {"model": "produtos.tamanho", "pk": 1,  "fields": {"nome": "PP",  "ordem": 1, "tipo": "ADULTO"}},
+  {"model": "produtos.tamanho", "pk": 2,  "fields": {"nome": "P",   "ordem": 2, "tipo": "ADULTO"}},
+  {"model": "produtos.tamanho", "pk": 3,  "fields": {"nome": "M",   "ordem": 3, "tipo": "ADULTO"}},
+  {"model": "produtos.tamanho", "pk": 4,  "fields": {"nome": "G",   "ordem": 4, "tipo": "ADULTO"}},
+  {"model": "produtos.tamanho", "pk": 5,  "fields": {"nome": "GG",  "ordem": 5, "tipo": "ADULTO"}},
+  {"model": "produtos.tamanho", "pk": 6,  "fields": {"nome": "XGG", "ordem": 6, "tipo": "ADULTO"}},
+  {"model": "produtos.tamanho", "pk": 7,  "fields": {"nome": "2",   "ordem": 1, "tipo": "INFANTIL"}},
+  {"model": "produtos.tamanho", "pk": 8,  "fields": {"nome": "4",   "ordem": 2, "tipo": "INFANTIL"}},
+  {"model": "produtos.tamanho", "pk": 9,  "fields": {"nome": "6",   "ordem": 3, "tipo": "INFANTIL"}},
+  {"model": "produtos.tamanho", "pk": 10, "fields": {"nome": "8",   "ordem": 4, "tipo": "INFANTIL"}},
+  {"model": "produtos.tamanho", "pk": 11, "fields": {"nome": "36",  "ordem": 1, "tipo": "NUMERICO"}},
+  {"model": "produtos.tamanho", "pk": 12, "fields": {"nome": "38",  "ordem": 2, "tipo": "NUMERICO"}},
+  {"model": "produtos.tamanho", "pk": 13, "fields": {"nome": "40",  "ordem": 3, "tipo": "NUMERICO"}},
+  {"model": "produtos.tamanho", "pk": 14, "fields": {"nome": "42",  "ordem": 4, "tipo": "NUMERICO"}},
+  {"model": "produtos.tamanho", "pk": 15, "fields": {"nome": "44",  "ordem": 5, "tipo": "NUMERICO"}}
+]

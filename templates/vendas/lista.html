@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Vendas{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-0"><i class="bi bi-bag-check text-primary me-2"></i>Vendas</h4>
+        <small class="text-muted">{{ total }} registro(s) encontrado(s)</small>
+    </div>
+    <a href="{% url 'vendas:pdv' %}" class="btn btn-success">
+        <i class="bi bi-plus-circle me-1"></i>Novo PDV
+    </a>
+</div>
+
+{# Filtros #}
+<div class="card mb-4">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label form-label-sm">Buscar</label>
+                <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm"
+                       placeholder="Nº venda, cliente...">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label form-label-sm">Status</label>
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">Todos</option>
+                    <option value="PENDENTE" {% if status == 'PENDENTE' %}selected{% endif %}>Pendente</option>
+                    <option value="PAGO" {% if status == 'PAGO' %}selected{% endif %}>Pago</option>
+                    <option value="PARCIAL" {% if status == 'PARCIAL' %}selected{% endif %}>Parcialmente Pago</option>
+                    <option value="CANCELADO" {% if status == 'CANCELADO' %}selected{% endif %}>Cancelado</option>
+                    <option value="DEVOLVIDO" {% if status == 'DEVOLVIDO' %}selected{% endif %}>Devolvido</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label form-label-sm">De</label>
+                <input type="date" name="data_de" value="{{ data_de }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label form-label-sm">Até</label>
+                <input type="date" name="data_ate" value="{{ data_ate }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label form-label-sm">Canal</label>
+                <select name="canal" class="form-select form-select-sm">
+                    <option value="">Todos</option>
+                    <option value="LOJA" {% if canal == 'LOJA' %}selected{% endif %}>Loja Física</option>
+                    <option value="WHATSAPP" {% if canal == 'WHATSAPP' %}selected{% endif %}>WhatsApp</option>
+                    <option value="INSTAGRAM" {% if canal == 'INSTAGRAM' %}selected{% endif %}>Instagram</option>
+                </select>
+            </div>
+            <div class="col-md-1 d-flex gap-1">
+                <button type="submit" class="btn btn-primary btn-sm w-100">
+                    <i class="bi bi-search"></i>
+                </button>
+                <a href="{% url 'vendas:lista' %}" class="btn btn-outline-secondary btn-sm w-100">
+                    <i class="bi bi-x"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# Tabela #}
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Nº</th>
+                        <th>Data</th>
+                        <th>Cliente</th>
+                        <th>Vendedor</th>
+                        <th>Canal</th>
+                        <th class="text-end">Total</th>
+                        <th class="text-end">Pago</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center pe-3">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for venda in page_obj %}
+                    <tr>
+                        <td class="ps-3">
+                            <a href="{% url 'vendas:detalhe' venda.pk %}" class="fw-semibold text-decoration-none">
+                                {{ venda.numero }}
+                            </a>
+                        </td>
+                        <td class="text-muted small">
+                            {{ venda.data_venda|date:"d/m/Y H:i" }}
+                        </td>
+                        <td>
+                            {% if venda.cliente %}
+                                <a href="{% url 'clientes:detalhe' venda.cliente.pk %}" class="text-decoration-none">
+                                    {{ venda.cliente.nome }}
+                                </a>
+                            {% else %}
+                                <span class="text-muted fst-italic">Consumidor final</span>
+                            {% endif %}
+                        </td>
+                        <td class="small">{{ venda.vendedor|default:"—" }}</td>
+                        <td>
+                            {% if venda.canal == 'LOJA' %}
+                                <span class="badge bg-primary-subtle text-primary">
+                                    <i class="bi bi-shop"></i> Loja
+                                </span>
+                            {% elif venda.canal == 'WHATSAPP' %}
+                                <span class="badge bg-success-subtle text-success">
+                                    <i class="bi bi-whatsapp"></i> WhatsApp
+                                </span>
+                            {% elif venda.canal == 'INSTAGRAM' %}
+                                <span class="badge bg-danger-subtle text-danger">
+                                    <i class="bi bi-instagram"></i> Instagram
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary-subtle text-secondary">{{ venda.canal }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end fw-semibold">R$ {{ venda.valor_total|floatformat:2 }}</td>
+                        <td class="text-end text-success">R$ {{ venda.valor_pago|floatformat:2 }}</td>
+                        <td class="text-center">
+                            {% if venda.status == 'PAGO' %}
+                                <span class="badge bg-success">Pago</span>
+                            {% elif venda.status == 'PENDENTE' %}
+                                <span class="badge bg-warning text-dark">Pendente</span>
+                            {% elif venda.status == 'PARCIAL' %}
+                                <span class="badge bg-info text-dark">Parcial</span>
+                            {% elif venda.status == 'CANCELADO' %}
+                                <span class="badge bg-danger">Cancelado</span>
+                            {% elif venda.status == 'DEVOLVIDO' %}
+                                <span class="badge bg-secondary">Devolvido</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ venda.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center pe-3">
+                            <a href="{% url 'vendas:detalhe' venda.pk %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'vendas:cupom' venda.pk %}" target="_blank"
+                               class="btn btn-sm btn-outline-secondary" title="Imprimir cupom">
+                                <i class="bi bi-printer"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center py-5 text-muted">
+                            <i class="bi bi-bag-x display-6 d-block mb-2"></i>
+                            Nenhuma venda encontrada.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                {% if page_obj %}
+                <tfoot class="table-light">
+                    <tr>
+                        <td colspan="5" class="ps-3 fw-semibold">Total da página</td>
+                        <td class="text-end fw-bold text-primary">
+                            R$ {{ total_pagina|floatformat:2|default:"0,00" }}
+                        </td>
+                        <td colspan="3"></td>
+                    </tr>
+                </tfoot>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+</div>
+
+{# Paginação #}
+{% if page_obj.has_other_pages %}
+<nav class="mt-3">
+    <ul class="pagination pagination-sm justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ q }}&status={{ status }}&data_de={{ data_de }}&data_ate={{ data_ate }}">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+        </li>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ num }}&q={{ q }}&status={{ status }}&data_de={{ data_de }}&data_ate={{ data_ate }}">{{ num }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ q }}&status={{ status }}&data_de={{ data_de }}&data_ate={{ data_ate }}">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

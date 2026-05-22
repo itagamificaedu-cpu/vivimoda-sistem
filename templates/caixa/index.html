@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Caixa{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-safe text-primary me-2"></i>Controle de Caixa</h4>
+</div>
+
+{# Caixas disponíveis #}
+<div class="row g-4 mb-4">
+    {% for caixa in caixas %}
+    <div class="col-md-4">
+        <div class="card h-100 {% if caixa.sessao_aberta %}border-success{% else %}border-secondary{% endif %}">
+            <div class="card-header d-flex justify-content-between align-items-center
+                {% if caixa.sessao_aberta %}bg-success text-white{% else %}bg-light{% endif %}">
+                <h6 class="mb-0">
+                    <i class="bi bi-safe me-2"></i>{{ caixa }}
+                </h6>
+                {% if caixa.sessao_aberta %}
+                <span class="badge bg-white text-success">Aberto</span>
+                {% else %}
+                <span class="badge bg-secondary">Fechado</span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if caixa.sessao_aberta %}
+                    {% with s=caixa.sessao_aberta %}
+                    <div class="mb-3">
+                        <small class="text-muted">Operador</small>
+                        <div class="fw-semibold">{{ s.operador.nome_exibicao }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted">Abertura</small>
+                        <div>{{ s.data_abertura|date:"d/m/Y H:i" }}</div>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <small class="text-muted">Vendas</small>
+                            <div class="fw-bold text-success">R$ {{ s.total_vendas|floatformat:2 }}</div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Dinheiro esp.</small>
+                            <div class="fw-bold">R$ {{ s.saldo_esperado|floatformat:2 }}</div>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'caixa:sessao' s.pk %}" class="btn btn-success">
+                            <i class="bi bi-eye me-1"></i>Ver Sessão
+                        </a>
+                        <a href="{% url 'caixa:fechar' s.pk %}" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-lock me-1"></i>Fechar Caixa
+                        </a>
+                    </div>
+                    {% endwith %}
+                {% else %}
+                    <p class="text-muted">Caixa fechado. Clique para abrir uma nova sessão.</p>
+                    <a href="{% url 'caixa:abrir' %}?caixa={{ caixa.pk }}" class="btn btn-primary d-grid">
+                        <i class="bi bi-unlock me-1"></i>Abrir Caixa
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Nenhum caixa cadastrado. Configure pelo menos um caixa no
+            <a href="{% url 'configuracoes:index' %}">painel de configurações</a>.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{# Histórico de sessões recentes #}
+<div class="card">
+    <div class="card-header">
+        <h6 class="mb-0"><i class="bi bi-clock-history me-2"></i>Últimas Sessões</h6>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Caixa</th>
+                        <th>Operador</th>
+                        <th>Abertura</th>
+                        <th>Fechamento</th>
+                        <th class="text-end">Total Vendas</th>
+                        <th class="text-end">Dinheiro</th>
+                        <th class="text-end">PIX</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center pe-3">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sessao in sessoes_recentes %}
+                    <tr>
+                        <td class="ps-3">{{ sessao.caixa }}</td>
+                        <td>{{ sessao.operador.nome_exibicao }}</td>
+                        <td class="small text-muted">{{ sessao.data_abertura|date:"d/m/Y H:i" }}</td>
+                        <td class="small text-muted">
+                            {% if sessao.data_fechamento %}{{ sessao.data_fechamento|date:"d/m/Y H:i" }}{% else %}—{% endif %}
+                        </td>
+                        <td class="text-end">R$ {{ sessao.total_vendas|floatformat:2 }}</td>
+                        <td class="text-end">R$ {{ sessao.total_dinheiro|floatformat:2 }}</td>
+                        <td class="text-end">R$ {{ sessao.total_pix|floatformat:2 }}</td>
+                        <td class="text-center">
+                            {% if sessao.status == 'ABERTO' %}
+                            <span class="badge bg-success">Aberto</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Fechado</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center pe-3">
+                            <a href="{% url 'caixa:sessao' sessao.pk %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center py-3 text-muted">Nenhuma sessão registrada.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

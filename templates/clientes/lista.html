@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block titulo %}Clientes{% endblock %}
+
+{% block breadcrumb %}
+<div class="breadcrumb-bar">
+  <nav><ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Início</a></li>
+    <li class="breadcrumb-item active">Clientes</li>
+  </ol></nav>
+</div>
+{% endblock %}
+
+{% block conteudo %}
+<!-- Cabeçalho + botão novo -->
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <span class="badge bg-secondary">{{ total }} clientes encontrados</span>
+  </div>
+  <a href="{% url 'clientes:criar' %}" class="btn btn-primary">
+    <i class="bi bi-plus-lg me-1"></i>Novo Cliente
+  </a>
+</div>
+
+<!-- Filtros -->
+<div class="card shadow-sm mb-3">
+  <div class="card-body py-2">
+    <form method="get" class="row g-2 align-items-end">
+      <div class="col-md-5">
+        <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm"
+               placeholder="Nome, CPF, celular...">
+      </div>
+      <div class="col-md-3">
+        <select name="categoria" class="form-select form-select-sm">
+          <option value="">Todas as categorias</option>
+          {% for val, label in categorias %}
+          <option value="{{ val }}" {% if categoria == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select name="ativo" class="form-select form-select-sm">
+          <option value="1" {% if ativo == '1' %}selected{% endif %}>Ativos</option>
+          <option value="0" {% if ativo == '0' %}selected{% endif %}>Inativos</option>
+          <option value="" {% if not ativo %}selected{% endif %}>Todos</option>
+        </select>
+      </div>
+      <div class="col-md-2 d-flex gap-2">
+        <button type="submit" class="btn btn-sm btn-primary flex-fill">
+          <i class="bi bi-search"></i> Buscar
+        </button>
+        <a href="{% url 'clientes:lista' %}" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-x"></i>
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Tabela -->
+<div class="card shadow-sm">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Nome</th>
+            <th>CPF/CNPJ</th>
+            <th>Celular</th>
+            <th>Cidade</th>
+            <th>Categoria</th>
+            <th>Saldo Devedor</th>
+            <th class="text-center">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in page_obj %}
+          <tr>
+            <td>
+              <a href="{% url 'clientes:detalhe' c.pk %}" class="fw-semibold text-decoration-none">
+                {% if c.aniversario_hoje %}🎂 {% endif %}{{ c.nome }}
+              </a>
+              {% if not c.ativo %}<span class="badge bg-secondary ms-1">Inativo</span>{% endif %}
+              {% if c.inadimplente and c.ativo %}<span class="badge bg-danger ms-1">Devedor</span>{% endif %}
+            </td>
+            <td class="text-muted small">{{ c.nome_documento }}</td>
+            <td>{{ c.celular }}</td>
+            <td class="text-muted small">{{ c.cidade }}</td>
+            <td>
+              {% if c.categoria == 'VIP' %}<span class="badge bg-warning text-dark">VIP</span>
+              {% elif c.categoria == 'ATACADO' %}<span class="badge bg-info">Atacado</span>
+              {% elif c.categoria == 'INADIMPLENTE' %}<span class="badge bg-danger">Inadimplente</span>
+              {% else %}<span class="badge bg-light text-dark">Regular</span>{% endif %}
+            </td>
+            <td class="{% if c.saldo_devedor > 0 %}text-danger fw-semibold{% endif %}">
+              {% if c.saldo_devedor > 0 %}R$ {{ c.saldo_devedor|floatformat:2 }}{% else %}—{% endif %}
+            </td>
+            <td class="text-center">
+              <div class="btn-group btn-group-sm">
+                <a href="{% url 'clientes:detalhe' c.pk %}" class="btn btn-outline-secondary" title="Ver">
+                  <i class="bi bi-eye"></i>
+                </a>
+                <a href="{% url 'clientes:editar' c.pk %}" class="btn btn-outline-primary" title="Editar">
+                  <i class="bi bi-pencil"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7" class="text-center text-muted py-4">
+            <i class="bi bi-people fs-3 d-block mb-2"></i>Nenhum cliente encontrado.
+          </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Paginação -->
+  {% if page_obj.has_other_pages %}
+  <div class="card-footer bg-white d-flex justify-content-center">
+    <nav><ul class="pagination pagination-sm mb-0">
+      {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ q }}&categoria={{ categoria }}&ativo={{ ativo }}">‹</a></li>
+      {% endif %}
+      <li class="page-item disabled"><span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+      {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ q }}&categoria={{ categoria }}&ativo={{ ativo }}">›</a></li>
+      {% endif %}
+    </ul></nav>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

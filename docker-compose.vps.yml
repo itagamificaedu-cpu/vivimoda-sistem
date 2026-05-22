@@ -1,0 +1,96 @@
+# docker-compose para o VPS — integra com o Nginx do CEITEC ID System
+# Django exposto na porta 8010 (interna), sem Nginx próprio
+
+version: '3.9'
+
+services:
+  vivimoda_db:
+    image: postgres:16-alpine
+    container_name: vivimoda_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-vivimoda_db}
+      POSTGRES_USER: ${DB_USER:-vivimoda_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-vivimoda_senha123}
+    volumes:
+      - vivimoda_postgres:/var/lib/postgresql/data
+    networks:
+      - vivimoda_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-vivimoda_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  vivimoda_redis:
+    image: redis:7-alpine
+    container_name: vivimoda_redis
+    restart: unless-stopped
+    volumes:
+      - vivimoda_redis_data:/data
+    networks:
+      - vivimoda_net
+
+  vivimoda_web:
+    build: .
+    container_name: vivimoda_web
+    restart: unless-stopped
+    command: >
+      sh -c "python manage.py migrate --settings=confec_system.settings.production &&
+             python manage.py collectstatic --noinput --settings=confec_system.settings.production &&
+             gunicorn confec_system.wsgi:application --bind 0.0.0.0:8000 --workers 3"
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: confec_system.settings.production
+    volumes:
+      - vivimoda_media:/app/media
+      - vivimoda_static:/app/staticfiles
+    ports:
+      - "8010:8000"
+    depends_on:
+      vivimoda_db:
+        condition: service_healthy
+    networks:
+      - vivimoda_net
+
+  vivimoda_celery:
+    build: .
+    container_name: vivimoda_celery
+    restart: unless-stopped
+    command: celery -A confec_system worker --loglevel=info --concurrency=2
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: confec_system.settings.production
+    volumes:
+      - vivimoda_media:/app/media
+    depends_on:
+      - vivimoda_web
+      - vivimoda_redis
+    networks:
+      - vivimoda_net
+
+  vivimoda_beat:
+    build: .
+    container_name: vivimoda_beat
+    restart: unless-stopped
+    command: celery -A confec_system beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: confec_system.settings.production
+    volumes:
+      - vivimoda_media:/app/media
+    depends_on:
+      - vivimoda_web
+      - vivimoda_redis
+    networks:
+      - vivimoda_net
+
+volumes:
+  vivimoda_postgres:
+  vivimoda_redis_data:
+  vivimoda_media:
+  vivimoda_static:
+
+networks:
+  vivimoda_net:
+    driver: bridge

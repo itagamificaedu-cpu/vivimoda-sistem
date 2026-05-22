@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block titulo %}Relatório de Comissões{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-person-badge text-primary me-2"></i>Comissões por Vendedor</h4>
+    <button onclick="window.print()" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-printer me-1"></i>Imprimir
+    </button>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-2"><input type="date" name="data_de" value="{{ data_de|date:'Y-m-d' }}" class="form-control form-control-sm"></div>
+            <div class="col-md-2"><input type="date" name="data_ate" value="{{ data_ate|date:'Y-m-d' }}" class="form-control form-control-sm"></div>
+            <div class="col-md-3">
+                <select name="vendedor" class="form-select form-select-sm">
+                    <option value="">Todos os vendedores</option>
+                    {% for v in vendedores %}
+                    <option value="{{ v.pk }}" {% if vendedor_id == v.pk|stringformat:"s" %}selected{% endif %}>{{ v.nome_completo }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto"><button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button></div>
+        </form>
+    </div>
+</div>
+
+{# Cards #}
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 bg-primary text-white">
+            <div class="card-body"><div class="small opacity-75">Total em Comissões</div>
+            <div class="fw-bold fs-4">R$ {{ total_comissoes|floatformat:2|default:"0,00" }}</div></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 bg-success text-white">
+            <div class="card-body"><div class="small opacity-75">Total Vendido</div>
+            <div class="fw-bold fs-4">R$ {{ total_vendido|floatformat:2|default:"0,00" }}</div></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 bg-info text-white">
+            <div class="card-body"><div class="small opacity-75">Comissão Média (%)</div>
+            <div class="fw-bold fs-4">{{ comissao_media|floatformat:2|default:"0" }}%</div></div>
+        </div>
+    </div>
+</div>
+
+{# Por vendedor #}
+{% for vendedor in por_vendedor %}
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h6 class="mb-0">
+            <i class="bi bi-person-circle me-2"></i>{{ vendedor.nome }}
+        </h6>
+        <div class="text-end">
+            <span class="badge bg-success me-2">R$ {{ vendedor.total_comissao|floatformat:2 }}</span>
+            <small class="text-muted">sobre R$ {{ vendedor.total_vendas|floatformat:2 }} vendidos</small>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-3">Venda</th>
+                    <th>Data</th>
+                    <th>Cliente</th>
+                    <th class="text-end">Total Venda</th>
+                    <th class="text-center">Comissão %</th>
+                    <th class="text-end pe-3">Comissão R$</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in vendedor.itens %}
+                <tr>
+                    <td class="ps-3"><a href="{% url 'vendas:detalhe' item.venda.pk %}">{{ item.venda.numero }}</a></td>
+                    <td class="small text-muted">{{ item.venda.data_venda|date:"d/m/Y" }}</td>
+                    <td>{{ item.venda.cliente|default:"Consumidor final" }}</td>
+                    <td class="text-end">R$ {{ item.valor_total|floatformat:2 }}</td>
+                    <td class="text-center">{{ item.comissao_percentual|floatformat:1 }}%</td>
+                    <td class="text-end pe-3 fw-semibold text-success">R$ {{ item.comissao_valor|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot class="table-light fw-bold">
+                <tr>
+                    <td colspan="5" class="ps-3">Total {{ vendedor.nome }}</td>
+                    <td class="text-end pe-3 text-success">R$ {{ vendedor.total_comissao|floatformat:2 }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+{% empty %}
+<div class="text-center text-muted py-5">
+    <i class="bi bi-person-x display-6 d-block mb-2"></i>
+    Nenhum dado de comissão no período.
+</div>
+{% endfor %}
+{% endblock %}

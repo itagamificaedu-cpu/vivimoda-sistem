@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block breadcrumb %}
+<div class="breadcrumb-bar">
+  <nav><ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Início</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'clientes:lista' %}">Clientes</a></li>
+    <li class="breadcrumb-item active">{{ titulo }}</li>
+  </ol></nav>
+</div>
+{% endblock %}
+
+{% block conteudo %}
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  <div class="row g-4">
+
+    <!-- Coluna esquerda -->
+    <div class="col-md-8">
+
+      <!-- Tipo de pessoa -->
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold py-3">
+          <i class="bi bi-person-vcard me-2 text-primary"></i>Tipo de Pessoa
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label">Tipo <span class="text-danger">*</span></label>
+              {{ form.tipo }}
+            </div>
+            <div class="col-md-9">
+              <label class="form-label">Nome <span class="text-danger">*</span></label>
+              {{ form.nome }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dados PF -->
+      <div class="card shadow-sm mb-3" id="bloco-pf">
+        <div class="card-header bg-white fw-semibold py-3">
+          <i class="bi bi-person me-2 text-success"></i>Dados — Pessoa Física
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">CPF</label>
+              {{ form.cpf }}
+              {% if form.cpf.errors %}<div class="text-danger small">{{ form.cpf.errors }}</div>{% endif %}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">RG</label>{{ form.rg }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Data de Nascimento</label>{{ form.data_nascimento }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Sexo</label>{{ form.sexo }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dados PJ -->
+      <div class="card shadow-sm mb-3 d-none" id="bloco-pj">
+        <div class="card-header bg-white fw-semibold py-3">
+          <i class="bi bi-building me-2 text-info"></i>Dados — Pessoa Jurídica
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Razão Social</label>{{ form.razao_social }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Nome Fantasia</label>{{ form.nome_fantasia }}
+            </div>
+            <div class="col-md-5">
+              <label class="form-label">CNPJ</label>
+              <div class="input-group">
+                {{ form.cnpj }}
+                <button type="button" class="btn btn-outline-secondary" id="btn-buscar-cnpj">
+                  <i class="bi bi-search"></i>
+                </button>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Inscrição Estadual</label>{{ form.inscricao_estadual }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contato -->
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold py-3">
+          <i class="bi bi-telephone me-2 text-warning"></i>Contato
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Celular <span class="text-danger">*</span></label>{{ form.celular }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">WhatsApp</label>{{ form.whatsapp }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Telefone</label>{{ form.telefone }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">E-mail</label>{{ form.email }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Endereço -->
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold py-3">
+          <i class="bi bi-geo-alt me-2 text-danger"></i>Endereço
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label">CEP</label>
+              <div class="input-group">
+                {{ form.cep }}
+                <button type="button" class="btn btn-outline-secondary" id="btn-buscar-cep">
+                  <i class="bi bi-search"></i>
+                </button>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Logradouro</label>{{ form.logradouro }}
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Número</label>{{ form.numero }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Complemento</label>{{ form.complemento }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Bairro</label>{{ form.bairro }}
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Cidade</label>{{ form.cidade }}
+            </div>
+            <div class="col-md-1">
+              <label class="form-label">UF</label>{{ form.estado }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold py-3">
+          <i class="bi bi-chat-text me-2"></i>Observações
+        </div>
+        <div class="card-body">{{ form.observacoes }}</div>
+      </div>
+    </div>
+
+    <!-- Coluna direita -->
+    <div class="col-md-4">
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold py-3">
+          <i class="bi bi-wallet2 me-2 text-success"></i>Configurações Financeiras
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Categoria</label>{{ form.categoria }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Limite de Crédito (R$)</label>{{ form.limite_credito }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Dia de Vencimento Padrão</label>{{ form.dia_vencimento }}
+            <div class="form-text">Para geração de carnê</div>
+          </div>
+          <div class="form-check">
+            {{ form.ativo }}
+            <label class="form-check-label">Cliente ativo</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold py-3">
+          <i class="bi bi-image me-2"></i>Foto
+        </div>
+        <div class="card-body text-center">
+          {% if cliente.foto %}
+          <img src="{{ cliente.foto.url }}" class="rounded-circle mb-2" width="80" height="80" style="object-fit:cover">
+          {% endif %}
+          {{ form.foto }}
+        </div>
+      </div>
+
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary btn-lg">
+          <i class="bi bi-check-lg me-2"></i>Salvar Cliente
+        </button>
+        <a href="{% url 'clientes:lista' %}" class="btn btn-outline-secondary">
+          <i class="bi bi-x me-1"></i>Cancelar
+        </a>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Alterna blocos PF/PJ
+function alternarTipo() {
+  const tipo = document.querySelector('[name="tipo"]').value;
+  document.getElementById('bloco-pf').classList.toggle('d-none', tipo === 'PJ');
+  document.getElementById('bloco-pj').classList.toggle('d-none', tipo === 'PF');
+}
+document.querySelector('[name="tipo"]').addEventListener('change', alternarTipo);
+alternarTipo();
+
+// Busca CEP
+document.getElementById('btn-buscar-cep').addEventListener('click', () => {
+  const cep = document.getElementById('id_cep_cliente').value;
+  buscarCep(cep, d => {
+    document.querySelector('[name="logradouro"]').value = d.logradouro || '';
+    document.querySelector('[name="bairro"]').value = d.bairro || '';
+    document.querySelector('[name="cidade"]').value = d.cidade || '';
+    document.querySelector('[name="estado"]').value = d.estado || '';
+    document.querySelector('[name="numero"]').focus();
+  });
+});
+
+// Busca CNPJ
+document.getElementById('btn-buscar-cnpj')?.addEventListener('click', () => {
+  const cnpj = document.querySelector('[name="cnpj"]').value;
+  fetch(`/ajax/buscar-cnpj/?cnpj=${cnpj}`)
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok) {
+        const dados = d.dados;
+        document.querySelector('[name="razao_social"]').value = dados.razao_social || '';
+        document.querySelector('[name="nome_fantasia"]').value = dados.nome_fantasia || '';
+        document.querySelector('[name="nome"]').value = dados.nome_fantasia || dados.razao_social || '';
+        document.querySelector('[name="email"]').value = dados.email || '';
+        document.querySelector('[name="logradouro"]').value = dados.logradouro || '';
+        document.querySelector('[name="numero"]').value = dados.numero || '';
+        document.querySelector('[name="bairro"]').value = dados.bairro || '';
+        document.querySelector('[name="cidade"]').value = dados.cidade || '';
+        document.querySelector('[name="estado"]').value = dados.estado || '';
+        toastr.success('Dados do CNPJ carregados!');
+      } else {
+        toastr.error('CNPJ não encontrado.');
+      }
+    });
+});
+</script>
+{% endblock %}
